@@ -155,6 +155,6 @@ namespace Aery {
 
     template<typename vec1>
     std::basic_string<char> base_vec2<vec1>::toString() const {
-        return fmt::format("\{ x: {}, y: {} \}", x, y);
+        return fmt::format("{ x: {}, y: {} }", x, y);
     }
 }
