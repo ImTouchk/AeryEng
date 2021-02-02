@@ -9,6 +9,7 @@ namespace Aery {
     class VkObject;
     struct VkShader;
     struct VkShaderCreateInfo;
+    struct VkObjectCreateInfo;
     class VkRenderer {
     public:
         VkRenderer(); ~VkRenderer();
@@ -21,17 +22,18 @@ namespace Aery {
         // Object methods
 
         VkObject& getObjectByID(u32);
-        bool createDefaultObject(VkObject*, VkShader*);
-        bool createObject(VkObject*, VkShader&);
+        bool createDefaultObject(VkObject*, VkShader**);
+        bool createObject(VkObjectCreateInfo&&, VkObject**) = delete;
+        bool createObject(VkObjectCreateInfo&, VkObject**);
         void destroyObject(VkObject&&) = delete;
         void destroyObject(VkObject&);
 
         // Shader methods
 
         VkShader& getShaderByID(u32);
-        bool createDefaultShader(VkShader*);
-        bool createShader(VkShaderCreateInfo&&, VkShader*) = delete;
-        bool createShader(VkShaderCreateInfo&, VkShader*);
+        bool createDefaultShader(VkShader**);
+        bool createShader(VkShaderCreateInfo&&, VkShader**) = delete;
+        bool createShader(VkShaderCreateInfo&, VkShader**);
         void destroyShader(VkShader&&) = delete;
         void destroyShader(VkShader&);
 
@@ -44,6 +46,7 @@ namespace Aery {
         bool CreateSurface();       void DestroySurface();
         bool PickPhysicalDevice();
         bool CreateLogicalDevice(); void DestroyLogicalDevice();
+        void DestroyShaders();
 
         // On-resize creation
 
@@ -54,13 +57,24 @@ namespace Aery {
         bool CreateFramebuffers();  void DestroyFramebuffers();
         bool CreateCommandPool();   void DestroyCommandPool();
         bool CreateSyncObjects();   void DestroySyncObjects();
+        bool AllocateCommandBuffers();
 
         // On-draw creation
 
-        bool AllocateCommandBuffers();
         bool CreateCommandBuffer(int);
 
-        void DestroyShaders();
+        // Utils
+
+        void CreateBuffer(
+            vk::DeviceSize Size, 
+            vk::BufferUsageFlags Usage, 
+            vk::MemoryPropertyFlags Properties, 
+            vk::Buffer& Buffer, 
+            vk::DeviceMemory& Memory
+        );
+        u32 FindMemoryType(u32, vk::MemoryPropertyFlags);
+
+        // Variables
 
         Window* m_Window = nullptr;
         bool m_LayersUsed = false;

@@ -14,7 +14,7 @@ namespace Aery {
         vec1 x, y, z;
 
         base_vec3(const base_vec3& Other) { x = Other.x; y = Other.y; z = Other.z; }
-        base_vec3(const base_vec2& Other) { x = Other.x; y = Other.y; z = 0; }
+        base_vec3(const base_vec2<vec1>& Other) { x = Other.x; y = Other.y; z = 0; }
         base_vec3(const vec1 x, const vec1 y, const vec1 z) { this->x = x; this->y = y; this->z = z; }
         base_vec3(const vec1 x, const vec1 y) { this->x = x; this->y = y; z = 0; }
         base_vec3(const vec1 a) { x = a; y = a; }
@@ -32,10 +32,10 @@ namespace Aery {
         base_vec3 operator*(const base_vec3& Other) const { return base_vec3(x * Other.x, y * Other.y, z * Other.z); }
         base_vec3 operator/(const base_vec3& Other) const { return base_vec3(x / Other.x, y / Other.y, z / Other.z); }
 
-        base_vec3 operator+(const base_vec2& Other) const { return base_vec3(x + Other.x, y + Other.y, z); }
-        base_vec3 operator-(const base_vec2& Other) const { return base_vec3(x - Other.x, y - Other.y, z); }
-        base_vec3 operator*(const base_vec2& Other) const { return base_vec3(x * Other.x, y * Other.y, z); }
-        base_vec3 operator/(const base_vec2& Other) const { return base_vec3(x / Other.x, y / Other.y, z); }
+        base_vec3 operator+(const base_vec2<vec1>& Other) const { return base_vec3(x + Other.x, y + Other.y, z); }
+        base_vec3 operator-(const base_vec2<vec1>& Other) const { return base_vec3(x - Other.x, y - Other.y, z); }
+        base_vec3 operator*(const base_vec2<vec1>& Other) const { return base_vec3(x * Other.x, y * Other.y, z); }
+        base_vec3 operator/(const base_vec2<vec1>& Other) const { return base_vec3(x / Other.x, y / Other.y, z); }
 
         base_vec3 operator+(const vec1 a) const { return base_vec3(x + a, y + a, z + a); }
         base_vec3 operator-(const vec1 a) const { return base_vec3(x - a, y - a, z - a); }
@@ -52,10 +52,10 @@ namespace Aery {
         base_vec3& operator*=(const base_vec3& Other) { x *= Other.x; y *= Other.y; z *= Other.z; return *this; }
         base_vec3& operator/=(const base_vec3& Other) { x /= Other.x; y /= Other.y; z /= Other.z; return *this; }
 
-        base_vec3& operator+=(const base_vec2& Other) { x += Other.x; y += Other.y; return *this; }
-        base_vec3& operator-=(const base_vec2& Other) { x -= Other.x; y -= Other.y; return *this; }
-        base_vec3& operator*=(const base_vec2& Other) { x *= Other.x; y *= Other.y; return *this; }
-        base_vec3& operator/=(const base_vec2& Other) { x /= Other.x; y /= Other.y; return *this; }
+        base_vec3& operator+=(const base_vec2<vec1>& Other) { x += Other.x; y += Other.y; return *this; }
+        base_vec3& operator-=(const base_vec2<vec1>& Other) { x -= Other.x; y -= Other.y; return *this; }
+        base_vec3& operator*=(const base_vec2<vec1>& Other) { x *= Other.x; y *= Other.y; return *this; }
+        base_vec3& operator/=(const base_vec2<vec1>& Other) { x /= Other.x; y /= Other.y; return *this; }
 
         base_vec3 operator-() const { return base_vec3(-x, -y, -z); }
 

@@ -1,6 +1,7 @@
 #include "utils/debug.hpp"
 #include "utils/types.hpp"
 #include "graphics/vk_shader.hpp"
+#include "graphics/vk_object.hpp"
 #include "graphics/vk_renderer.hpp"
 #include <vulkan/vulkan.hpp>
 #include <fmt/core.h>
@@ -12,7 +13,6 @@ using namespace std;
 
 static Aery::mut_u32 Index = 0;
 static mutex ListMutex = {};
-static mutex PoolMutex = {};
 
 static bool LoadFile(const char* Input, vector<char>& Output, Aery::u32 ID) {
     ifstream Stream = ifstream(Input, ios::ate | ios::binary);
@@ -44,9 +44,9 @@ static bool CreateModule(vector<char>& Input, vk::ShaderModule& Output, vk::Devi
 }
 
 namespace Aery {
-    bool VkRenderer::createDefaultShader(VkShader* Output) {
+    bool VkRenderer::createDefaultShader(VkShader** Output) {
         static bool Existent = false;
-        static VkShader DefaultShader;
+        static VkShader* DefaultShader;
 
         if (Existent) {
             if (Output != nullptr) { *Output = DefaultShader; }
@@ -60,10 +60,11 @@ namespace Aery {
 
         if (!createShader(Default, &DefaultShader)) { return false; }
         if (Output != nullptr) { *Output = DefaultShader; }
+        Existent = true;
         return true;
     }
 
-    bool VkRenderer::createShader(VkShaderCreateInfo& Input, VkShader* Output) {
+    bool VkRenderer::createShader(VkShaderCreateInfo& Input, VkShader** Output) {
         auto CreatePipeline = [&](VkShader& Shader) {
             vector<char> VertexCode = {},
                 FragmentCode = {};
@@ -95,11 +96,14 @@ namespace Aery {
                 FragmentCreateInfo
             };
 
+            auto BindingDescription = VkVertex::GetBindingDescription();
+            auto AttributeDescriptions = VkVertex::GetAttributeDescription();
+
             vk::PipelineVertexInputStateCreateInfo VertexInputInfo = {
-                .vertexBindingDescriptionCount = 0,
-                .pVertexBindingDescriptions = nullptr,
-                .vertexAttributeDescriptionCount = 0,
-                .pVertexAttributeDescriptions = nullptr
+                .vertexBindingDescriptionCount = 1,
+                .pVertexBindingDescriptions = &BindingDescription,
+                .vertexAttributeDescriptionCount = AttributeDescriptions.size(),
+                .pVertexAttributeDescriptions = AttributeDescriptions.data()
             };
 
             vk::PipelineInputAssemblyStateCreateInfo AssemblyInfo = {
@@ -228,17 +232,23 @@ namespace Aery {
         m_Shaders.push_back(NewShader);
         ListMutex.unlock();
         if (Output != nullptr) { 
-            *Output = m_Shaders[m_Shaders.size() - 1]; 
+            *Output = &m_Shaders[m_Shaders.size() - 1]; 
         }
 
         Aery::log(fmt::format("<VkRenderer::createShader> ID {} created a pipeline {}.", m_ID, NewShader.id));
         return true;
     }
 
-    void VkRenderer::destroyShader(VkShader& Shader) {
-        m_Device.destroyPipeline(Shader.pipeline);
-        m_Device.destroyPipelineLayout(Shader.layout);
-        Aery::log(fmt::format("<VkRenderer::destroyShader> ID {} destroyed pipeline {}.", m_ID, Shader.id));
+    void VkRenderer::destroyShader(VkShader& Input) {
+        m_Device.destroyPipeline(Input.pipeline);
+        m_Device.destroyPipelineLayout(Input.layout);
+        ListMutex.lock();
+        std::vector<VkShader>::iterator Position = std::find(m_Shaders.begin(), m_Shaders.end(), Input);
+        if (Position != m_Shaders.end()) {
+            m_Shaders.erase(Position);
+        }
+        ListMutex.unlock();
+        Aery::log(fmt::format("<VkRenderer::destroyShader> ID {} destroyed pipeline {}.", m_ID, Input.id));
     }
 
     VkShader& VkRenderer::getShaderByID(u32 ID) {

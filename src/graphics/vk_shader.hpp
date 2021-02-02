@@ -15,5 +15,9 @@ namespace Aery {
         vk::PipelineCache cache;
         vk::Pipeline pipeline;
         mut_u32 id;
+
+        bool operator==(const VkShader& Other) {
+            return id == Other.id;
+        }
     };
 }
