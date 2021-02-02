@@ -53,13 +53,12 @@ namespace Aery {
         bool CreateRenderPass();    void DestroyRenderPass();
         bool CreateFramebuffers();  void DestroyFramebuffers();
         bool CreateCommandPool();   void DestroyCommandPool();
-        bool CreateSemaphores();    void DestroySemaphores();
+        bool CreateSyncObjects();   void DestroySyncObjects();
 
         // On-draw creation
 
         bool AllocateCommandBuffers();
         bool CreateCommandBuffer(int);
-        void RecreateCommandBuffers();
 
         void DestroyShaders();
 
@@ -89,11 +88,20 @@ namespace Aery {
 
         vk::RenderPass m_RenderPass;
         vk::CommandPool m_CommandPool;
+
         std::vector<vk::CommandBuffer> m_CommandBuffers = {};
         bool m_CmdBuffersCreated = false;
 
-        vk::Semaphore m_ImageAvailable;
-        vk::Semaphore m_RenderFinished;
+        vk::Viewport m_Viewport;
+        vk::Rect2D m_Scissor;
+
+        std::vector<vk::Semaphore> m_ImageAvailable = {};
+        std::vector<vk::Semaphore> m_RenderFinished = {};
+        std::vector<vk::Fence> m_ImagesInFlight = {};
+        std::vector<vk::Fence> m_InFlightFences = {};
+        mut_u16 m_CurrentFrame = 0;
+
+        u32 MAX_FRAMES_IN_FLIGHT = 2;
 
         std::vector<const char*> m_Extensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME

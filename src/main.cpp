@@ -22,9 +22,6 @@ int main() {
 
     VkShader Default = {};
     GameRenderer.createDefaultShader(&Default);
-    GameRenderer.createDefaultShader(nullptr);
-    GameRenderer.createDefaultShader(nullptr);
-    GameRenderer.createDefaultShader(nullptr);
 
     while (GameWindow.active()) {
         GameWindow.update();

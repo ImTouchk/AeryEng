@@ -57,7 +57,7 @@ namespace Aery {
         
         for (mut_u32 i = 0; i < FamilyCount; i++) {
             VkBool32 PresentSupport = false;
-            GPU.getSurfaceSupportKHR(i, Surface, &PresentSupport);
+            vk::Result Result = GPU.getSurfaceSupportKHR(i, Surface, &PresentSupport);
             if (PresentSupport) { CachedIndices.pFamily = i; }
             if (QFamilies[i].queueFlags & vk::QueueFlagBits::eGraphics) { CachedIndices.gFamily = i; }
             if (CachedIndices.isComplete()) { break; }
@@ -79,20 +79,20 @@ namespace Aery {
             return CachedDetails;
         }
 
-        GPU.getSurfaceCapabilitiesKHR(Surface, &CachedDetails.capabilities);
+        vk::Result Result = GPU.getSurfaceCapabilitiesKHR(Surface, &CachedDetails.capabilities);
 
         mut_u32 FormatCount = 0;
-        GPU.getSurfaceFormatsKHR(Surface, &FormatCount, nullptr);
+        Result = GPU.getSurfaceFormatsKHR(Surface, &FormatCount, nullptr);
         if (FormatCount != 0) {
             CachedDetails.formats.resize(FormatCount);
-            GPU.getSurfaceFormatsKHR(Surface, &FormatCount, CachedDetails.formats.data());
+            Result = GPU.getSurfaceFormatsKHR(Surface, &FormatCount, CachedDetails.formats.data());
         }
 
         mut_u32 PModeCount = 0;
-        GPU.getSurfacePresentModesKHR(Surface, &PModeCount, nullptr);
+        Result = GPU.getSurfacePresentModesKHR(Surface, &PModeCount, nullptr);
         if (PModeCount != 0) {
             CachedDetails.presentModes.resize(PModeCount);
-            GPU.getSurfacePresentModesKHR(Surface, &PModeCount, CachedDetails.presentModes.data());
+            Result = GPU.getSurfacePresentModesKHR(Surface, &PModeCount, CachedDetails.presentModes.data());
         }
         return CachedDetails;
     }

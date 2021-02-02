@@ -183,7 +183,7 @@
     <ClCompile Include="src\graphics\vulkan\vk_object.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_physical_device.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_render_pass.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_semaphores.cpp" />
+    <ClCompile Include="src\graphics\vulkan\vk_sync_objects.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_shader.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_surface.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_swapchain.cpp" />

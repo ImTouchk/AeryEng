@@ -47,14 +47,26 @@ namespace Aery {
         if (!CreateFramebuffers()) { return false; }
         if (!CreateCommandPool()) { return false; }
         if (!AllocateCommandBuffers()) { return false; }
-        if (!CreateSemaphores()) { return false; }
+        if (!CreateSyncObjects()) { return false; }
+
+        m_Scissor = vk::Rect2D {
+            .offset = { 0, 0 },
+            .extent = m_Swapchain.extent
+        };
+
+        m_Viewport = vk::Viewport {
+            .x = 0, .y = 0,
+            .width = (f32)m_Swapchain.extent.width,
+            .height = (f32)m_Swapchain.extent.height,
+            .minDepth = 0.0f, .maxDepth = 1.0f
+        };
         return true;
     }
 
     void VkRenderer::destroy() {
         Aery::log(fmt::format("--------------- DESTROYING VULKAN RENDERER {} ---------------", m_ID), fmt::color::hot_pink);
         DestroyShaders();
-        DestroySemaphores();
+        DestroySyncObjects();
         DestroyCommandPool();
         DestroyFramebuffers();
         DestroyRenderPass();
@@ -74,6 +86,18 @@ namespace Aery {
             m_Minimized = true;
             return;
         }
+
+        m_Scissor = vk::Rect2D{
+            .offset = { 0, 0 },
+            .extent = m_Swapchain.extent
+        };
+
+        m_Viewport = vk::Viewport{
+            .x = 0, .y = 0,
+            .width = (f32)m_Swapchain.extent.width,
+            .height = (f32)m_Swapchain.extent.height,
+            .minDepth = 0.0f, .maxDepth = 1.0f
+        };
         // TO DO
     }
 
@@ -95,13 +119,27 @@ namespace Aery {
             _onResize();
         }
 
-        vk::Fence Fence = {};
+        m_Device.waitForFences(1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
+
         mut_u32 ImageIndex = 0;
-        m_Device.acquireNextImageKHR(m_Swapchain.instance, UINT64_MAX, m_ImageAvailable, Fence, &ImageIndex, vk::DispatchLoaderStatic());
+        vk::Result Result = m_Device.acquireNextImageKHR(
+            m_Swapchain.instance, 
+            UINT64_MAX, 
+            m_ImageAvailable[m_CurrentFrame], 
+            {},
+            &ImageIndex,
+            vk::DispatchLoaderStatic()
+        );
         CreateCommandBuffer(ImageIndex);
 
-        vk::Semaphore SignalSemaphores[] = { m_RenderFinished };
-        vk::Semaphore WaitSemaphores[] = { m_ImageAvailable };
+        if (m_ImagesInFlight[m_CurrentFrame] != VK_NULL_HANDLE) {
+            m_Device.waitForFences(1, &m_ImagesInFlight[m_CurrentFrame], VK_TRUE, UINT64_MAX);
+        }
+        m_ImagesInFlight[m_CurrentFrame] = m_InFlightFences[m_CurrentFrame];
+        m_Device.resetFences(1, &m_InFlightFences[m_CurrentFrame]);
+
+        vk::Semaphore SignalSemaphores[] = { m_RenderFinished[m_CurrentFrame] };
+        vk::Semaphore WaitSemaphores[] = { m_ImageAvailable[m_CurrentFrame] };
         vk::PipelineStageFlags WaitStages[] = { vk::PipelineStageFlagBits::eColorAttachmentOutput };
         vk::SubmitInfo SubmitInfo = {
             .waitSemaphoreCount = 1,
@@ -113,7 +151,7 @@ namespace Aery {
             .pSignalSemaphores = SignalSemaphores
         };
 
-        m_GraphicsQ.submit(1, &SubmitInfo, Fence);
+        m_GraphicsQ.submit(1, &SubmitInfo, m_InFlightFences[m_CurrentFrame]);
 
         vk::SwapchainKHR Swapchains[] = { m_Swapchain.instance };
         vk::PresentInfoKHR PresentInfo = {
@@ -126,6 +164,8 @@ namespace Aery {
         };
 
         m_PresentQ.presentKHR(PresentInfo);
-        Aery::log("Drawing...", fmt::color::aqua); // <--- wtf the window is unresponsive if i comment this out
+        m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+        //Aery::log("Drawing...", fmt::color::aqua); // <--- wtf the window is unresponsive if i comment this out
+        // ^--- fixed, was due to how I was drawing
     }
 }

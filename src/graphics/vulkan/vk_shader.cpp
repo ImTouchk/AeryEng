@@ -107,6 +107,16 @@ namespace Aery {
                 .primitiveRestartEnable = VK_FALSE
             };
 
+            vk::DynamicState PipelineDynamicStates[] = {
+                vk::DynamicState::eViewport,
+                vk::DynamicState::eScissor
+            };
+
+            vk::PipelineDynamicStateCreateInfo DynamicStateCreateInfo = {
+                .dynamicStateCount = 2,
+                .pDynamicStates = PipelineDynamicStates
+            };
+
             vk::Viewport Viewport = {
                 .x = 0, .y = 0,
                 .width = (float)m_Swapchain.extent.width,
@@ -191,7 +201,7 @@ namespace Aery {
                 .pMultisampleState = &MultisampleStateInfo,
                 .pDepthStencilState = nullptr,
                 .pColorBlendState = &BlendState,
-                .pDynamicState = nullptr,
+                .pDynamicState = &DynamicStateCreateInfo,
                 .layout = Shader.layout,
                 .renderPass = m_RenderPass,
                 .subpass = 0,
@@ -228,7 +238,7 @@ namespace Aery {
     void VkRenderer::destroyShader(VkShader& Shader) {
         m_Device.destroyPipeline(Shader.pipeline);
         m_Device.destroyPipelineLayout(Shader.layout);
-        Aery::log(fmt::format("<VkRenderer::createShader> ID {} destroyed pipeline {}.", m_ID, Shader.id));
+        Aery::log(fmt::format("<VkRenderer::destroyShader> ID {} destroyed pipeline {}.", m_ID, Shader.id));
     }
 
     VkShader& VkRenderer::getShaderByID(u32 ID) {
