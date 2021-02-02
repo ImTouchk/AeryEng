@@ -10,7 +10,7 @@ using namespace std;
 namespace Aery {
     bool VkRenderer::CreateSurface() {
         VkSurfaceKHR Surface = VK_NULL_HANDLE;
-        VkResult Result = glfwCreateWindowSurface(m_Instance, m_Window->info().handle, nullptr, &Surface);  
+        VkResult Result = glfwCreateWindowSurface(static_cast<VkInstance>(m_Instance), m_Window->info().handle, nullptr, &Surface);  
         if (Result != VK_SUCCESS) {
             Aery::error(fmt::format("<VkRenderer::CreateSurface> ID {} failed to create a surface.", m_ID));
             return false;
