@@ -189,6 +189,7 @@
     <ClCompile Include="src\graphics\vulkan\vk_swapchain.cpp" />
     <ClCompile Include="src\graphics\window.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\math\vec2.cpp" />
     <ClCompile Include="src\utils\debug.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -200,6 +201,7 @@
     <ClInclude Include="src\graphics\vk_shader.hpp" />
     <ClInclude Include="src\graphics\vulkan\vk_common.hpp" />
     <ClInclude Include="src\graphics\window.hpp" />
+    <ClInclude Include="src\math\vec2.hpp" />
     <ClInclude Include="src\utils\debug.hpp" />
     <ClInclude Include="src\utils\types.hpp" />
   </ItemGroup>

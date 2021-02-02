@@ -11,7 +11,6 @@ namespace Aery {
     };
 
     struct VkShader {
-        std::vector<vk::CommandBuffer> cmdBuffers;
         vk::PipelineLayout layout;
         vk::PipelineCache cache;
         vk::Pipeline pipeline;

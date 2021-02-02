@@ -57,13 +57,15 @@ namespace Aery {
 
         // On-draw creation
 
-        bool CreateCommandBuffers();
+        bool AllocateCommandBuffers();
+        bool CreateCommandBuffer(int);
         void RecreateCommandBuffers();
 
         void DestroyShaders();
 
         Window* m_Window = nullptr;
         bool m_LayersUsed = false;
+        bool m_Minimized = false;
         bool m_UseLayers = true;
         bool m_Active = false;
         u32 m_ID = -1;
@@ -88,6 +90,7 @@ namespace Aery {
         vk::RenderPass m_RenderPass;
         vk::CommandPool m_CommandPool;
         std::vector<vk::CommandBuffer> m_CommandBuffers = {};
+        bool m_CmdBuffersCreated = false;
 
         vk::Semaphore m_ImageAvailable;
         vk::Semaphore m_RenderFinished;

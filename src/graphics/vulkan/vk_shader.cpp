@@ -209,58 +209,9 @@ namespace Aery {
             return true;
         };
 
-        auto CreateCommandBuffers = [&](VkShader& Shader) {
-            Shader.cmdBuffers.resize(m_Swapchain.buffers.size());
-            vk::CommandBufferAllocateInfo BufferAllocateInfo = {
-                .commandPool = m_CommandPool,
-                .level = vk::CommandBufferLevel::eSecondary,
-                .commandBufferCount = (u32)m_CommandBuffers.size()
-            };
-
-            PoolMutex.lock();
-            vk::Result Result = m_Device.allocateCommandBuffers(&BufferAllocateInfo, Shader.cmdBuffers.data());
-            PoolMutex.unlock();
-
-            if (Result != vk::Result::eSuccess) {
-                Aery::error(fmt::format("<VkRenderer::createShader> ID {} failed to allocate command buffers.", m_ID));
-                return false;
-            }
-
-            for (mut_u32 i = 0; i < m_CommandBuffers.size(); i++) {
-                vk::CommandBufferBeginInfo BufferBeginInfo = {};
-                m_CommandBuffers[i].begin(BufferBeginInfo);
-
-                vk::ClearColorValue ClearColor = {};
-                ClearColor.setFloat32({ 0.0f, 0.0f, 0.0f, 1.0f });
-                vk::ClearValue ClearValue = {};
-                ClearValue.setColor(ClearColor);
-
-                vk::RenderPassBeginInfo PassBeginInfo = {
-                    .renderPass = m_RenderPass,
-                    .framebuffer = m_Swapchain.buffers[i],
-                    .renderArea = {
-                        .offset = { 0, 0 },
-                        .extent = m_Swapchain.extent
-                    },
-                    .clearValueCount = 1,
-                    .pClearValues = &ClearValue,
-                };
-
-                m_CommandBuffers[i].beginRenderPass(PassBeginInfo, vk::SubpassContents::eInline);
-                for (mut_u32 sh = 0; sh < m_Shaders.size(); sh++) {
-                    m_CommandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, m_Shaders[sh].pipeline);
-                    m_CommandBuffers[i].draw(3, 1, 0, 0);
-                }
-                m_CommandBuffers[i].endRenderPass();
-                m_CommandBuffers[i].end();
-            }
-            return true;
-        };
-
         VkShader NewShader = {};
 
         if (!CreatePipeline(NewShader)) { return false; }
-        if (!CreateCommandBuffers(NewShader)) { return false; }
 
         ListMutex.lock();
         NewShader.id = Index; Index++;

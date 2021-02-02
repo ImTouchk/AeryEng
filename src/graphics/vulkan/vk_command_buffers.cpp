@@ -27,7 +27,11 @@ namespace Aery {
         Aery::log(fmt::format("<VkRenderer::DestroyCommandPool> ID {} destroyed a command pool.", m_ID));
     }
 
-    bool VkRenderer::CreateCommandBuffers() {
+    bool VkRenderer::AllocateCommandBuffers() {
+        if (m_CmdBuffersCreated) {
+            m_Device.resetCommandPool(m_CommandPool, vk::CommandPoolResetFlagBits::eReleaseResources);
+        }
+
         m_CommandBuffers.resize(m_Swapchain.buffers.size());
         vk::CommandBufferAllocateInfo BufferAllocateInfo = {
             .commandPool = m_CommandPool,
@@ -40,40 +44,36 @@ namespace Aery {
             Aery::error(fmt::format("<VkRenderer::CreateCmdBuffers> ID {} failed to allocate command buffers.", m_ID));
             return false;
         }
-
-        for (mut_u32 i = 0; i < m_CommandBuffers.size(); i++) {
-            vk::CommandBufferBeginInfo BufferBeginInfo = {};
-            m_CommandBuffers[i].begin(BufferBeginInfo);
-
-            vk::ClearColorValue ClearColor = {};
-            ClearColor.setFloat32({ 0.0f, 0.0f, 0.0f, 1.0f });
-            vk::ClearValue ClearValue = {};
-            ClearValue.setColor(ClearColor);
-
-            vk::RenderPassBeginInfo PassBeginInfo = {
-                .renderPass = m_RenderPass,
-                .framebuffer = m_Swapchain.buffers[i],
-                .renderArea = {
-                    .offset = { 0, 0 },
-                    .extent = m_Swapchain.extent
-                },
-                .clearValueCount = 1,
-                .pClearValues = &ClearValue,
-            };
-
-            m_CommandBuffers[i].beginRenderPass(PassBeginInfo, vk::SubpassContents::eInline);
-            for (mut_u32 sh = 0; sh < m_Shaders.size(); sh++) {
-                m_CommandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, m_Shaders[sh].pipeline);
-                m_CommandBuffers[i].draw(3, 1, 0, 0);
-            }
-            m_CommandBuffers[i].endRenderPass();
-            m_CommandBuffers[i].end();
-        }
         return true;
     }
 
-    void VkRenderer::RecreateCommandBuffers() {
-        m_Device.freeCommandBuffers(m_CommandPool, static_cast<u32>(m_CommandBuffers.size()), m_CommandBuffers.data());
-        CreateCommandBuffers();
+    bool VkRenderer::CreateCommandBuffer(int i) {
+        vk::CommandBufferBeginInfo BufferBeginInfo = {};
+        m_CommandBuffers[i].begin(BufferBeginInfo);
+
+        vk::ClearColorValue ClearColor = {};
+        ClearColor.setFloat32({ 0.0f, 0.0f, 0.0f, 1.0f });
+        vk::ClearValue ClearValue = {};
+        ClearValue.setColor(ClearColor);
+
+        vk::RenderPassBeginInfo PassBeginInfo = {
+            .renderPass = m_RenderPass,
+            .framebuffer = m_Swapchain.buffers[i],
+            .renderArea = {
+                .offset = { 0, 0 },
+                .extent = m_Swapchain.extent
+            },
+            .clearValueCount = 1,
+            .pClearValues = &ClearValue,
+        };
+
+        m_CommandBuffers[i].beginRenderPass(PassBeginInfo, vk::SubpassContents::eInline);
+        for (mut_u32 sh = 0; sh < m_Shaders.size(); sh++) {
+            m_CommandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, m_Shaders[sh].pipeline);
+            m_CommandBuffers[i].draw(3, 1, 0, 0);
+        }
+        m_CommandBuffers[i].endRenderPass();
+        m_CommandBuffers[i].end();
+        return true;
     }
 }
