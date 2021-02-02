@@ -189,7 +189,6 @@
     <ClCompile Include="src\graphics\vulkan\vk_swapchain.cpp" />
     <ClCompile Include="src\graphics\window.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\math\vec2.cpp" />
     <ClCompile Include="src\utils\debug.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -69,9 +69,6 @@
     <ClCompile Include="src\graphics\vulkan\vk_object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\math\vec2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\graphics\vulkan\vk_sync_objects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
