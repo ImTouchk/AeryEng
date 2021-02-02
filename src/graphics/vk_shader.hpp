@@ -1,0 +1,20 @@
+#pragma once
+
+#include "utils/types.hpp"
+#include <vulkan/vulkan.hpp>
+#include <vector>
+
+namespace Aery {
+    struct VkShaderCreateInfo {
+        const char* vertex;
+        const char* fragment;
+    };
+
+    struct VkShader {
+        std::vector<vk::CommandBuffer> cmdBuffers;
+        vk::PipelineLayout layout;
+        vk::PipelineCache cache;
+        vk::Pipeline pipeline;
+        mut_u32 id;
+    };
+}
