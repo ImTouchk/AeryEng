@@ -9,22 +9,14 @@
 
 using namespace std;
 
-static Aery::mut_u32 Index = 0;
+static Aery::mut_u32 Index = 1;
 static mutex ListMutex = {};
 
 namespace Aery {
-    bool VkRenderer::createObject(VkObjectCreateInfo& Input, VkObject** Output) {
-        VkObject NewObject = {};
-        NewObject.indices = Input.indices;
-        NewObject.vertex.list = Input.vertices;
-        if (Input.shader == nullptr) {
-            createDefaultShader(&NewObject.shader);
-        }
-
-        // Vertex buffer creation
-        {
+    bool VkRenderer::createObject(VkObjectCreateInfo& Input, PVkObject* Output) {
+        auto CreateVertexBuffer = [&](VkObject& Object ) {
             vk::BufferCreateInfo BufferInfo = {
-                .size = sizeof(NewObject.vertex.list[0]) * NewObject.vertex.list.size(),
+                .size = sizeof(Object.vertex.list[0]) * Object.vertex.list.size(),
                 .usage = vk::BufferUsageFlagBits::eVertexBuffer
             };
 
@@ -39,38 +31,48 @@ namespace Aery {
 
             void* VertexData;
             vmaMapMemory(m_Allocator, Allocation, &VertexData);
-            memcpy(VertexData, NewObject.vertex.list.data(), BufferInfo.size);
+            memcpy(VertexData, Object.vertex.list.data(), BufferInfo.size);
             vmaUnmapMemory(m_Allocator, Allocation);
 
-            NewObject.vertex.allocation = Allocation;
-            NewObject.vertex.buffer = static_cast<vk::Buffer>(Buffer);
+            Object.vertex.allocation = Allocation;
+            Object.vertex.buffer = static_cast<vk::Buffer>(Buffer);
+        };
+
+        mut_u32 ID = 0;
+        ListMutex.lock();
+            m_Objects.insert(pair<mut_u32, VkObject>(Index, {}));
+            m_Objects[Index].id = Index; ID = Index;
+            Index++;
+        ListMutex.unlock();
+
+        m_Objects[ID].indices = Input.indices;
+        m_Objects[ID].vertex.list = Input.vertices;
+        if (Input.shader == 0) {
+            createDefaultShader(&m_Objects[ID].shader);
+        }
+        CreateVertexBuffer(m_Objects[ID]);
+
+        if (Output != nullptr) {
+            *Output = ID;
         }
 
-        ListMutex.lock();
-        NewObject.id = Index; Index++;
-        m_Objects.push_back(NewObject);
-        if (Output != nullptr) {
-            *Output = &m_Objects[m_Objects.size() - 1];
-        }
-        ListMutex.unlock();
-        Aery::log(fmt::format("<VkRenderer::createObject> ID {} created object {}.", m_ID, NewObject.id));
+        Aery::log(fmt::format("<VkRenderer::createObject> ID {} created object {}.", m_ID, ID));
         return true;
     }
 
-    void VkRenderer::destroyObject(VkObject& Input) {
-        vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Input.vertex.buffer), Input.vertex.allocation);
+    void VkRenderer::destroyObject(PVkObject Input) {
+        VkObject& Object = m_Objects[Input];
+
+        vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Object.vertex.buffer), Object.vertex.allocation);
         ListMutex.lock();
-        std::vector<VkObject>::iterator Position = std::find(m_Objects.begin(), m_Objects.end(), Input);
-        if (Position != m_Objects.end()) {
-            m_Objects.erase(Position);
-        }
+            m_Objects.erase((mut_u32)Input);
         ListMutex.unlock();
-        Aery::log(fmt::format("<VkRenderer::destroyObject> ID {} destroyed object {}.", m_ID, Input.id));
+        Aery::log(fmt::format("<VkRenderer::destroyObject> ID {} destroyed object {}.", m_ID, Input));
     }
 
     void VkRenderer::DestroyObjects() {
         for (auto& Object : m_Objects) {
-            destroyObject(Object);
+            destroyObject(Object.first);
         }
         m_Objects.clear();
     }

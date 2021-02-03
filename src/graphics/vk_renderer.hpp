@@ -3,9 +3,13 @@
 #include "utils/types.hpp"
 #include <vulkan/vulkan.hpp>
 #include <vk_mem_alloc.h> 
+#include <unordered_map>
 #include <vector>
 
 namespace Aery {
+    using PVkShader = mut_u32;
+    using PVkObject = mut_u32;
+
     class Window;
     class VkObject;
     struct VkShader;
@@ -23,20 +27,20 @@ namespace Aery {
         // Object methods
 
         VkObject& getObjectByID(u32);
-        bool createDefaultObject(VkObject*, VkShader**);
-        bool createObject(VkObjectCreateInfo&&, VkObject**) = delete;
-        bool createObject(VkObjectCreateInfo&, VkObject**);
-        void destroyObject(VkObject&&) = delete;
-        void destroyObject(VkObject&);
+        bool createDefaultObject(PVkObject*);
+        bool createObject(VkObjectCreateInfo&&, PVkObject*) = delete;
+        bool createObject(VkObjectCreateInfo&, PVkObject*);
+        void destroyObject(PVkObject);
 
         // Shader methods
 
         VkShader& getShaderByID(u32);
-        bool createDefaultShader(VkShader**);
-        bool createShader(VkShaderCreateInfo&&, VkShader**) = delete;
-        bool createShader(VkShaderCreateInfo&, VkShader**);
-        void destroyShader(VkShader&&) = delete;
-        void destroyShader(VkShader&);
+        bool createDefaultShader(PVkShader*);
+        bool createShader(VkShaderCreateInfo&&, PVkShader*) = delete;
+        bool createShader(VkShaderCreateInfo&, PVkShader*);
+        void destroyShader(PVkShader);
+
+        // Events
 
         void _onResize();
     private:
@@ -122,7 +126,7 @@ namespace Aery {
             "VK_LAYER_KHRONOS_validation"
         };
 
-        std::vector<VkShader> m_Shaders = {};
-        std::vector<VkObject> m_Objects = {};
+        std::unordered_map<mut_u32, VkShader> m_Shaders = {};
+        std::unordered_map<mut_u32, VkObject> m_Objects = {};
     };
 }

@@ -21,7 +21,7 @@ void Start() {
         return;
     }
 
-    VkObject* VertexObject;
+    PVkObject VertexObject;
     VkObjectCreateInfo ObjectInfo = {
         .vertices = {
             { { -0.5f,  0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
@@ -33,13 +33,14 @@ void Start() {
             { {  0.5f, -0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f } }
         },
     };
-    GameRenderer.createObject(ObjectInfo, nullptr);
+    GameRenderer.createObject(ObjectInfo, &VertexObject);
 
     while (GameWindow.active()) {
         GameWindow.update();
         GameRenderer.draw();
     }
 
+    GameRenderer.destroyObject(VertexObject);
     GameRenderer.destroy();
     GameWindow.destroy();
 }

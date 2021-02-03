@@ -9,6 +9,7 @@
 #include <array>
 
 namespace Aery {
+    using PVkShader = mut_u32;
     struct VkShader;
     struct VkVertex {
         vec3 position;
@@ -42,7 +43,7 @@ namespace Aery {
     struct VkObjectCreateInfo {
         std::vector<VkVertex> vertices;
         std::vector<mut_u16> indices;
-        VkShader* shader;
+        PVkShader shader;
     };
 
     class VkObject {
@@ -54,7 +55,7 @@ namespace Aery {
             VmaAllocation allocation;
         } vertex;
         std::vector<mut_u16> indices;
-        VkShader* shader;
+        PVkShader shader = 0;
         mut_u32 id;
 
         bool operator==(const VkObject& Other) {

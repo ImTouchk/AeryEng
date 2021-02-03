@@ -11,7 +11,7 @@
 
 using namespace std;
 
-static Aery::mut_u32 Index = 0;
+static Aery::mut_u32 Index = 1;
 static mutex ListMutex = {};
 
 static bool LoadFile(const char* Input, vector<char>& Output, Aery::u32 ID) {
@@ -31,11 +31,12 @@ static bool LoadFile(const char* Input, vector<char>& Output, Aery::u32 ID) {
 }
 
 static bool CreateModule(vector<char>& Input, vk::ShaderModule& Output, vk::Device& Device) {
-    const vk::ShaderModuleCreateInfo ModuleInfo = {
+    vk::ShaderModuleCreateInfo ModuleInfo = {
         .codeSize = Input.size(),
         .pCode = reinterpret_cast<Aery::u32*>(Input.data())
     };
-    const vk::Result Result = Device.createShaderModule(&ModuleInfo, nullptr, &Output);
+
+    vk::Result Result = Device.createShaderModule(&ModuleInfo, nullptr, &Output);
     if (Result != vk::Result::eSuccess) {
         Aery::error("<VkShader::CreateModule> Failed to create a shader module.");
         return false;
@@ -44,9 +45,9 @@ static bool CreateModule(vector<char>& Input, vk::ShaderModule& Output, vk::Devi
 }
 
 namespace Aery {
-    bool VkRenderer::createDefaultShader(VkShader** Output) {
+    bool VkRenderer::createDefaultShader(PVkShader* Output) {
         static bool Existent = false;
-        static VkShader* DefaultShader;
+        static PVkShader DefaultShader = -1;
 
         if (Existent) {
             if (Output != nullptr) { *Output = DefaultShader; }
@@ -64,7 +65,7 @@ namespace Aery {
         return true;
     }
 
-    bool VkRenderer::createShader(VkShaderCreateInfo& Input, VkShader** Output) {
+    bool VkRenderer::createShader(VkShaderCreateInfo& Input, PVkShader* Output) {
         auto CreatePipeline = [&](VkShader& Shader) {
             vector<char> VertexCode = {},
                 FragmentCode = {};
@@ -223,32 +224,34 @@ namespace Aery {
             return true;
         };
 
-        VkShader NewShader = {};
-
-        if (!CreatePipeline(NewShader)) { return false; }
-
+        mut_u32 ID = 0;
         ListMutex.lock();
-        NewShader.id = Index; Index++;
-        m_Shaders.push_back(NewShader);
+            m_Shaders.insert(std::pair<mut_u32, VkShader>(Index, {}));
+            m_Shaders[Index].id = Index; ID = Index;
+            Index++;
         ListMutex.unlock();
+
+        if (!CreatePipeline(m_Shaders[ID])) { return false; }
+
         if (Output != nullptr) { 
-            *Output = &m_Shaders[m_Shaders.size() - 1]; 
+            *Output = ID; 
         }
 
-        Aery::log(fmt::format("<VkRenderer::createShader> ID {} created a pipeline {}.", m_ID, NewShader.id));
+        Aery::log(fmt::format("<VkRenderer::createShader> ID {} created a pipeline {}.", m_ID, ID));
         return true;
     }
 
-    void VkRenderer::destroyShader(VkShader& Input) {
-        m_Device.destroyPipeline(Input.pipeline);
-        m_Device.destroyPipelineLayout(Input.layout);
+    void VkRenderer::destroyShader(PVkShader Input) {
+        VkShader& Shader = m_Shaders[Input];
+
+        m_Device.destroyPipeline(Shader.pipeline);
+        m_Device.destroyPipelineLayout(Shader.layout);
+
         ListMutex.lock();
-        std::vector<VkShader>::iterator Position = std::find(m_Shaders.begin(), m_Shaders.end(), Input);
-        if (Position != m_Shaders.end()) {
-            m_Shaders.erase(Position);
-        }
+            m_Shaders.erase(Shader.id);
         ListMutex.unlock();
-        Aery::log(fmt::format("<VkRenderer::destroyShader> ID {} destroyed pipeline {}.", m_ID, Input.id));
+
+        Aery::log(fmt::format("<VkRenderer::destroyShader> ID {} destroyed pipeline {}.", m_ID, Shader.id));
     }
 
     VkShader& VkRenderer::getShaderByID(u32 ID) {
@@ -256,9 +259,17 @@ namespace Aery {
     }
 
     void VkRenderer::DestroyShaders() {
-        for (auto& Shader : m_Shaders) {
-            destroyShader(Shader);
+        // I am not calling 'destroyShader' because it erases the element
+        // from the map, which leads to weird out-of-bounds access bugs
+        ListMutex.lock();
+
+        for (auto& Shader_ : m_Shaders) {
+            VkShader& Shader = Shader_.second;
+            m_Device.destroyPipeline(Shader.pipeline);
+            m_Device.destroyPipelineLayout(Shader.layout);
         }
         m_Shaders.clear();
+
+        ListMutex.unlock();
     }
 }

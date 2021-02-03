@@ -71,17 +71,16 @@ namespace Aery {
         m_CommandBuffers[i].beginRenderPass(PassBeginInfo, vk::SubpassContents::eInline);
         m_CommandBuffers[i].setViewport(0, 1, &m_Viewport);
         m_CommandBuffers[i].setScissor(0, 1, &m_Scissor);
-        for (mut_u32 obj = 0; obj < m_Objects.size(); obj++) {
-            if (m_Objects[obj].shader == nullptr) {
-                continue;
-            }
-            
-            vk::Buffer VertexBuffers[] = { m_Objects[obj].vertex.buffer };
+        for (auto& Object_ : m_Objects) {
+            VkObject& Object = Object_.second;
+            VkShader& Shader = m_Shaders[Object.shader];
+
+            vk::Buffer VertexBuffers[] = { Object.vertex.buffer };
             vk::DeviceSize Offsets[] = { 0 };
 
             m_CommandBuffers[i].bindVertexBuffers(0, 1, VertexBuffers, Offsets);
-            m_CommandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, m_Objects[obj].shader->pipeline);
-            m_CommandBuffers[i].draw(static_cast<u32>(m_Objects[obj].vertex.list.size()), 1, 0, 0);
+            m_CommandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, Shader.pipeline);
+            m_CommandBuffers[i].draw(static_cast<u32>(Object.vertex.list.size()), 1, 0, 0);
         }
         m_CommandBuffers[i].endRenderPass();
         m_CommandBuffers[i].end();
