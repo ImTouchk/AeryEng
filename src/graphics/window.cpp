@@ -130,7 +130,7 @@ namespace Aery {
     void Window::_onResize(const u32 Width, const u32 Height) {
         m_Width = Width; m_Height = Height;
         if (m_Renderer != nullptr) {
-            //m_Renderer->_onResize();
+            m_Renderer->_onResize();
         }
     }
 

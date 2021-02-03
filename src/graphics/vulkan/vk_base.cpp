@@ -39,6 +39,7 @@ namespace Aery {
         if (!CreateSurface()) { return false; }
         if (!PickPhysicalDevice()) { return false; }
         if (!CreateLogicalDevice()) { return false; }
+        if (!CreateAllocator()) { return false; }
 
         // Might be recreated later
         if (!CreateSwapchain()) { return false; }
@@ -72,6 +73,7 @@ namespace Aery {
         DestroyRenderPass();
         DestroyImageViews();
         DestroySwapchain();
+        DestroyAllocator();
         DestroyLogicalDevice();
         DestroySurface();
         DestroyDM();
@@ -82,17 +84,19 @@ namespace Aery {
         Aery::log("--------------- RESIZE EVENT ---------------", fmt::color::hot_pink);
         m_Device.waitIdle();
 
-        if (m_Window->width() == 0 || m_Window->height() == 0) {
+        int Width = 0, Height = 0;
+        glfwGetFramebufferSize(m_Window->info().handle, &Width, &Height);
+        if (Width == 0 || Height == 0) {
             m_Minimized = true;
             return;
         }
 
-        m_Scissor = vk::Rect2D{
+        m_Scissor = vk::Rect2D {
             .offset = { 0, 0 },
             .extent = m_Swapchain.extent
         };
 
-        m_Viewport = vk::Viewport{
+        m_Viewport = vk::Viewport {
             .x = 0, .y = 0,
             .width = (f32)m_Swapchain.extent.width,
             .height = (f32)m_Swapchain.extent.height,
