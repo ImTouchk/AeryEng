@@ -58,6 +58,7 @@ namespace Aery {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, Info.flags & WINDOW_RESIZABLE);
         glfwWindowHint(GLFW_MAXIMIZED, Info.flags & WINDOW_MAXIMIZED);
+        m_VSync = Info.flags & WINDOW_VSYNC;
 
         GLFWmonitor* Monitor = nullptr;
         int Width   = Info.width,

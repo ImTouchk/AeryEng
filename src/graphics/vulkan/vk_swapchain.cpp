@@ -23,16 +23,20 @@ static vk::SurfaceFormatKHR& PickSurfaceFormat(vector<vk::SurfaceFormatKHR>& For
     return Formats[0];
 }
 
-static vk::PresentModeKHR PickPresentMode(vector<vk::PresentModeKHR>& Modes) {
+static vk::PresentModeKHR PickPresentMode(vector<vk::PresentModeKHR>& Modes, bool VSync) {
     if (Modes.size() == 0) {
         Aery::error("<PickPresentMode> No present modes available.");
         return {};
     }
-    for (Aery::mut_u32 i = 0; i < Modes.size(); i++) {
-        if (Modes[i] == vk::PresentModeKHR::eMailbox) {
-            return Modes[i];
+
+    if (VSync) {
+        for (Aery::mut_u32 i = 0; i < Modes.size(); i++) {
+            if (Modes[i] == vk::PresentModeKHR::eMailbox) {
+                return Modes[i];
+            }
         }
     }
+
     return vk::PresentModeKHR::eImmediate;
 }
 
@@ -54,7 +58,7 @@ namespace Aery {
     bool VkRenderer::CreateSwapchain(bool PreviousExists) {
         VkSwapchainSupportDetails Support = QuerySwapSupport(m_PhysicalDevice, m_Surface);
         vk::SurfaceFormatKHR Format = PickSurfaceFormat(Support.formats);
-        vk::PresentModeKHR PresentMode = PickPresentMode(Support.presentModes);
+        vk::PresentModeKHR PresentMode = PickPresentMode(Support.presentModes, m_Window->info().vsync);
         vk::Extent2D Extent = PickExtent(*m_Window, Support.capabilities);
         mut_u32 ImageCount = Support.capabilities.minImageCount + 1;
         if (Support.capabilities.maxImageCount > 0 && ImageCount > Support.capabilities.maxImageCount) {
