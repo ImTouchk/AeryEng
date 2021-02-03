@@ -33,6 +33,7 @@ namespace Aery {
         Windows.push_back(this);
         Index++;
         Mutex.unlock();
+
         m_Active = false;
         m_Created = false;
     }
@@ -60,7 +61,17 @@ namespace Aery {
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, Info.flags & WINDOW_RESIZABLE);
         glfwWindowHint(GLFW_MAXIMIZED, Info.flags & WINDOW_MAXIMIZED);
-        m_Handle = glfwCreateWindow(Info.width, Info.height, Info.title, nullptr, nullptr);
+
+        GLFWmonitor* Monitor = nullptr;
+        int Width   = Info.width,
+            Height  = Info.height;
+        if (Info.flags & WINDOW_FULLSCREEN) {
+            Monitor = glfwGetPrimaryMonitor();
+            const GLFWvidmode* Mode = glfwGetVideoMode(Monitor);
+            Width = Mode->width; Height = Mode->height;
+        }
+
+        m_Handle = glfwCreateWindow(Width, Height, Info.title, Monitor, nullptr);
         m_Width = Info.width; m_Height = Info.height;
         glfwSetFramebufferSizeCallback(m_Handle, (GLFWframebuffersizefun)OnWindowResize);
 
@@ -85,6 +96,7 @@ namespace Aery {
         m_Created = false;
         glfwDestroyWindow(m_Handle);
         Aery::log(fmt::format("<Window::destroy> ID {} was destroyed.", m_ID));
+        glfwTerminate();
     }
 
     void Window::update() const {
