@@ -50,7 +50,7 @@ namespace Aery {
         NewObject.id = Index; Index++;
         m_Objects.push_back(NewObject);
         if (Output != nullptr) {
-            *Output = &m_Objects[m_Objects.size()] - 1;
+            *Output = &m_Objects[m_Objects.size() - 1];
         }
         ListMutex.unlock();
         Aery::log(fmt::format("<VkRenderer::createObject> ID {} created object {}.", m_ID, NewObject.id));
