@@ -171,7 +171,5 @@ namespace Aery {
 
         Result = m_PresentQ.presentKHR(PresentInfo);
         m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
-        //Aery::log("Drawing...", fmt::color::aqua); // <--- wtf the window is unresponsive if i comment this out
-        // ^--- fixed, was due to how I was drawing
     }
 }

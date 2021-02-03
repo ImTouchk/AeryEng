@@ -14,28 +14,67 @@ static mutex ListMutex = {};
 
 namespace Aery {
     bool VkRenderer::createObject(VkObjectCreateInfo& Input, PVkObject* Output) {
-        auto CreateVertexBuffer = [&](VkObject& Object ) {
-            vk::BufferCreateInfo BufferInfo = {
+        auto CreateVertexBuffer = [&](VkObject& Object) {
+            //
+            vk::BufferCreateInfo TempBufferInfo = {
                 .size = sizeof(Object.vertex.list[0]) * Object.vertex.list.size(),
                 .usage = vk::BufferUsageFlagBits::eVertexBuffer
             };
 
+            // Create staging buffer
             VmaAllocationCreateInfo AllocateInfo = {
-                .usage = VMA_MEMORY_USAGE_CPU_TO_GPU
+                .usage = VMA_MEMORY_USAGE_CPU_ONLY
             };
 
-            VkBuffer Buffer;
-            VmaAllocation Allocation;
-            VkBufferCreateInfo BufferCreateInfo = static_cast<VkBufferCreateInfo>(BufferInfo);
-            vmaCreateBuffer(m_Allocator, &BufferCreateInfo, &AllocateInfo, &Buffer, &Allocation, nullptr);
+            VkBuffer TempBuffer;
+            VmaAllocation TempAllocation;
+            VkBufferCreateInfo BufferCreateInfo = static_cast<VkBufferCreateInfo>(TempBufferInfo);
+            vmaCreateBuffer(m_Allocator, &BufferCreateInfo, &AllocateInfo, &TempBuffer, &TempAllocation, nullptr);
 
             void* VertexData;
-            vmaMapMemory(m_Allocator, Allocation, &VertexData);
-            memcpy(VertexData, Object.vertex.list.data(), (size_t)BufferInfo.size);
-            vmaUnmapMemory(m_Allocator, Allocation);
+            vmaMapMemory(m_Allocator, TempAllocation, &VertexData);
+            memcpy(VertexData, Object.vertex.list.data(), (size_t)TempBufferInfo.size);
+            vmaUnmapMemory(m_Allocator, TempAllocation);
+
+            // Create actual buffer
+            AllocateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+            
+            VkBuffer Buffer;
+            VmaAllocation Allocation;
+            vmaCreateBuffer(m_Allocator, &BufferCreateInfo, &AllocateInfo, &Buffer, &Allocation, nullptr);
+            
+            // Copy from staging buffer to the actual one
+            vk::CommandBufferAllocateInfo CmdAllocInfo = {
+                .commandPool = m_CommandPool,
+                .level = vk::CommandBufferLevel::ePrimary,
+                .commandBufferCount = 1,
+            };
+
+            vk::CommandBuffer CmdBuffer = m_Device.allocateCommandBuffers(CmdAllocInfo)[0];
+            vk::CommandBufferBeginInfo CmdBeginInfo = {
+                .flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit
+            };
+            CmdBuffer.begin(CmdBeginInfo);
+
+            vk::BufferCopy CopyRegion = {
+                .srcOffset = 0,
+                .dstOffset = 0,
+                .size = TempBufferInfo.size,
+            };
+            CmdBuffer.copyBuffer(static_cast<vk::Buffer>(TempBuffer), static_cast<vk::Buffer>(Buffer), 1, &CopyRegion);
+            CmdBuffer.end();
+
+            vk::SubmitInfo SubmitInfo = {
+                .commandBufferCount = 1,
+                .pCommandBuffers = &CmdBuffer
+            };
+            m_GraphicsQ.submit(1, &SubmitInfo, {});
+            m_GraphicsQ.waitIdle();
+            m_Device.freeCommandBuffers(m_CommandPool, 1, &CmdBuffer);
 
             Object.vertex.allocation = Allocation;
             Object.vertex.buffer = static_cast<vk::Buffer>(Buffer);
+            vmaDestroyBuffer(m_Allocator, TempBuffer, TempAllocation);
         };
 
         mut_u32 ID = 0;
