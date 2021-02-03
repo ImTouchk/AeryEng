@@ -66,6 +66,7 @@ namespace Aery {
 
     void VkRenderer::destroy() {
         Aery::log(fmt::format("--------------- DESTROYING VULKAN RENDERER {} ---------------", m_ID), fmt::color::hot_pink);
+        DestroyObjects();
         DestroyShaders();
         DestroySyncObjects();
         DestroyCommandPool();
@@ -103,13 +104,6 @@ namespace Aery {
             .minDepth = 0.0f, .maxDepth = 1.0f
         };
         // TO DO
-    }
-
-    void VkRenderer::DestroyShaders() {
-        for (mut_u32 i = 0; i < m_Shaders.size(); i++) {
-            destroyShader(m_Shaders[i]);
-        }
-        m_Shaders.clear();
     }
 
     void VkRenderer::draw() {

@@ -254,4 +254,11 @@ namespace Aery {
     VkShader& VkRenderer::getShaderByID(u32 ID) {
         return m_Shaders[ID];
     }
+
+    void VkRenderer::DestroyShaders() {
+        for (auto& Shader : m_Shaders) {
+            destroyShader(Shader);
+        }
+        m_Shaders.clear();
+    }
 }

@@ -48,7 +48,7 @@ namespace Aery {
         bool PickPhysicalDevice();
         bool CreateLogicalDevice(); void DestroyLogicalDevice();
         bool CreateAllocator();     void DestroyAllocator();
-        void DestroyShaders();
+        void DestroyShaders();      void DestroyObjects();
 
         // On-resize creation
 

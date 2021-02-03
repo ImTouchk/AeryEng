@@ -67,4 +67,11 @@ namespace Aery {
         ListMutex.unlock();
         Aery::log(fmt::format("<VkRenderer::destroyObject> ID {} destroyed object {}.", m_ID, Input.id));
     }
+
+    void VkRenderer::DestroyObjects() {
+        for (auto& Object : m_Objects) {
+            destroyObject(Object);
+        }
+        m_Objects.clear();
+    }
 }
