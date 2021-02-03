@@ -139,10 +139,10 @@ namespace Aery {
         CreateCommandBuffer(ImageIndex);
 
         if (m_ImagesInFlight[m_CurrentFrame] != VK_NULL_HANDLE) {
-            m_Device.waitForFences(1, &m_ImagesInFlight[m_CurrentFrame], VK_TRUE, UINT64_MAX);
+            Result = m_Device.waitForFences(1, &m_ImagesInFlight[m_CurrentFrame], VK_TRUE, UINT64_MAX);
         }
         m_ImagesInFlight[m_CurrentFrame] = m_InFlightFences[m_CurrentFrame];
-        m_Device.resetFences(1, &m_InFlightFences[m_CurrentFrame]);
+        Result = m_Device.resetFences(1, &m_InFlightFences[m_CurrentFrame]);
 
         vk::Semaphore SignalSemaphores[] = { m_RenderFinished[m_CurrentFrame] };
         vk::Semaphore WaitSemaphores[] = { m_ImageAvailable[m_CurrentFrame] };
@@ -157,7 +157,7 @@ namespace Aery {
             .pSignalSemaphores = SignalSemaphores
         };
 
-        m_GraphicsQ.submit(1, &SubmitInfo, m_InFlightFences[m_CurrentFrame]);
+        Result = m_GraphicsQ.submit(1, &SubmitInfo, m_InFlightFences[m_CurrentFrame]);
 
         vk::SwapchainKHR Swapchains[] = { m_Swapchain.instance };
         vk::PresentInfoKHR PresentInfo = {
@@ -169,7 +169,7 @@ namespace Aery {
             .pResults = nullptr
         };
 
-        m_PresentQ.presentKHR(PresentInfo);
+        Result = m_PresentQ.presentKHR(PresentInfo);
         m_CurrentFrame = (m_CurrentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
         //Aery::log("Drawing...", fmt::color::aqua); // <--- wtf the window is unresponsive if i comment this out
         // ^--- fixed, was due to how I was drawing

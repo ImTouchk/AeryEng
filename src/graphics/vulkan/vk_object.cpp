@@ -31,7 +31,7 @@ namespace Aery {
 
             void* VertexData;
             vmaMapMemory(m_Allocator, Allocation, &VertexData);
-            memcpy(VertexData, Object.vertex.list.data(), BufferInfo.size);
+            memcpy(VertexData, Object.vertex.list.data(), (size_t)BufferInfo.size);
             vmaUnmapMemory(m_Allocator, Allocation);
 
             Object.vertex.allocation = Allocation;

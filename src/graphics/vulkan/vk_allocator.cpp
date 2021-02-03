@@ -9,9 +9,9 @@ using namespace std;
 namespace Aery {
     bool VkRenderer::CreateAllocator() {
         VmaAllocatorCreateInfo AllocatorInfo = {
-            .physicalDevice = m_PhysicalDevice,
-            .device = m_Device,
-            .instance = m_Instance,
+            .physicalDevice = static_cast<VkPhysicalDevice>(m_PhysicalDevice),
+            .device = static_cast<VkDevice>(m_Device),
+            .instance = static_cast<VkInstance>(m_Instance),
             .vulkanApiVersion = VK_API_VERSION_1_0,
         };
         VkResult Result = vmaCreateAllocator(&AllocatorInfo, &m_Allocator);
