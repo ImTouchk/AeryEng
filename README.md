@@ -15,4 +15,5 @@ Make sure to build with the C++20 compiler flag.
 ### Dependencies
 * GLFW
 * Vulkan-Hpp
+* VulkanMemoryAllocator
 * fmt
