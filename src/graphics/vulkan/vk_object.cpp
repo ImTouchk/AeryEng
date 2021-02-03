@@ -71,9 +71,17 @@ namespace Aery {
     }
 
     void VkRenderer::DestroyObjects() {
-        for (auto& Object : m_Objects) {
-            destroyObject(Object.first);
+        // (Same scenario as for shaders) I am not calling the destroyObject method
+        // as it removes the element from the map, resulting in weird out-of-bounds
+        // access bugs.
+        ListMutex.lock();
+
+        for (auto& Object_ : m_Objects) {
+            VkObject& Object = Object_.second;
+            vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Object.vertex.buffer), Object.vertex.allocation);
         }
         m_Objects.clear();
+
+        ListMutex.unlock();
     }
 }
