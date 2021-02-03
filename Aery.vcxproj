@@ -189,6 +189,7 @@
   <ItemGroup>
     <ClCompile Include="inc\fmt\format.cc" />
     <ClCompile Include="inc\fmt\os.cc" />
+    <ClCompile Include="src\graphics\vulkan\vk_allocator.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_base.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_command_buffers.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_common.cpp" />

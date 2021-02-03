@@ -4,6 +4,7 @@
 #include "math/vec2.hpp"
 #include "math/vec3.hpp"
 #include <vulkan/vulkan.hpp>
+#include <vk_mem_alloc.h>
 #include <vector>
 #include <array>
 
@@ -50,6 +51,7 @@ namespace Aery {
             std::vector<VkVertex> list;
             vk::Buffer buffer;
             vk::DeviceMemory memory;
+            VmaAllocation allocation;
         } vertex;
         std::vector<mut_u16> indices;
         VkShader* shader;

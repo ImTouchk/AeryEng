@@ -4,6 +4,7 @@
 #include "graphics/vk_object.hpp"
 #include "graphics/vk_renderer.hpp"
 #include <vulkan/vulkan.hpp>
+#include <vk_mem_alloc.h>
 #include <mutex>
 
 using namespace std;
@@ -12,17 +13,6 @@ static Aery::mut_u32 Index = 0;
 static mutex ListMutex = {};
 
 namespace Aery {
-    u32 VkRenderer::FindMemoryType(u32 TypeFilter, vk::MemoryPropertyFlags Properties) {
-        vk::PhysicalDeviceMemoryProperties MemoryProperties = {};
-        m_PhysicalDevice.getMemoryProperties(&MemoryProperties);
-
-        for (mut_u32 i = 0; i < MemoryProperties.memoryTypeCount; i++) {
-            if (TypeFilter & (1 << i) && (MemoryProperties.memoryTypes[i].propertyFlags & Properties) == Properties) {
-                return i;
-            }
-        }
-    }
-
     bool VkRenderer::createObject(VkObjectCreateInfo& Input, VkObject** Output) {
         VkObject NewObject = {};
         NewObject.indices = Input.indices;
@@ -31,32 +21,30 @@ namespace Aery {
             createDefaultShader(&NewObject.shader);
         }
 
-        vk::BufferCreateInfo BufferInfo = {
-            .size = sizeof(NewObject.vertex.list[0]) * NewObject.vertex.list.size(),
-            .usage = vk::BufferUsageFlagBits::eVertexBuffer,
-            .sharingMode = vk::SharingMode::eExclusive
-        };
+        // Vertex buffer creation
+        {
+            vk::BufferCreateInfo BufferInfo = {
+                .size = sizeof(NewObject.vertex.list[0]) * NewObject.vertex.list.size(),
+                .usage = vk::BufferUsageFlagBits::eVertexBuffer
+            };
 
-        NewObject.vertex.buffer = m_Device.createBuffer(BufferInfo);
+            VmaAllocationCreateInfo AllocateInfo = {
+                .usage = VMA_MEMORY_USAGE_CPU_TO_GPU
+            };
 
-        vk::MemoryRequirements Requirements = {};
-        m_Device.getBufferMemoryRequirements(NewObject.vertex.buffer, &Requirements);
+            VkBuffer Buffer;
+            VmaAllocation Allocation;
+            VkBufferCreateInfo BufferCreateInfo = static_cast<VkBufferCreateInfo>(BufferInfo);
+            vmaCreateBuffer(m_Allocator, &BufferCreateInfo, &AllocateInfo, &Buffer, &Allocation, nullptr);
 
-        vk::MemoryAllocateInfo AllocateInfo = {
-            .allocationSize = Requirements.size,
-            .memoryTypeIndex = FindMemoryType(
-                Requirements.memoryTypeBits,
-                vk::MemoryPropertyFlagBits::eHostVisible | 
-                vk::MemoryPropertyFlagBits::eHostCoherent
-            )
-        };
+            void* VertexData;
+            vmaMapMemory(m_Allocator, Allocation, &VertexData);
+            memcpy(VertexData, NewObject.vertex.list.data(), BufferInfo.size);
+            vmaUnmapMemory(m_Allocator, Allocation);
 
-        NewObject.vertex.memory = m_Device.allocateMemory(AllocateInfo);
-        m_Device.bindBufferMemory(NewObject.vertex.buffer, NewObject.vertex.memory, 0);
-
-        void* VertexData = m_Device.mapMemory(NewObject.vertex.memory, 0, BufferInfo.size, {});
-        memcpy(VertexData, NewObject.vertex.list.data(), BufferInfo.size);
-        m_Device.unmapMemory(NewObject.vertex.memory);
+            NewObject.vertex.allocation = Allocation;
+            NewObject.vertex.buffer = static_cast<vk::Buffer>(Buffer);
+        }
 
         ListMutex.lock();
         NewObject.id = Index; Index++;
@@ -70,8 +58,7 @@ namespace Aery {
     }
 
     void VkRenderer::destroyObject(VkObject& Input) {
-        m_Device.destroyBuffer(Input.vertex.buffer);
-        m_Device.freeMemory(Input.vertex.memory);
+        vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Input.vertex.buffer), Input.vertex.allocation);
         ListMutex.lock();
         std::vector<VkObject>::iterator Position = std::find(m_Objects.begin(), m_Objects.end(), Input);
         if (Position != m_Objects.end()) {

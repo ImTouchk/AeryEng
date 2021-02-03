@@ -2,6 +2,7 @@
 
 #include "utils/types.hpp"
 #include <vulkan/vulkan.hpp>
+#include <vk_mem_alloc.h> 
 #include <vector>
 
 namespace Aery {
@@ -46,6 +47,7 @@ namespace Aery {
         bool CreateSurface();       void DestroySurface();
         bool PickPhysicalDevice();
         bool CreateLogicalDevice(); void DestroyLogicalDevice();
+        bool CreateAllocator();     void DestroyAllocator();
         void DestroyShaders();
 
         // On-resize creation
@@ -83,6 +85,8 @@ namespace Aery {
         vk::Device m_Device;
         vk::Queue m_GraphicsQ;
         vk::Queue m_PresentQ;
+
+        VmaAllocator m_Allocator;
         
         struct {
             vk::SwapchainKHR instance;

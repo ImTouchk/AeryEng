@@ -1,5 +1,6 @@
 #pragma once
 
+#include "utils/types.hpp"
 #include <vulkan/vulkan.hpp>
 #include <optional>
 #include <vector>
@@ -23,18 +24,18 @@ namespace Aery {
     class Window;
     bool CreateVulkanSurface(Window&);
     void DestroyVulkanSurface(Window&);
-    bool CheckLayerSupport(std::vector<const char*>& Layers);
+    bool CheckLayerSupport(std::vector<const char*>&);
     std::array<const char*, 2> GetInstanceExtensions();
-    std::vector<const char*> GetRequiredExtensions(bool UseLayers);
+    std::vector<const char*> GetRequiredExtensions(bool);
     vk::DebugUtilsMessengerCreateInfoEXT EmptyDMCInfo();
 
     VkQueueFamilyIndices& FindQueueFamilies(
-        vk::PhysicalDevice& GPU,
-        vk::SurfaceKHR& Surface
+        vk::PhysicalDevice&,
+        vk::SurfaceKHR&
     );
 
     VkSwapchainSupportDetails& QuerySwapSupport(
-        vk::PhysicalDevice& GPU,
-        vk::SurfaceKHR& Surface
+        vk::PhysicalDevice&,
+        vk::SurfaceKHR& 
     );
 }
