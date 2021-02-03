@@ -83,7 +83,6 @@ namespace Aery {
 
     void VkRenderer::_onResize() {
         Aery::log("--------------- RESIZE EVENT ---------------", fmt::color::hot_pink);
-        m_Device.waitIdle();
 
         int Width = 0, Height = 0;
         glfwGetFramebufferSize(m_Window->info().handle, &Width, &Height);
@@ -91,6 +90,16 @@ namespace Aery {
             m_Minimized = true;
             return;
         }
+
+        m_Device.waitIdle();
+
+        DestroyFramebuffers();
+        DestroyImageViews();
+
+        RecreateSwapchain();
+
+        CreateImageViews();
+        CreateFramebuffers();
 
         m_Scissor = vk::Rect2D {
             .offset = { 0, 0 },
@@ -103,7 +112,6 @@ namespace Aery {
             .height = (f32)m_Swapchain.extent.height,
             .minDepth = 0.0f, .maxDepth = 1.0f
         };
-        // TO DO
     }
 
     void VkRenderer::draw() {

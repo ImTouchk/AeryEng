@@ -7,7 +7,7 @@ void Start() {
         .title = "Hello, world!",
         .width = 800,
         .height = 600,
-        .flags = WINDOW_VSYNC
+        .flags = WINDOW_VSYNC | WINDOW_RESIZABLE
     };
 
     Window GameWindow = {};
