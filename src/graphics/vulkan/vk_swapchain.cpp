@@ -73,7 +73,7 @@ namespace Aery {
             .compositeAlpha = vk::CompositeAlphaFlagBitsKHR::eOpaque,
             .presentMode = PresentMode,
             .clipped = VK_TRUE,
-            .oldSwapchain = (PreviousExists) ? m_Swapchain.instance : nullptr,
+            .oldSwapchain = nullptr
         };
         
         const VkQueueFamilyIndices Indices = FindQueueFamilies(m_PhysicalDevice, m_Surface);
