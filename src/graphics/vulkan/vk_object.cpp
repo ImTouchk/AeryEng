@@ -65,6 +65,7 @@ namespace Aery {
             *Output = &m_Objects[m_Objects.size()] - 1;
         }
         ListMutex.unlock();
+        Aery::log(fmt::format("<VkRenderer::createObject> ID {} created object {}.", m_ID, NewObject.id));
         return true;
     }
 

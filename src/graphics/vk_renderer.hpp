@@ -65,13 +65,6 @@ namespace Aery {
 
         // Utils
 
-        void CreateBuffer(
-            vk::DeviceSize Size, 
-            vk::BufferUsageFlags Usage, 
-            vk::MemoryPropertyFlags Properties, 
-            vk::Buffer& Buffer, 
-            vk::DeviceMemory& Memory
-        );
         u32 FindMemoryType(u32, vk::MemoryPropertyFlags);
 
         // Variables

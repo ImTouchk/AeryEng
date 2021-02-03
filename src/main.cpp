@@ -23,9 +23,13 @@ void Start() {
     VkObject* VertexObject;
     VkObjectCreateInfo ObjectInfo = {
         .vertices = {
-            { {  0.0f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
-            { {  0.5f,  0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
-            { { -0.5f,  0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } }
+            { { -0.5f,  0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
+            { { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
+            { {  0.5f,  0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+
+            { {  0.5f,  0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+            { { -0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
+            { {  0.5f, -0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f } }
         },
     };
     GameRenderer.createObject(ObjectInfo, nullptr);
@@ -39,6 +43,7 @@ void Start() {
     GameWindow.destroy();
 }
 
+// Program entry point
 #ifdef NDEBUG
 #include <Windows.h>
 int WINAPI WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CmdLine, int CmdShow) {
