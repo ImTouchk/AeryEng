@@ -55,9 +55,6 @@ namespace Aery {
             return false;
         }
 
-        static bool GLFWInitialized = false;
-        do { GLFWInitialized = glfwInit(); } while (!GLFWInitialized);
-
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, Info.flags & WINDOW_RESIZABLE);
         glfwWindowHint(GLFW_MAXIMIZED, Info.flags & WINDOW_MAXIMIZED);
@@ -96,7 +93,6 @@ namespace Aery {
         m_Created = false;
         glfwDestroyWindow(m_Handle);
         Aery::log(fmt::format("<Window::destroy> ID {} was destroyed.", m_ID));
-        glfwTerminate();
     }
 
     void Window::update() const {
