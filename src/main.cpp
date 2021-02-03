@@ -1,4 +1,5 @@
 #include "aery.hpp"
+#include <thread>
 
 void Start() {
     using namespace Aery;
@@ -6,7 +7,7 @@ void Start() {
         .title = "Hello, world!",
         .width = 800,
         .height = 600,
-        .flags = WINDOW_VSYNC | WINDOW_FULLSCREEN
+        .flags = WINDOW_VSYNC
     };
 
     Window GameWindow = {};
@@ -44,12 +45,15 @@ void Start() {
 }
 
 // Program entry point
+#include <GLFW/glfw3.h>
 #ifdef NDEBUG
 #include <Windows.h>
 int WINAPI WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CmdLine, int CmdShow) {
 #else
 int main() {
 #endif
+    glfwInit();
     Start();
+    glfwTerminate();
     return 0;
 }
