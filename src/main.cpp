@@ -1,5 +1,4 @@
 #include "aery.hpp"
-#include <thread>
 
 void Start() {
     using namespace Aery;

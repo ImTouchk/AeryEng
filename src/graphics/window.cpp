@@ -14,16 +14,7 @@ static Aery::mut_u32 Index = 0;
 static mutex Mutex = {};
 
 static void OnWindowResize(GLFWwindow* Window, int Width, int Height) {
-    Aery::Window* Current = nullptr;
-    for (Aery::Window* Pointer : Windows) {
-        if (Pointer->info().handle == Window) {
-            Current = Pointer;
-            break;
-        }
-    }
-    if (Current == nullptr) {
-        return;
-    }
+    Aery::Window* Current = reinterpret_cast<Aery::Window*>(glfwGetWindowUserPointer(Window));
     Current->_onResize((Aery::u32)Width, (Aery::u32)Height);
 }
 
@@ -71,12 +62,13 @@ namespace Aery {
 
         m_Handle = glfwCreateWindow(Width, Height, Info.title, Monitor, nullptr);
         m_Width = Info.width; m_Height = Info.height;
-        glfwSetFramebufferSizeCallback(m_Handle, (GLFWframebuffersizefun)OnWindowResize);
 
         if (m_Handle == NULL) {
             Aery::error(fmt::format("<Window::create> ID {} creation failed.", m_ID));
             return false;
         }
+        glfwSetWindowUserPointer(m_Handle, this);
+        glfwSetFramebufferSizeCallback(m_Handle, (GLFWframebuffersizefun)OnWindowResize);
         
         Aery::log(fmt::format("<Window::create> ID {} was started.", m_ID), fmt::color::light_green);
         glfwMakeContextCurrent(m_Handle);
