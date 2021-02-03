@@ -203,6 +203,7 @@
     <ClCompile Include="src\graphics\vulkan\vk_shader.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_surface.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_swapchain.cpp" />
+    <ClCompile Include="src\graphics\vulkan\vk_utils.cpp" />
     <ClCompile Include="src\graphics\window.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\utils\debug.cpp" />
