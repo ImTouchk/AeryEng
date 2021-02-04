@@ -8,7 +8,7 @@
 
 namespace Aery {
     template<typename vec1>
-    class base_vec3 {
+    struct base_vec3 {
         static_assert(std::is_arithmetic<vec1>(), "vec1 must be a number type.");
     public:
         vec1 x, y, z;

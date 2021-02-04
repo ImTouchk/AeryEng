@@ -2,13 +2,14 @@
 
 #include "utils/types.hpp"
 #include "math/vec2.hpp"
+#include "math/vec3.hpp"
 #include <fmt/core.h>
 #include <string>
 #include <cmath>
 
 namespace Aery {
     template<typename vec1>
-    class base_vec4 {
+    struct base_vec4 {
         static_assert(std::is_arithmetic<vec1>(), "vec1 must be a number type.");
     public:
         vec1 x, y, z, a;
@@ -76,5 +77,5 @@ namespace Aery {
         }
     };
 
-    using vec3 = base_vec4<mut_f32>;
+    using vec4 = base_vec4<mut_f32>;
 }
