@@ -21,26 +21,35 @@ void Start() {
     }
 
     PVkObject VertexObject;
-    VkObjectCreateInfo ObjectInfo = {
+    VkObjectCreateInfo ObjectInfo1 = {
         .vertices = {
-            { { -0.5f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
-            { {  0.5f, -0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
-            { {  0.5f,  0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
-            { { -0.5f,  0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f } }
+            { {  1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f } },
+            { { -1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f } },
+            { { -1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f } },
         },
         .indices = {
             0, 1, 2,
-            2, 3, 0
         }
     };
-    GameRenderer.createObject(ObjectInfo, &VertexObject);
+
+    VkObjectCreateInfo ObjectInfo2 = {
+        .vertices = {
+            { {  1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
+            { { -1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
+            { {  1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+        },
+        .indices = {
+            0, 1, 2,
+        }
+    };
+    GameRenderer.createObject(ObjectInfo1, &VertexObject);
+    GameRenderer.createObject(ObjectInfo2, &VertexObject);
 
     while (GameWindow.active()) {
         GameWindow.update();
         GameRenderer.draw();
     }
 
-    GameRenderer.destroyObject(VertexObject);
     GameRenderer.destroy();
     GameWindow.destroy();
 }
