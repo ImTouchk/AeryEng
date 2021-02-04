@@ -14,6 +14,67 @@ static mutex ListMutex = {};
 
 namespace Aery {
     bool VkRenderer::createObject(VkObjectCreateInfo& Input, PVkObject* Output) {
+        auto CreateIndexBuffer = [&](VkObject& Object) {
+            vk::BufferCreateInfo TempBufferInfo = {
+                .size = sizeof(Object.index.list[0]) * Object.index.list.size(),
+                .usage = vk::BufferUsageFlagBits::eIndexBuffer
+            };
+
+            VmaAllocationCreateInfo AllocateInfo = {
+                .usage = VMA_MEMORY_USAGE_CPU_ONLY
+            };
+
+            VkBuffer TempBuffer;
+            VmaAllocation TempAllocation;
+            VkBufferCreateInfo BufferCreateInfo = static_cast<VkBufferCreateInfo>(TempBufferInfo);
+            vmaCreateBuffer(m_Allocator, &BufferCreateInfo, &AllocateInfo, &TempBuffer, &TempAllocation, nullptr);
+
+            void* IndexData;
+            vmaMapMemory(m_Allocator, TempAllocation, &IndexData);
+            memcpy(IndexData, Object.index.list.data(), (size_t)TempBufferInfo.size);
+            vmaUnmapMemory(m_Allocator, TempAllocation);
+
+            AllocateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+            VkBuffer Buffer;
+            VmaAllocation Allocation;
+            vmaCreateBuffer(m_Allocator, &BufferCreateInfo, &AllocateInfo, &Buffer, &Allocation, nullptr);
+
+            // Copy from staging buffer to the actual one
+            vk::CommandBufferAllocateInfo CmdAllocInfo = {
+                .commandPool = m_CommandPool,
+                .level = vk::CommandBufferLevel::ePrimary,
+                .commandBufferCount = 1,
+            };
+
+            vk::CommandBuffer CmdBuffer = m_Device.allocateCommandBuffers(CmdAllocInfo)[0];
+            vk::CommandBufferBeginInfo CmdBeginInfo = {
+                .flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit
+            };
+            CmdBuffer.begin(CmdBeginInfo);
+
+            vk::BufferCopy CopyRegion = {
+                .srcOffset = 0,
+                .dstOffset = 0,
+                .size = TempBufferInfo.size,
+            };
+            CmdBuffer.copyBuffer(static_cast<vk::Buffer>(TempBuffer), static_cast<vk::Buffer>(Buffer), 1, &CopyRegion);
+            CmdBuffer.end();
+
+            vk::SubmitInfo SubmitInfo = {
+                .commandBufferCount = 1,
+                .pCommandBuffers = &CmdBuffer
+            };
+            m_GraphicsQ.submit(1, &SubmitInfo, {});
+            m_GraphicsQ.waitIdle();
+            m_Device.freeCommandBuffers(m_CommandPool, 1, &CmdBuffer);
+
+            Object.index.allocation = Allocation;
+            Object.index.buffer = static_cast<vk::Buffer>(Buffer);
+            Object.index.size = static_cast<vk::DeviceSize>(TempBufferInfo.size);
+            vmaDestroyBuffer(m_Allocator, TempBuffer, TempAllocation);
+        };
+
         auto CreateVertexBuffer = [&](VkObject& Object) {
             //
             vk::BufferCreateInfo TempBufferInfo = {
@@ -84,12 +145,13 @@ namespace Aery {
             Index++;
         ListMutex.unlock();
 
-        m_Objects[ID].indices = Input.indices;
+        m_Objects[ID].index.list = Input.indices;
         m_Objects[ID].vertex.list = Input.vertices;
         if (Input.shader == 0) {
             createDefaultShader(&m_Objects[ID].shader);
         }
         CreateVertexBuffer(m_Objects[ID]);
+        CreateIndexBuffer(m_Objects[ID]);
 
         if (Output != nullptr) {
             *Output = ID;
@@ -103,6 +165,7 @@ namespace Aery {
         VkObject& Object = m_Objects[Input];
 
         vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Object.vertex.buffer), Object.vertex.allocation);
+        vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Object.index.buffer), Object.index.allocation);
         ListMutex.lock();
             m_Objects.erase((mut_u32)Input);
         ListMutex.unlock();
@@ -118,6 +181,7 @@ namespace Aery {
         for (auto& Object_ : m_Objects) {
             VkObject& Object = Object_.second;
             vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Object.vertex.buffer), Object.vertex.allocation);
+            vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Object.index.buffer), Object.index.allocation);
         }
         m_Objects.clear();
 

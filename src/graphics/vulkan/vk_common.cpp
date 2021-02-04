@@ -38,6 +38,8 @@ namespace Aery {
         return CreateInfo;
     }
 
+    // This function is called on every resize event, therefore caching the result will
+    // definitely improve performance
     VkQueueFamilyIndices& FindQueueFamilies(vk::PhysicalDevice& GPU, vk::SurfaceKHR& Surface) {
         static VkQueueFamilyIndices CachedIndices = {};
         static vk::PhysicalDevice& CachedGPU = GPU;

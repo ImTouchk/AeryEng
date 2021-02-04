@@ -51,11 +51,17 @@ namespace Aery {
         struct {
             std::vector<VkVertex> list;
             vk::Buffer buffer;
-            vk::DeviceMemory memory;
             VmaAllocation allocation;
         } vertex;
-        std::vector<mut_u16> indices;
+        struct {
+            std::vector<mut_u16> list;
+            vk::Buffer buffer;
+            vk::DeviceSize size;
+            VmaAllocation allocation;
+        } index;
+        
         PVkShader shader = 0;
+        
         mut_u32 id;
 
         bool operator==(const VkObject& Other) {

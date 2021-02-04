@@ -82,7 +82,7 @@ namespace Aery {
     }
 
     void VkRenderer::_onResize() {
-        Aery::log("--------------- RESIZE EVENT ---------------", fmt::color::hot_pink);
+        Aery::log("--------------- RENDERER RESIZE EVENT ---------------", fmt::color::hot_pink);
 
         int Width = 0, Height = 0;
         glfwGetFramebufferSize(m_Window->info().handle, &Width, &Height);

@@ -79,8 +79,9 @@ namespace Aery {
             vk::DeviceSize Offsets[] = { 0 };
 
             m_CommandBuffers[i].bindVertexBuffers(0, 1, VertexBuffers, Offsets);
+            m_CommandBuffers[i].bindIndexBuffer(Object.index.buffer, 0, vk::IndexType::eUint16);
             m_CommandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, Shader.pipeline);
-            m_CommandBuffers[i].draw(static_cast<u32>(Object.vertex.list.size()), 1, 0, 0);
+            m_CommandBuffers[i].drawIndexed(static_cast<mut_u32>(Object.index.list.size()), 1, 0, 0, 0);
         }
         m_CommandBuffers[i].endRenderPass();
         m_CommandBuffers[i].end();

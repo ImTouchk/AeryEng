@@ -31,7 +31,7 @@ static vk::PresentModeKHR PickPresentMode(vector<vk::PresentModeKHR>& Modes, boo
 
     if (VSync) {
         for (Aery::mut_u32 i = 0; i < Modes.size(); i++) {
-            if (Modes[i] == vk::PresentModeKHR::eMailbox) {
+            if (Modes[i] == vk::PresentModeKHR::eFifo) {
                 return Modes[i];
             }
         }
