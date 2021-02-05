@@ -6,11 +6,13 @@
 #include <cmath>
 
 namespace Aery {
+    constexpr mut_f32 pi = 3.14159265358979f;
+
     template<typename vec1>
     struct base_mat4x4 {
         static_assert(std::is_arithmetic<vec1>(), "vec1 must be a number type");
         vec1 _Elements[16];
-#   define iter(s, a) for(size_t i = 0; i < s; i++) { a; }
+#   define iter(s, a) for(mut_u16 i = 0; i < s; i++) { a; }
     public:
         base_mat4x4(const base_vec4<vec1>& a) {
             iter(16, _Elements[i] = 0.0f);
@@ -179,8 +181,8 @@ namespace Aery {
         }
 
         void transpose() {
-            for (size_t y = 0; y < 4; y++) {
-                for (size_t x = 0; x < 4; x++) {
+            for (mut_u16 y = 0; y < 4; y++) {
+                for (mut_u16 x = 0; x < 4; x++) {
                     (*this)(x, y) = (*this)(y, x);
                 }
             }
@@ -200,8 +202,8 @@ namespace Aery {
 
         base_mat4x4 operator*(const base_mat4x4& other) const {
             base_mat4x4 result = {};
-            for (int y = 0; y < 4; y++) {
-                for (int x = 0; x < 4; x++) {
+            for (mut_u16 y = 0; y < 4; y++) {
+                for (mut_u16 x = 0; x < 4; x++) {
                     result(y, x) = 0.0f;
                     for (int k = 0; k < 4; k++) {
                         result(y, x) += (*this)(y, k) * other(k, x);
@@ -239,7 +241,7 @@ namespace Aery {
 
         std::basic_string<char> toString() const {
             return 
-                fmt::format("mat4x4 {{\n{} {} {} {}\n{} {} {} {}\n{} {} {} {}\n{} {} {} {}\n}}",
+                fmt::format("mat4x4 {{\n    {} {} {} {}\n    {} {} {} {}\n    {} {} {} {}\n    {} {} {} {}\n}}\n",
                     _Elements[0],  _Elements[1],  _Elements[2],  _Elements[3], 
                     _Elements[4],  _Elements[5],  _Elements[6],  _Elements[7], 
                     _Elements[8],  _Elements[9],  _Elements[10], _Elements[11], 
