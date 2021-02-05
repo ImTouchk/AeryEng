@@ -1,5 +1,6 @@
 #include "utils/debug.hpp"
 #include "utils/types.hpp"
+#include "math/mat4.hpp"
 #include "graphics/vk_shader.hpp"
 #include "graphics/vk_object.hpp"
 #include "graphics/vulkan/vk_common.hpp"
@@ -78,9 +79,18 @@ namespace Aery {
             vk::Buffer VertexBuffers[] = { Object.vertex.buffer };
             vk::DeviceSize Offsets[] = { 0 };
 
+            mat4& Transform = Object.push_constant.transform;
+            Transform = { 1.0f };
+
             m_CommandBuffers[i].bindVertexBuffers(0, 1, VertexBuffers, Offsets);
             m_CommandBuffers[i].bindIndexBuffer(Object.index.buffer, 0, vk::IndexType::eUint16);
             m_CommandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, Shader.pipeline);
+            m_CommandBuffers[i].pushConstants(
+                Shader.layout, 
+                vk::ShaderStageFlagBits::eVertex, 0, 
+                sizeof(VkObject::push_constant), 
+                &Object.push_constant
+            );
             m_CommandBuffers[i].drawIndexed(static_cast<mut_u32>(Object.index.list.size()), 1, 0, 0, 0);
         }
         m_CommandBuffers[i].endRenderPass();

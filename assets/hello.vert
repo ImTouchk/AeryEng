@@ -6,7 +6,7 @@ layout (location = 1) in vec3 Color;
 
 layout (location = 0) out vec3 Shading;
 
-layout (push_constant) uniform constants {
+layout ( push_constant ) uniform constants {
     mat4 transform;
 } PushConstants;
 
@@ -18,5 +18,5 @@ vec3 colors[3] = vec3[] (
 
 void main() {
     gl_Position = PushConstants.transform * vec4(Position.xyz, 1.0);
-    Shading = vec4(Color.xyz, 1.0);
+    Shading = Color;
 }

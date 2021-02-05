@@ -15,12 +15,24 @@ namespace Aery {
     struct VkShader;
     struct VkShaderCreateInfo;
     struct VkObjectCreateInfo;
+    
+    enum VkRendererCreateFlags {
+        VK_RENDERER_VSYNC = 2,
+        VK_RENDERER_TRIPLE_BUFFERING = 4,
+        VK_RENDERER_UNCAPPED = 5
+    };
+
+    struct VkRendererCreateInfo {
+        Window* window = nullptr;
+        mut_u16 render_mode = VK_RENDERER_VSYNC;
+    };
+
     class VkRenderer {
     public:
         VkRenderer(); ~VkRenderer();
 
-        bool create(Window&&) = delete;
-        bool create(Window&);
+        bool create(VkRendererCreateInfo&&) = delete;
+        bool create(VkRendererCreateInfo&);
         void destroy();
         void draw();
         
@@ -81,6 +93,8 @@ namespace Aery {
         bool m_UseLayers = true;
         bool m_Active = false;
         u32 m_ID = -1;
+
+        mut_u16 m_RenderMode = VK_RENDERER_VSYNC;
 
         vk::Instance m_Instance;
         vk::DebugUtilsMessengerEXT m_DebugMessenger;

@@ -183,11 +183,17 @@ namespace Aery {
             };
             BlendState.setBlendConstants({ 0.0f, 0.0f, 0.0f, 0.0f });
 
+            vk::PushConstantRange PushConstant = {
+                .stageFlags = vk::ShaderStageFlagBits::eVertex,
+                .offset = 0,
+                .size = sizeof(VkObject::push_constant),
+            };
+
             vk::PipelineLayoutCreateInfo LayoutInfo = {
                 .setLayoutCount = 0,
                 .pSetLayouts = nullptr,
-                .pushConstantRangeCount = 0,
-                .pPushConstantRanges = nullptr
+                .pushConstantRangeCount = 1,
+                .pPushConstantRanges = &PushConstant
             };
 
             vk::Result Result = m_Device.createPipelineLayout(&LayoutInfo, nullptr, &Shader.layout);

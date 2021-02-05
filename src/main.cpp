@@ -2,7 +2,7 @@
 
 void Start() {
     using namespace Aery;
-    const WindowCreateInfo WCInfo = {
+    WindowCreateInfo WCInfo = {
         .title = "Hello, world!",
         .width = 800,
         .height = 600,
@@ -14,25 +14,19 @@ void Start() {
         return;
     }
 
+    VkRendererCreateInfo VRInfo = {
+        .window = &GameWindow,
+        .render_mode = VK_RENDERER_TRIPLE_BUFFERING,
+    };
+
     VkRenderer GameRenderer = {};
-    if (!GameRenderer.create(GameWindow)) {
+    if (!GameRenderer.create(VRInfo)) {
         GameWindow.destroy();
         return;
     }
 
     PVkObject VertexObject;
-    VkObjectCreateInfo ObjectInfo1 = {
-        .vertices = {
-            { {  1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f } },
-            { { -1.0f,  1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f } },
-            { { -1.0f, -1.0f, 0.0f }, { 1.0f, 1.0f, 1.0f } },
-        },
-        .indices = {
-            0, 1, 2,
-        }
-    };
-
-    VkObjectCreateInfo ObjectInfo2 = {
+    VkObjectCreateInfo ObjectInfo = {
         .vertices = {
             { {  1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
             { { -1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
@@ -42,8 +36,7 @@ void Start() {
             0, 1, 2,
         }
     };
-    GameRenderer.createObject(ObjectInfo1, &VertexObject);
-    GameRenderer.createObject(ObjectInfo2, &VertexObject);
+    GameRenderer.createObject(ObjectInfo, &VertexObject);
 
     while (GameWindow.active()) {
         GameWindow.update();

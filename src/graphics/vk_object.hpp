@@ -3,6 +3,8 @@
 #include "utils/types.hpp"
 #include "math/vec2.hpp"
 #include "math/vec3.hpp"
+#include "math/vec4.hpp"
+#include "math/mat4.hpp"
 #include <vulkan/vulkan.hpp>
 #include <vk_mem_alloc.h>
 #include <vector>
@@ -53,15 +55,19 @@ namespace Aery {
             vk::Buffer buffer;
             VmaAllocation allocation;
         } vertex;
+
         struct {
             std::vector<mut_u16> list;
             vk::Buffer buffer;
             vk::DeviceSize size;
             VmaAllocation allocation;
         } index;
+
+        struct {
+            mat4 transform = { 1.0f };
+        } push_constant;
         
         PVkShader shader = 0;
-        
         mut_u32 id;
 
         bool operator==(const VkObject& Other) {
