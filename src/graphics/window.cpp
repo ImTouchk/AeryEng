@@ -1,5 +1,6 @@
 #include "utils/debug.hpp"
 #include "utils/types.hpp"
+#include "graphics/gl_renderer.hpp"
 #include "graphics/vk_renderer.hpp"
 #include "graphics/window.hpp"
 #include <fmt/color.h>
@@ -53,7 +54,14 @@ namespace Aery {
 
         glfwWindowHint(GLFW_RESIZABLE, Info.flags & WINDOW_RESIZABLE);
         glfwWindowHint(GLFW_MAXIMIZED, Info.flags & WINDOW_MAXIMIZED);
+
         glfwWindowHint(GLFW_CLIENT_API, (Info.flags & WINDOW_GL_CONTEXT) ? GLFW_OPENGL_API : GLFW_NO_API);
+        if (Info.flags & WINDOW_GL_CONTEXT) {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            m_GLSurface = true;
+        }
 
         GLFWmonitor* Monitor = nullptr;
         int Width   = Info.width,
@@ -94,6 +102,9 @@ namespace Aery {
 
     void Window::update() const {
         glfwPollEvents();
+        if (m_GLSurface) {
+            glfwSwapBuffers(m_Handle);
+        }
     }
 
     WindowInfo Window::info() {
@@ -121,12 +132,22 @@ namespace Aery {
 
     void Window::_onResize(const u32 Width, const u32 Height) {
         m_Width = Width; m_Height = Height;
-        if (m_Renderer != nullptr) {
-            m_Renderer->_onResize();
+        switch (m_Renderer) {
+            case WINDOW_RENDERER_OPENGL: m_GLRenderer->_onResize();
+            case WINDOW_RENDERER_VULKAN: m_VkRenderer->_onResize();
+            default: break;
         }
     }
 
-    void Window::_onRendererCreated(VkRenderer& Renderer) {
-        m_Renderer = &Renderer;
+    void Window::_onVulkanCreated(VkRenderer& Renderer) {
+        assert(m_Renderer == WINDOW_RENDERER_OPENGL);
+        m_Renderer = WINDOW_RENDERER_VULKAN;
+        m_VkRenderer = &Renderer;
+    }
+
+    void Window::_onGLCreated(GLRenderer& Renderer) {
+        assert(m_Renderer == WINDOW_RENDERER_VULKAN);
+        m_Renderer = WINDOW_RENDERER_OPENGL;
+        m_GLRenderer = &Renderer;
     }
 }

@@ -5,6 +5,7 @@
 
 namespace Aery {
     class VkRenderer;
+    class GLRenderer;
 
     enum WindowCreateFlags {
         WINDOW_VSYNC = 1,
@@ -12,6 +13,11 @@ namespace Aery {
         WINDOW_RESIZABLE = 4,
         WINDOW_MAXIMIZED = 6,
         WINDOW_GL_CONTEXT = 8,
+    };
+
+    enum WindowRenderer {
+        WINDOW_RENDERER_OPENGL = 1,
+        WINDOW_RENDERER_VULKAN = 2
     };
 
     struct WindowCreateInfo {
@@ -45,14 +51,17 @@ namespace Aery {
         const bool active();
 
         void _onResize(const u32, const u32);
-        void _onRendererCreated(VkRenderer&);
+        void _onVulkanCreated(VkRenderer&);
+        void _onGLCreated(GLRenderer&);
 
     private:
         u32 m_ID;
         bool m_Created;
         mutable bool m_Active;
-        VkRenderer* m_Renderer;
+        VkRenderer* m_VkRenderer = nullptr;
+        GLRenderer* m_GLRenderer = nullptr;
         GLFWwindow* m_Handle;
+        mut_u16 m_Renderer = 0;
         mut_u32 m_Height;
         mut_u32 m_Width;
         bool m_GLSurface;
