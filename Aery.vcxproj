@@ -107,6 +107,9 @@
       <AdditionalLibraryDirectories>D:\Development\C++\Aery\lib\glfw32;D:\Development\Vulkan\SDK 1.2.154\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>assets/compile.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -137,6 +140,9 @@
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
+    <PreBuildEvent>
+      <Command>assets/compile.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -155,6 +161,9 @@
       <AdditionalLibraryDirectories>D:\Development\C++\Aery\lib\glfw64;D:\Development\Vulkan\SDK 1.2.154\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>assets/compile.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -185,6 +194,9 @@
       <EntryPointSymbol>
       </EntryPointSymbol>
     </Link>
+    <PreBuildEvent>
+      <Command>assets/compile.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="inc\fmt\format.cc" />
@@ -214,6 +226,7 @@
     <ClInclude Include="inc\GLFW\glfw3.h" />
     <ClInclude Include="inc\GLFW\glfw3native.h" />
     <ClInclude Include="src\aery.hpp" />
+    <ClInclude Include="src\graphics\gl_renderer.hpp" />
     <ClInclude Include="src\graphics\vk_object.hpp" />
     <ClInclude Include="src\graphics\vk_renderer.hpp" />
     <ClInclude Include="src\graphics\vk_shader.hpp" />
