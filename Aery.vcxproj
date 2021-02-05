@@ -189,6 +189,7 @@
   <ItemGroup>
     <ClCompile Include="inc\fmt\format.cc" />
     <ClCompile Include="inc\fmt\os.cc" />
+    <ClCompile Include="lib\glad.c" />
     <ClCompile Include="src\graphics\vulkan\vk_allocator.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_base.cpp" />
     <ClCompile Include="src\graphics\vulkan\vk_command_buffers.cpp" />
@@ -216,10 +217,13 @@
     <ClInclude Include="src\graphics\vk_object.hpp" />
     <ClInclude Include="src\graphics\vk_renderer.hpp" />
     <ClInclude Include="src\graphics\vk_shader.hpp" />
+    <ClInclude Include="src\graphics\vk_uniform_buffer.hpp" />
     <ClInclude Include="src\graphics\vulkan\vk_common.hpp" />
     <ClInclude Include="src\graphics\window.hpp" />
+    <ClInclude Include="src\math\mat4.hpp" />
     <ClInclude Include="src\math\vec2.hpp" />
     <ClInclude Include="src\math\vec3.hpp" />
+    <ClInclude Include="src\math\vec4.hpp" />
     <ClInclude Include="src\utils\debug.hpp" />
     <ClInclude Include="src\utils\types.hpp" />
   </ItemGroup>
