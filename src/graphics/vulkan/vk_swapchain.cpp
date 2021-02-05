@@ -23,20 +23,26 @@ static vk::SurfaceFormatKHR& PickSurfaceFormat(vector<vk::SurfaceFormatKHR>& For
     return Formats[0];
 }
 
-static vk::PresentModeKHR PickPresentMode(vector<vk::PresentModeKHR>& Modes, bool VSync) {
+static vk::PresentModeKHR PickPresentMode(vector<vk::PresentModeKHR>& Modes, Aery::mut_u16 Preferred) {
     if (Modes.size() == 0) {
         Aery::error("<PickPresentMode> No present modes available.");
         return {};
     }
 
-    if (VSync) {
-        for (Aery::mut_u32 i = 0; i < Modes.size(); i++) {
-            if (Modes[i] == vk::PresentModeKHR::eFifo) {
-                return Modes[i];
-            }
+    vk::PresentModeKHR PresentMode = {};
+    switch (Preferred) {
+        case Aery::VK_RENDERER_VSYNC: PresentMode = vk::PresentModeKHR::eFifo; break;
+        case Aery::VK_RENDERER_TRIPLE_BUFFERING: PresentMode = vk::PresentModeKHR::eMailbox; break;
+        case Aery::VK_RENDERER_UNCAPPED: return vk::PresentModeKHR::eImmediate; break;
+    }
+
+    for (Aery::mut_u32 i = 0; i < Modes.size(); i++) {
+        if (Modes[i] == PresentMode) {
+            return Modes[i];
         }
     }
 
+    Aery::warn("<PickPresentMode> Requested mode is not available. Using immediate instead.");
     return vk::PresentModeKHR::eImmediate;
 }
 
@@ -45,10 +51,12 @@ static vk::Extent2D PickExtent(const Aery::Window& Surface, const vk::SurfaceCap
         Capabilities.currentExtent.width != 0) {
         return Capabilities.currentExtent;
     }
+
     vk::Extent2D ActualExtent = {
         Surface.width(),
         Surface.height()
     };
+
     ActualExtent.width = max(Capabilities.minImageExtent.width, ActualExtent.width);
     ActualExtent.height = max(Capabilities.minImageExtent.height, ActualExtent.height);
     return ActualExtent;
@@ -58,7 +66,7 @@ namespace Aery {
     bool VkRenderer::CreateSwapchain(bool PreviousExists) {
         VkSwapchainSupportDetails Support = QuerySwapSupport(m_PhysicalDevice, m_Surface);
         vk::SurfaceFormatKHR Format = PickSurfaceFormat(Support.formats);
-        vk::PresentModeKHR PresentMode = PickPresentMode(Support.presentModes, m_Window->info().vsync);
+        vk::PresentModeKHR PresentMode = PickPresentMode(Support.presentModes, m_RenderMode);
         vk::Extent2D Extent = PickExtent(*m_Window, Support.capabilities);
         mut_u32 ImageCount = Support.capabilities.minImageCount + 1;
         if (Support.capabilities.maxImageCount > 0 && ImageCount > Support.capabilities.maxImageCount) {
