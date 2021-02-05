@@ -40,16 +40,20 @@ namespace Aery {
         }
     }
 
+    bool Window::recreate(const WindowCreateInfo& Info) {
+        destroy();
+        return create(Info);
+    }
+
     bool Window::create(const WindowCreateInfo& Info) {
         if (m_Active) {
             Aery::error(fmt::format("<Window::create> ID {} is already active.", m_ID));
             return false;
         }
 
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, Info.flags & WINDOW_RESIZABLE);
         glfwWindowHint(GLFW_MAXIMIZED, Info.flags & WINDOW_MAXIMIZED);
-        m_VSync = Info.flags & WINDOW_VSYNC;
+        glfwWindowHint(GLFW_CLIENT_API, (Info.flags & WINDOW_GL_CONTEXT) ? GLFW_OPENGL_API : GLFW_NO_API);
 
         GLFWmonitor* Monitor = nullptr;
         int Width   = Info.width,
@@ -96,7 +100,6 @@ namespace Aery {
         WindowInfo Info = {
             m_Handle,
             m_GLSurface,
-            m_VSync,
             m_Width,
             m_Height
         };

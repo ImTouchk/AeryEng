@@ -11,6 +11,7 @@ namespace Aery {
         WINDOW_FULLSCREEN = 2,
         WINDOW_RESIZABLE = 4,
         WINDOW_MAXIMIZED = 6,
+        WINDOW_GL_CONTEXT = 8,
     };
 
     struct WindowCreateInfo {
@@ -23,7 +24,6 @@ namespace Aery {
     struct WindowInfo {
         GLFWwindow* handle;
         bool& glSurface;
-        bool vsync;
         const u32 width;
         const u32 height;
     };
@@ -34,6 +34,8 @@ namespace Aery {
         
         bool create(const WindowCreateInfo&&) = delete;
         bool create(const WindowCreateInfo&);
+        bool recreate(const WindowCreateInfo&&) = delete;
+        inline bool recreate(const WindowCreateInfo&);
         void destroy();
         void update() const;
 
@@ -54,6 +56,5 @@ namespace Aery {
         mut_u32 m_Height;
         mut_u32 m_Width;
         bool m_GLSurface;
-        bool m_VSync;
     };
 }
