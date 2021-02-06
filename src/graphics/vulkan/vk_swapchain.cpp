@@ -23,20 +23,22 @@ static vk::SurfaceFormatKHR& PickSurfaceFormat(vector<vk::SurfaceFormatKHR>& For
     return Formats[0];
 }
 
-static vk::PresentModeKHR PickPresentMode(vector<vk::PresentModeKHR>& Modes, Aery::mut_u16 Preferred) {
+static vk::PresentModeKHR PickPresentMode(vector<vk::PresentModeKHR>& Modes, Aery::Graphics::PresentMode Preferred) {
     if (Modes.size() == 0) {
         Aery::error("<PickPresentMode> No present modes available.");
         return {};
     }
 
     vk::PresentModeKHR PresentMode = {};
+    using namespace Aery::Graphics;
     switch (Preferred) {
-        case Aery::VK_RENDERER_VSYNC: PresentMode = vk::PresentModeKHR::eFifo; break;
-        case Aery::VK_RENDERER_TRIPLE_BUFFERING: PresentMode = vk::PresentModeKHR::eMailbox; break;
-        case Aery::VK_RENDERER_UNCAPPED: return vk::PresentModeKHR::eImmediate; break;
+        case PresentMode::eVsync: PresentMode = vk::PresentModeKHR::eFifo; break;
+        case PresentMode::eTripleBuffering: PresentMode = vk::PresentModeKHR::eMailbox; break;
+        case PresentMode::eImmediate: return vk::PresentModeKHR::eImmediate; break;
+        default: PresentMode = vk::PresentModeKHR::eMailbox; break;
     }
 
-    for (Aery::mut_u32 i = 0; i < Modes.size(); i++) {
+    for (Aery::mut_u16 i = 0; i < Modes.size(); i++) {
         if (Modes[i] == PresentMode) {
             return Modes[i];
         }
@@ -46,7 +48,7 @@ static vk::PresentModeKHR PickPresentMode(vector<vk::PresentModeKHR>& Modes, Aer
     return vk::PresentModeKHR::eImmediate;
 }
 
-static vk::Extent2D PickExtent(const Aery::Window& Surface, const vk::SurfaceCapabilitiesKHR& Capabilities) {
+static vk::Extent2D PickExtent(const Aery::Graphics::Window& Surface, const vk::SurfaceCapabilitiesKHR& Capabilities) {
     if (Capabilities.currentExtent.width != UINT32_MAX &&
         Capabilities.currentExtent.width != 0) {
         return Capabilities.currentExtent;
@@ -62,11 +64,11 @@ static vk::Extent2D PickExtent(const Aery::Window& Surface, const vk::SurfaceCap
     return ActualExtent;
 }
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     bool VkRenderer::CreateSwapchain(bool PreviousExists) {
         VkSwapchainSupportDetails Support = QuerySwapSupport(m_PhysicalDevice, m_Surface);
         vk::SurfaceFormatKHR Format = PickSurfaceFormat(Support.formats);
-        vk::PresentModeKHR PresentMode = PickPresentMode(Support.presentModes, m_RenderMode);
+        vk::PresentModeKHR PresentMode = PickPresentMode(Support.presentModes, m_PresentMode);
         vk::Extent2D Extent = PickExtent(*m_Window, Support.capabilities);
         mut_u32 ImageCount = Support.capabilities.minImageCount + 1;
         if (Support.capabilities.maxImageCount > 0 && ImageCount > Support.capabilities.maxImageCount) {
@@ -142,7 +144,7 @@ namespace Aery {
         m_Swapchain.views.resize(
             m_Swapchain.images.size()
         );
-        for (mut_u32 i = 0; i < m_Swapchain.images.size(); i++) {
+        for (mut_u16 i = 0; i < m_Swapchain.images.size(); i++) {
             vk::ImageViewCreateInfo ViewInfo = {
                 .image = m_Swapchain.images[i],
                 .viewType = vk::ImageViewType::e2D,
@@ -172,7 +174,7 @@ namespace Aery {
     }
 
     void VkRenderer::DestroyImageViews() {
-        for (mut_u32 i = 0; i < m_Swapchain.views.size(); i++) {
+        for (mut_u16 i = 0; i < m_Swapchain.views.size(); i++) {
             if (!m_Swapchain.views[i]) {
                 continue;
             }
@@ -180,4 +182,5 @@ namespace Aery {
         }
         Aery::log(fmt::format("<VkRenderer::DestroyImageViews> Destroyed all views.", m_ID));
     }
+}
 }

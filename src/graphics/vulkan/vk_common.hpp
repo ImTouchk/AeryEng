@@ -5,7 +5,7 @@
 #include <optional>
 #include <vector>
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     struct VkQueueFamilyIndices {
         std::optional<mut_u32> gFamily;
         std::optional<mut_u32> pFamily;
@@ -25,7 +25,6 @@ namespace Aery {
     bool CreateVulkanSurface(Window&);
     void DestroyVulkanSurface(Window&);
     bool CheckLayerSupport(std::vector<const char*>&);
-    std::array<const char*, 2> GetInstanceExtensions();
     std::vector<const char*> GetRequiredExtensions(bool);
     vk::DebugUtilsMessengerCreateInfoEXT EmptyDMCInfo();
 
@@ -38,4 +37,5 @@ namespace Aery {
         vk::PhysicalDevice&,
         vk::SurfaceKHR& 
     );
+}
 }

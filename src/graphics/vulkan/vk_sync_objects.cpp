@@ -1,6 +1,5 @@
 #include "utils/debug.hpp"
 #include "utils/types.hpp"
-#include "graphics/vk_shader.hpp"
 #include "graphics/vulkan/vk_common.hpp"
 #include "graphics/vk_renderer.hpp"
 #include <vulkan/vulkan.hpp>
@@ -9,7 +8,7 @@
 
 using namespace std;
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     bool VkRenderer::CreateSyncObjects() {
         m_ImageAvailable.resize(MAX_FRAMES_IN_FLIGHT);
         m_RenderFinished.resize(MAX_FRAMES_IN_FLIGHT);
@@ -39,4 +38,5 @@ namespace Aery {
         m_InFlightFences.clear(); m_ImagesInFlight.clear();
         Aery::log(fmt::format("<VkRenderer::DestroySyncObjects> ID {} destroyed all objects.", m_ID));
     }
+}
 }

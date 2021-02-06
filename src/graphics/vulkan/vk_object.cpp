@@ -1,7 +1,5 @@
 #include "utils/debug.hpp"
 #include "utils/types.hpp"
-#include "graphics/vk_shader.hpp"
-#include "graphics/vk_object.hpp"
 #include "graphics/vk_renderer.hpp"
 #include <vulkan/vulkan.hpp>
 #include <vk_mem_alloc.h>
@@ -12,11 +10,11 @@ using namespace std;
 static Aery::mut_u32 Index = 1;
 static mutex ListMutex = {};
 
-namespace Aery {
-    bool VkRenderer::createObject(VkObjectCreateInfo& Input, PVkObject* Output) {
+namespace Aery { namespace Graphics {
+    bool VkRenderer::createObject(ObjectCreateInfo& Input, PObject* Output) {
         auto CreateIndexBuffer = [&](VkObject& Object) {
             vk::BufferCreateInfo TempBufferInfo = {
-                .size = sizeof(Object.index.list[0]) * Object.index.list.size(),
+                .size = sizeof(Object.indices[0]) * Object.indices.size(),
                 .usage = vk::BufferUsageFlagBits::eIndexBuffer
             };
 
@@ -31,7 +29,7 @@ namespace Aery {
 
             void* IndexData;
             vmaMapMemory(m_Allocator, TempAllocation, &IndexData);
-            memcpy(IndexData, Object.index.list.data(), (size_t)TempBufferInfo.size);
+            memcpy(IndexData, Object.indices.data(), (size_t)TempBufferInfo.size);
             vmaUnmapMemory(m_Allocator, TempAllocation);
 
             AllocateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
@@ -71,14 +69,13 @@ namespace Aery {
 
             Object.index.allocation = Allocation;
             Object.index.buffer = static_cast<vk::Buffer>(Buffer);
-            Object.index.size = static_cast<vk::DeviceSize>(TempBufferInfo.size);
             vmaDestroyBuffer(m_Allocator, TempBuffer, TempAllocation);
         };
 
         auto CreateVertexBuffer = [&](VkObject& Object) {
             //
             vk::BufferCreateInfo TempBufferInfo = {
-                .size = sizeof(Object.vertex.list[0]) * Object.vertex.list.size(),
+                .size = sizeof(Object.vertices[0]) * Object.vertices.size(),
                 .usage = vk::BufferUsageFlagBits::eVertexBuffer
             };
 
@@ -94,7 +91,7 @@ namespace Aery {
 
             void* VertexData;
             vmaMapMemory(m_Allocator, TempAllocation, &VertexData);
-            memcpy(VertexData, Object.vertex.list.data(), (size_t)TempBufferInfo.size);
+            memcpy(VertexData, Object.vertices.data(), (size_t)TempBufferInfo.size);
             vmaUnmapMemory(m_Allocator, TempAllocation);
 
             // Create actual buffer
@@ -145,10 +142,10 @@ namespace Aery {
             Index++;
         ListMutex.unlock();
 
-        m_Objects[ID].index.list = Input.indices;
-        m_Objects[ID].vertex.list = Input.vertices;
-        if (Input.shader == 0) {
-            createDefaultShader(&m_Objects[ID].shader);
+        m_Objects[ID].indices = Input.indices;
+        m_Objects[ID].vertices = Input.vertices;
+        if (Input.shaders.empty()) {
+            createDefaultShader(m_Objects[ID].shaders[0]);
         }
         CreateVertexBuffer(m_Objects[ID]);
         CreateIndexBuffer(m_Objects[ID]);
@@ -161,9 +158,10 @@ namespace Aery {
         return true;
     }
 
-    void VkRenderer::destroyObject(PVkObject Input) {
-        VkObject& Object = m_Objects[Input];
-
+    void VkRenderer::destroyObject(PObject Input) {
+        assert(m_Objects.contains(Input));
+        VkObject& Object = m_Objects[static_cast<mut_u16>(Input)];
+        
         vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Object.vertex.buffer), Object.vertex.allocation);
         vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Object.index.buffer), Object.index.allocation);
         ListMutex.lock();
@@ -187,4 +185,5 @@ namespace Aery {
 
         ListMutex.unlock();
     }
+}
 }

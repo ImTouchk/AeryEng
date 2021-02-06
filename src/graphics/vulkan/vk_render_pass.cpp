@@ -8,7 +8,7 @@
 
 using namespace std;
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     bool VkRenderer::CreateRenderPass() {
         vk::AttachmentDescription ColorAttachment = {
             .format = m_Swapchain.format,
@@ -64,4 +64,5 @@ namespace Aery {
         m_Device.destroyRenderPass(m_RenderPass);
         Aery::log(fmt::format("<VkRenderer::DestroyRenderPass> ID {} destroyed a render pass.", m_ID));
     }
+}
 }

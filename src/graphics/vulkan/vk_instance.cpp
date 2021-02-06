@@ -9,9 +9,9 @@
 
 using namespace std;
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     bool VkRenderer::CreateInstance() {
-        vector<const char*> Extensions = GetRequiredExtensions(m_UseLayers);
+        vector<const char*> Extensions = GetRequiredExtensions(m_States.useLayers);
         if (strcmp(Extensions[0], "NOT_AVAILABLE") == 0) {
             return false;
         }
@@ -32,7 +32,7 @@ namespace Aery {
 
         };
 
-        if (m_UseLayers && CheckLayerSupport(m_Layers)) {
+        if (m_States.useLayers && CheckLayerSupport(m_Layers)) {
             vk::DebugUtilsMessengerCreateInfoEXT DebugInfo = EmptyDMCInfo();
             InstInfo.enabledLayerCount = static_cast<u32>(m_Layers.size());
             InstInfo.ppEnabledLayerNames = m_Layers.data();
@@ -52,4 +52,5 @@ namespace Aery {
         m_Instance.destroy();
         Aery::log(fmt::format("<VkRenderer::DestroyInstance> ID {} destroyed an instance.", m_ID));
     }
+}
 }

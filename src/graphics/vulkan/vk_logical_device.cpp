@@ -10,7 +10,7 @@
 
 using namespace std;
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     bool VkRenderer::CreateLogicalDevice() {
         const VkQueueFamilyIndices Indices = FindQueueFamilies(m_PhysicalDevice, m_Surface);
         vector<vk::DeviceQueueCreateInfo> QueueInfos = {};
@@ -40,7 +40,7 @@ namespace Aery {
             .pEnabledFeatures = &Features,
         };
 
-        if (m_LayersUsed) {
+        if (m_States.layersUsed) {
             DeviceInfo.enabledLayerCount = static_cast<u32>(m_Layers.size());
             DeviceInfo.ppEnabledLayerNames = m_Layers.data();
         }
@@ -61,4 +61,5 @@ namespace Aery {
         m_Device.destroy();
         Aery::log(fmt::format("<VkRenderer::DestroyLogicalDevice> ID {} destroyed a logical device.", m_ID));
     }
+}
 }

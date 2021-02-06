@@ -74,6 +74,10 @@ namespace Aery {
         m_CommandBuffers[i].setScissor(0, 1, &m_Scissor);
         for (auto& Object_ : m_Objects) {
             VkObject& Object = Object_.second;
+
+            if (Object.shader == 0)
+                continue;
+
             VkShader& Shader = m_Shaders[Object.shader];
 
             vk::Buffer VertexBuffers[] = { Object.vertex.buffer };
@@ -81,7 +85,7 @@ namespace Aery {
 
             mat4& Transform = Object.push_constant.transform;
             Transform = { 1.0f };
-
+             
             m_CommandBuffers[i].bindVertexBuffers(0, 1, VertexBuffers, Offsets);
             m_CommandBuffers[i].bindIndexBuffer(Object.index.buffer, 0, vk::IndexType::eUint16);
             m_CommandBuffers[i].bindPipeline(vk::PipelineBindPoint::eGraphics, Shader.pipeline);

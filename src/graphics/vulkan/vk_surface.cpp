@@ -7,7 +7,7 @@
 
 using namespace std;
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     bool VkRenderer::CreateSurface() {
         VkSurfaceKHR Surface = VK_NULL_HANDLE;
         VkResult Result = glfwCreateWindowSurface(static_cast<VkInstance>(m_Instance), m_Window->info().handle, nullptr, &Surface);  
@@ -25,4 +25,5 @@ namespace Aery {
         vkDestroySurfaceKHR(static_cast<VkInstance>(m_Instance), static_cast<VkSurfaceKHR>(m_Surface), nullptr);
         Aery::log(fmt::format("<VkRenderer::DestroySurface> ID {} destroyed a surface.", m_ID));
     }
+}
 }

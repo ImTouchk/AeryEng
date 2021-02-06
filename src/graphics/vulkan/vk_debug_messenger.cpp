@@ -6,11 +6,11 @@
 #include <vulkan/vulkan.h>
 #include <fmt/core.h>
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     bool VkRenderer::SetupDM() {
-        if (!m_UseLayers) {
+        if (!m_States.useLayers) {
             Aery::log(fmt::format("<VkRenderer::SetupDM> ID {} is not using debug layers.", m_ID));
-            m_LayersUsed = false;
+            m_States.layersUsed = 0;
             return false;
         }
 
@@ -27,18 +27,18 @@ namespace Aery {
         }
         if (Result != VK_SUCCESS) {
             Aery::warn(fmt::format("<VkRenderer::SetupDM> ID {} failed to set up a debug messenger.", m_ID));
-            m_LayersUsed = false;
+            m_States.layersUsed = 0;
             return false;
         }
 
         m_DebugMessenger = static_cast<vk::DebugUtilsMessengerEXT>(DMessenger);
-        m_LayersUsed = true;
+        m_States.layersUsed = 1;
         Aery::log(fmt::format("<VkRenderer::SetupDM> ID {} set up a debug messenger.", m_ID), fmt::color::light_green);
         return true;
     }
 
     void VkRenderer::DestroyDM() {
-        if (!m_LayersUsed) {
+        if (!m_States.layersUsed) {
             return;
         }
         auto Function = (PFN_vkDestroyDebugUtilsMessengerEXT)
@@ -48,4 +48,5 @@ namespace Aery {
         }
         Aery::log(fmt::format("<VkRenderer::DestroyDM> ID {} destroyed a debug messenger.", m_ID));
     }
+}
 }

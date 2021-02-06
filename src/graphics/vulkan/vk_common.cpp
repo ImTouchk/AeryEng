@@ -26,7 +26,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback
 }
 
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     vk::DebugUtilsMessengerCreateInfoEXT EmptyDMCInfo() {
         using SFlags = vk::DebugUtilsMessageSeverityFlagBitsEXT;
         using MTFlags = vk::DebugUtilsMessageTypeFlagBitsEXT;
@@ -138,4 +138,5 @@ namespace Aery {
         }
         return true;
     }
+}
 }

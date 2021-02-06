@@ -51,8 +51,8 @@ static Aery::u32 GetDeviceScore(vk::PhysicalDevice& PhysDevice, vk::SurfaceKHR& 
         }
     }
     
-    Aery::VkQueueFamilyIndices Indices = Aery::FindQueueFamilies(PhysDevice, Surface);
-    Aery::VkSwapchainSupportDetails Support = Aery::QuerySwapSupport(PhysDevice, Surface);
+    Aery::Graphics::VkQueueFamilyIndices Indices = Aery::Graphics::FindQueueFamilies(PhysDevice, Surface);
+    Aery::Graphics::VkSwapchainSupportDetails Support = Aery::Graphics::QuerySwapSupport(PhysDevice, Surface);
     bool SwapAdequate = !Support.formats.empty() && !Support.presentModes.empty();
     bool Adequate = Indices.isComplete() && SwapAdequate;
     if (!Adequate) {
@@ -61,7 +61,7 @@ static Aery::u32 GetDeviceScore(vk::PhysicalDevice& PhysDevice, vk::SurfaceKHR& 
     return Score;
 }
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     bool VkRenderer::PickPhysicalDevice() {
         mut_u32 DeviceCount = 0;
         vk::Result Result = m_Instance.enumeratePhysicalDevices(&DeviceCount, nullptr);
@@ -101,4 +101,5 @@ namespace Aery {
         m_PhysicalDevice = *Best.first;
         return true;
     }
+}
 }

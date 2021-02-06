@@ -8,7 +8,7 @@
 
 using namespace std;
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     bool VkRenderer::CreateFramebuffers() {
         m_Swapchain.buffers.resize(m_Swapchain.views.size());
         for (mut_u32 i = 0; i < m_Swapchain.views.size(); i++) {
@@ -43,4 +43,5 @@ namespace Aery {
         Aery::log(fmt::format("<VkRenderer::DestroyFramebuffers> ID {} destroyed {} framebuffers.", m_ID, m_Swapchain.buffers.size()));
         m_Swapchain.buffers.clear();
     }
+}
 }

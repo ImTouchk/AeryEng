@@ -6,7 +6,7 @@
 
 using namespace std;
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     bool VkRenderer::CreateAllocator() {
         VmaAllocatorCreateInfo AllocatorInfo = {
             .physicalDevice = static_cast<VkPhysicalDevice>(m_PhysicalDevice),
@@ -28,4 +28,5 @@ namespace Aery {
         vmaDestroyAllocator(m_Allocator);
         Aery::log(fmt::format("<VkRenderer::DestroyAllocator> ID {} destroyed an allocator.", m_ID));
     }
+}
 }
