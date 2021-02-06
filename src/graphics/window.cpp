@@ -1,6 +1,5 @@
 #include "utils/debug.hpp"
 #include "utils/types.hpp"
-#include "graphics/gl_renderer.hpp"
 #include "graphics/vk_renderer.hpp"
 #include "graphics/window.hpp"
 #include <fmt/color.h>
