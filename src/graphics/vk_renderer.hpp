@@ -1,56 +1,48 @@
 #pragma once
 
 #include "utils/types.hpp"
+#include "graphics/rn_common.hpp"
 #include <vulkan/vulkan.hpp>
 #include <vk_mem_alloc.h> 
 #include <unordered_map>
 #include <vector>
 
-namespace Aery {
-    using PVkShader = mut_u32;
-    using PVkObject = mut_u32;
-
-    class Window;
-    class VkObject;
-    struct VkShader;
-    struct VkShaderCreateInfo;
-    struct VkObjectCreateInfo;
-    
-    enum VkRendererCreateFlags {
-        VK_RENDERER_VSYNC = 2,
-        VK_RENDERER_TRIPLE_BUFFERING = 4,
-        VK_RENDERER_UNCAPPED = 5
+namespace Aery { namespace Graphics {
+    class VkShader : public Shader { public:
+        vk::PipelineLayout layout;
+        vk::PipelineCache cache;
+        vk::Pipeline pipeline;
     };
 
-    struct VkRendererCreateInfo {
-        Window* window = nullptr;
-        mut_u16 render_mode = VK_RENDERER_VSYNC;
+    class VkObject : public Object { public:
+        struct ObjectBuffer {
+            VmaAllocation allocation;
+            vk::Buffer buffer;
+        } vertex, index;
     };
 
     class VkRenderer {
     public:
         VkRenderer(); ~VkRenderer();
 
-        bool create(VkRendererCreateInfo&&) = delete;
-        bool create(VkRendererCreateInfo&);
+        bool create(RendererCreateInfo&&) = delete;
+        bool create(RendererCreateInfo&);
         void destroy();
         void draw();
         
         // Object methods
 
-        VkObject& getObjectByID(u32);
-        bool createDefaultObject(PVkObject*);
-        bool createObject(VkObjectCreateInfo&&, PVkObject*) = delete;
-        bool createObject(VkObjectCreateInfo&, PVkObject*);
-        void destroyObject(PVkObject);
+        bool createDefaultObject(PObject*);
+        bool createObject(ObjectCreateInfo&&, PObject*) = delete;
+        bool createObject(ObjectCreateInfo&, PObject*);
+        void destroyObject(PObject);
 
         // Shader methods
 
-        VkShader& getShaderByID(u32);
-        bool createDefaultShader(PVkShader*);
-        bool createShader(VkShaderCreateInfo&&, PVkShader*) = delete;
-        bool createShader(VkShaderCreateInfo&, PVkShader*);
-        void destroyShader(PVkShader);
+        bool createDefaultShader(PShader*);
+        bool createShader(ShaderCreateInfo&&, PShader*) = delete;
+        bool createShader(ShaderCreateInfo&, PShader*);
+        void destroyShader(PShader);
 
         // Events
 
@@ -87,14 +79,18 @@ namespace Aery {
 
         // Variables
 
+        struct {
+            char useLayers : 1;
+            char layersUsed : 1;
+            char minimized : 1;
+            char active : 1;
+        } m_States;
+        PresentMode m_PresentMode = PresentMode::eAny;
         Window* m_Window = nullptr;
-        bool m_LayersUsed = false;
-        bool m_Minimized = false;
-        bool m_UseLayers = true;
-        bool m_Active = false;
-        u32 m_ID = -1;
+        mut_u16 m_ID = -1;
 
-        mut_u16 m_RenderMode = VK_RENDERER_VSYNC;
+        std::unordered_map<mut_u16, VkShader> m_Shaders = {};
+        std::unordered_map<mut_u16, VkObject> m_Objects = {};
 
         vk::Instance m_Instance;
         vk::DebugUtilsMessengerEXT m_DebugMessenger;
@@ -130,7 +126,7 @@ namespace Aery {
         std::vector<vk::Fence> m_InFlightFences = {};
         mut_u16 m_CurrentFrame = 0;
 
-        u32 MAX_FRAMES_IN_FLIGHT = 2;
+        u16 MAX_FRAMES_IN_FLIGHT = 2;
 
         std::vector<const char*> m_Extensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
@@ -139,8 +135,6 @@ namespace Aery {
         std::vector<const char*> m_Layers = {
             "VK_LAYER_KHRONOS_validation"
         };
-
-        std::unordered_map<mut_u32, VkShader> m_Shaders = {};
-        std::unordered_map<mut_u32, VkObject> m_Objects = {};
     };
+}
 }

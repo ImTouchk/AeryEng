@@ -10,32 +10,24 @@
 
 using namespace std;
 
-static vector<Aery::Window*> Windows = {};
-static Aery::mut_u32 Index = 0;
-static mutex Mutex = {};
-
-static void OnWindowResize(GLFWwindow* Window, int Width, int Height) {
-    Aery::Window* Current = reinterpret_cast<Aery::Window*>(glfwGetWindowUserPointer(Window));
-    Current->_onResize((Aery::u32)Width, (Aery::u32)Height);
+namespace {
+    Aery::mut_u16 Index = 1;
+    mutex Mutex = {};
 }
 
-namespace Aery {
-    Window::Window() : m_ID(Index) {
-        Mutex.lock();
-        Windows.push_back(this);
-        Index++;
-        Mutex.unlock();
+static void OnWindowResize(GLFWwindow* Window, int Width, int Height) {
+    Aery::Graphics::Window* Current = reinterpret_cast<Aery::Graphics::Window*>(glfwGetWindowUserPointer(Window));
+    Current->_onResize(static_cast<Aery::mut_u16>(Width), static_cast<Aery::mut_u16>(Height));
+}
 
+namespace Aery { namespace Graphics {
+    Window::Window() : m_ID(Index) {
+        Mutex.lock(); Index++; Mutex.unlock();
         m_Active = false;
         m_Created = false;
     }
 
     Window::~Window() {
-        Mutex.lock();
-        Windows.erase(
-            Windows.begin() + m_ID
-        );
-        Mutex.unlock();
         if (m_Created) {
             destroy();
         }
@@ -52,11 +44,11 @@ namespace Aery {
             return false;
         }
 
-        glfwWindowHint(GLFW_RESIZABLE, Info.flags & WINDOW_RESIZABLE);
-        glfwWindowHint(GLFW_MAXIMIZED, Info.flags & WINDOW_MAXIMIZED);
+        glfwWindowHint(GLFW_RESIZABLE, Info.flags & WindowCreateFlags::eResizable);
+        glfwWindowHint(GLFW_MAXIMIZED, Info.flags & WindowCreateFlags::eMaximized);
 
-        glfwWindowHint(GLFW_CLIENT_API, (Info.flags & WINDOW_GL_CONTEXT) ? GLFW_OPENGL_API : GLFW_NO_API);
-        if (Info.flags & WINDOW_GL_CONTEXT) {
+        glfwWindowHint(GLFW_CLIENT_API, (Info.flags & WindowCreateFlags::eGLContext) ? GLFW_OPENGL_API : GLFW_NO_API);
+        if (Info.flags & WindowCreateFlags::eGLContext) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -66,13 +58,19 @@ namespace Aery {
         GLFWmonitor* Monitor = nullptr;
         int Width   = Info.width,
             Height  = Info.height;
-        if (Info.flags & WINDOW_FULLSCREEN) {
+        if (Info.flags & WindowCreateFlags::eFullscreen) {
             Monitor = glfwGetPrimaryMonitor();
             const GLFWvidmode* Mode = glfwGetVideoMode(Monitor);
             Width = Mode->width; Height = Mode->height;
         }
 
-        m_Handle = glfwCreateWindow(Width, Height, Info.title, Monitor, nullptr);
+        m_Handle = glfwCreateWindow(
+            static_cast<int>(Width), 
+            static_cast<int>(Height), 
+            Info.title, 
+            Monitor, 
+            nullptr
+        );
         m_Width = Info.width; m_Height = Info.height;
 
         if (m_Handle == NULL) {
@@ -111,17 +109,15 @@ namespace Aery {
         WindowInfo Info = {
             m_Handle,
             m_GLSurface,
-            m_Width,
-            m_Height
         };
         return Info;
     }
 
-    const u32 Window::width() const {
+    const u16 Window::width() const {
         return m_Width;
     }
 
-    const u32 Window::height() const {
+    const u16 Window::height() const {
         return m_Height;
     }
 
@@ -130,24 +126,23 @@ namespace Aery {
         return m_Active;
     }
 
-    void Window::_onResize(const u32 Width, const u32 Height) {
+    void Window::_onResize(u16 Width, u16 Height) {
         m_Width = Width; m_Height = Height;
         switch (m_Renderer) {
-            case WINDOW_RENDERER_OPENGL: m_GLRenderer->_onResize();
-            case WINDOW_RENDERER_VULKAN: m_VkRenderer->_onResize();
+            case WindowRenderer::eOpenGL: m_GLRenderer->_onResize();
+            case WindowRenderer::eVulkan: m_VkRenderer->_onResize();
             default: break;
         }
     }
 
-    void Window::_onVulkanCreated(VkRenderer& Renderer) {
-        assert(m_Renderer == WINDOW_RENDERER_OPENGL);
-        m_Renderer = WINDOW_RENDERER_VULKAN;
+    void Window::_onVulkanCreated(Graphics::VkRenderer& Renderer) {
+        m_Renderer = WindowRenderer::eVulkan;
         m_VkRenderer = &Renderer;
     }
 
-    void Window::_onGLCreated(GLRenderer& Renderer) {
-        assert(m_Renderer == WINDOW_RENDERER_VULKAN);
-        m_Renderer = WINDOW_RENDERER_OPENGL;
+    void Window::_onGLCreated(Graphics::GLRenderer& Renderer) {
+        m_Renderer = WindowRenderer::eOpenGL;
         m_GLRenderer = &Renderer;
     }
+}
 }

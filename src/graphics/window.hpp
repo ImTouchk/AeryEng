@@ -3,35 +3,41 @@
 #include "utils/types.hpp"
 #include <GLFW/glfw3.h>
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     class VkRenderer;
     class GLRenderer;
 
-    enum WindowCreateFlags {
-        WINDOW_VSYNC = 1,
-        WINDOW_FULLSCREEN = 2,
-        WINDOW_RESIZABLE = 4,
-        WINDOW_MAXIMIZED = 6,
-        WINDOW_GL_CONTEXT = 8,
+    enum class WindowCreateFlags : mut_u16 {
+        eVsync = 0,
+        eFullscreen = 1 << 0,
+        eResizable = 1 << 1,
+        eMaximized = 1 << 2,
+        eGLContext = 1 << 3,
     };
 
-    enum WindowRenderer {
-        WINDOW_RENDERER_OPENGL = 1,
-        WINDOW_RENDERER_VULKAN = 2
+    WindowCreateFlags operator|(WindowCreateFlags a, WindowCreateFlags b) {
+        return static_cast<WindowCreateFlags>(static_cast<mut_u16>(a) | static_cast<mut_u16>(b));
+    }
+    bool operator&(WindowCreateFlags a, WindowCreateFlags b) {
+        return static_cast<bool>(static_cast<mut_u16>(a) & static_cast<mut_u16>(b));
+    }
+
+    enum class WindowRenderer : mut_u16 {
+        eNone = 0,
+        eOpenGL = 1 << 0,
+        eVulkan = 1 << 1
     };
 
     struct WindowCreateInfo {
         const char* title = "Untitled Window";
-        const u32 width;
-        const u32 height;
-        const u16 flags;
+        const WindowCreateFlags flags;
+        const u16 width;
+        const u16 height;
     };
 
     struct WindowInfo {
         GLFWwindow* handle;
         bool& glSurface;
-        const u32 width;
-        const u32 height;
     };
 
     class Window {
@@ -46,24 +52,25 @@ namespace Aery {
         void update() const;
 
         WindowInfo info();
-        const u32 width() const;
-        const u32 height() const;
+        const u16 width() const;
+        const u16 height() const;
         const bool active();
 
-        void _onResize(const u32, const u32);
-        void _onVulkanCreated(VkRenderer&);
-        void _onGLCreated(GLRenderer&);
+        void _onResize(u16, u16);
+        void _onVulkanCreated(Graphics::VkRenderer&);
+        void _onGLCreated(Graphics::GLRenderer&);
 
     private:
-        u32 m_ID;
         bool m_Created;
-        mutable bool m_Active;
-        VkRenderer* m_VkRenderer = nullptr;
-        GLRenderer* m_GLRenderer = nullptr;
-        GLFWwindow* m_Handle;
-        mut_u16 m_Renderer = 0;
-        mut_u32 m_Height;
-        mut_u32 m_Width;
         bool m_GLSurface;
+        mutable bool m_Active;
+        Graphics::VkRenderer* m_VkRenderer = nullptr;
+        Graphics::GLRenderer* m_GLRenderer = nullptr;
+        WindowRenderer m_Renderer = WindowRenderer::eNone;
+        GLFWwindow* m_Handle;
+        mut_u16 m_Height;
+        mut_u16 m_Width;
+        mut_u16 m_ID;
     };
+}
 }
