@@ -89,9 +89,6 @@
     <ClInclude Include="src\graphics\vk_renderer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vk_shader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\graphics\window.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -110,16 +107,10 @@
     <ClInclude Include="inc\GLFW\glfw3native.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\vk_object.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\math\vec2.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\math\vec3.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\graphics\vk_uniform_buffer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\math\vec4.hpp">
@@ -128,7 +119,7 @@
     <ClInclude Include="src\math\mat4.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\graphics\gl_renderer.hpp">
+    <ClInclude Include="src\graphics\rn_common.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
