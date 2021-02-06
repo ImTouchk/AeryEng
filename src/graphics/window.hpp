@@ -15,12 +15,8 @@ namespace Aery { namespace Graphics {
         eGLContext = 1 << 3,
     };
 
-    WindowCreateFlags operator|(WindowCreateFlags a, WindowCreateFlags b) {
-        return static_cast<WindowCreateFlags>(static_cast<mut_u16>(a) | static_cast<mut_u16>(b));
-    }
-    bool operator&(WindowCreateFlags a, WindowCreateFlags b) {
-        return static_cast<bool>(static_cast<mut_u16>(a) & static_cast<mut_u16>(b));
-    }
+    WindowCreateFlags operator|(WindowCreateFlags a, WindowCreateFlags b);
+    bool operator&(WindowCreateFlags a, WindowCreateFlags b);
 
     enum class WindowRenderer : mut_u16 {
         eNone = 0,

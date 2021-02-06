@@ -129,7 +129,7 @@ namespace Aery { namespace Graphics {
     void Window::_onResize(u16 Width, u16 Height) {
         m_Width = Width; m_Height = Height;
         switch (m_Renderer) {
-            case WindowRenderer::eOpenGL: m_GLRenderer->_onResize();
+            //case WindowRenderer::eOpenGL: m_GLRenderer->_onResize();
             case WindowRenderer::eVulkan: m_VkRenderer->_onResize();
             default: break;
         }
@@ -143,6 +143,14 @@ namespace Aery { namespace Graphics {
     void Window::_onGLCreated(Graphics::GLRenderer& Renderer) {
         m_Renderer = WindowRenderer::eOpenGL;
         m_GLRenderer = &Renderer;
+    }
+
+    bool operator&(WindowCreateFlags a, WindowCreateFlags b) {
+        return static_cast<bool>(static_cast<mut_u16>(a) & static_cast<mut_u16>(b));
+    }
+
+    WindowCreateFlags operator|(WindowCreateFlags a, WindowCreateFlags b) {
+        return static_cast<WindowCreateFlags>(static_cast<mut_u16>(a) | static_cast<mut_u16>(b));
     }
 }
 }

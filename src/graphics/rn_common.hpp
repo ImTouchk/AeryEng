@@ -35,7 +35,7 @@ namespace Aery {
         public:
             std::vector<Vertex> vertices;
             std::vector<mut_u16> indices;
-            std::vector<Shader> shaders;
+            std::vector<PShader> shaders;
             PushConstant push_constant;
             mut_u16 id;
 

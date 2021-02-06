@@ -92,6 +92,7 @@ namespace Aery { namespace Graphics {
         DestroySurface();
         DestroyDM();
         DestroyInstance();
+        m_States.active = 0;
     }
 
     void VkRenderer::_onResize() {
