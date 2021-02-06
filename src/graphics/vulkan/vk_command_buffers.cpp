@@ -1,8 +1,6 @@
 #include "utils/debug.hpp"
 #include "utils/types.hpp"
 #include "math/mat4.hpp"
-#include "graphics/vk_shader.hpp"
-#include "graphics/vk_object.hpp"
 #include "graphics/vulkan/vk_common.hpp"
 #include "graphics/vk_renderer.hpp"
 #include <vulkan/vulkan.hpp>
@@ -11,7 +9,7 @@
 
 using namespace std;
 
-namespace Aery {
+namespace Aery { namespace Graphics {
     bool VkRenderer::CreateCommandPool() {
         VkQueueFamilyIndices Indices = FindQueueFamilies(m_PhysicalDevice, m_Surface);
         
@@ -75,10 +73,10 @@ namespace Aery {
         for (auto& Object_ : m_Objects) {
             VkObject& Object = Object_.second;
 
-            if (Object.shader == 0)
+            if (Object.shaders.empty())
                 continue;
 
-            VkShader& Shader = m_Shaders[Object.shader];
+            VkShader& Shader = m_Shaders[Object.shaders[0]];
 
             vk::Buffer VertexBuffers[] = { Object.vertex.buffer };
             vk::DeviceSize Offsets[] = { 0 };
@@ -95,10 +93,11 @@ namespace Aery {
                 sizeof(VkObject::push_constant), 
                 &Object.push_constant
             );
-            m_CommandBuffers[i].drawIndexed(static_cast<mut_u32>(Object.index.list.size()), 1, 0, 0, 0);
+            m_CommandBuffers[i].drawIndexed(static_cast<mut_u32>(Object.indices.size()), 1, 0, 0, 0);
         }
         m_CommandBuffers[i].endRenderPass();
         m_CommandBuffers[i].end();
         return true;
     }
+}
 }

@@ -145,7 +145,7 @@ namespace Aery { namespace Graphics {
         m_Objects[ID].indices = Input.indices;
         m_Objects[ID].vertices = Input.vertices;
         if (Input.shaders.empty()) {
-            createDefaultShader(m_Objects[ID].shaders[0]);
+            createDefaultShader(&m_Objects[ID].shaders[0]);
         }
         CreateVertexBuffer(m_Objects[ID]);
         CreateIndexBuffer(m_Objects[ID]);
