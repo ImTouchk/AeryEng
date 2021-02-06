@@ -7,8 +7,9 @@
 #include <vector>
 
 namespace Aery {
-    class Window;
     namespace Graphics {
+        class Window;
+
         struct Vertex {
             vec3 position;
             vec3 color;
@@ -21,18 +22,6 @@ namespace Aery {
         using PShader = mut_u16;
         using PObject = mut_u16;
 
-        class Object {
-        public:
-            std::vector<Vertex> vertices;
-            std::vector<mut_u16> indices;
-            PushConstant push_constant;
-            mut_u16 id;
-
-            bool operator==(const Object& Other) { 
-                return id == Other.id;
-            }
-        };
-
         class Shader {
         public:
             mut_u16 id;
@@ -42,27 +31,39 @@ namespace Aery {
             }
         };
 
+        class Object {
+        public:
+            std::vector<Vertex> vertices;
+            std::vector<mut_u16> indices;
+            std::vector<Shader> shaders;
+            PushConstant push_constant;
+            mut_u16 id;
+
+            bool operator==(const Object& Other) { 
+                return id == Other.id;
+            }
+        };
+
         struct ObjectCreateInfo {
-            const std::vector<PShader> shaders;
-            const std::vector<Vertex> vertices;
-            const std::vector<mut_u16> indices;
+            std::vector<PShader> shaders;
+            std::vector<Vertex> vertices;
+            std::vector<mut_u16> indices;
         };
 
         struct ShaderCreateInfo {
-            std::string_view vertex_path;
-            std::string_view fragment_path;
+            const char* vertex_path;
+            const char* fragment_path;
         };
 
-        enum class PresentModeBits : mut_u16 {
+        enum class PresentMode : mut_u16 {
             eTripleBuffering = 0,
             eImmediate = 1 << 0,
             eVsync = 1 << 1, 
             eAny = 1 << 2
         };
-        using PresentMode = PresentModeBits;
         struct RendererCreateInfo {
-            const PresentMode present_mode = PresentModeBits::eAny;
-            const Window* window = nullptr;
+            PresentMode present_mode = PresentMode::eAny;
+            Window* window = nullptr;
         };
     }
 }
