@@ -108,14 +108,14 @@ namespace Aery { namespace Graphics {
             AttributeDescriptions[0].offset = offsetof(Vertex, position);
 
             AttributeDescriptions[1].binding = 0;
-            AttributeDescriptions[1].location = 0;
+            AttributeDescriptions[1].location = 1;
             AttributeDescriptions[1].format = vk::Format::eR32G32B32Sfloat;
             AttributeDescriptions[1].offset = offsetof(Vertex, color);
 
             vk::PipelineVertexInputStateCreateInfo VertexInputInfo = {
                 .vertexBindingDescriptionCount = 1,
                 .pVertexBindingDescriptions = &BindingDescription,
-                .vertexAttributeDescriptionCount = AttributeDescriptions.size(),
+                .vertexAttributeDescriptionCount = static_cast<mut_u32>(AttributeDescriptions.size()),
                 .pVertexAttributeDescriptions = AttributeDescriptions.data()
             };
 
