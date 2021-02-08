@@ -70,13 +70,13 @@ namespace Aery { namespace Graphics {
         m_CommandBuffers[i].beginRenderPass(PassBeginInfo, vk::SubpassContents::eInline);
         m_CommandBuffers[i].setViewport(0, 1, &m_Viewport);
         m_CommandBuffers[i].setScissor(0, 1, &m_Scissor);
-        for (auto& Object_ : m_Objects) {
-            VkObject& Object = Object_.second;
-
-            if (Object.shaders.empty())
+        for (auto& Element : m_Objects) {
+            VkObject& Object = Element.second;
+            if (Object.shader == 0) {
                 continue;
+            }
 
-            VkShader& Shader = m_Shaders[Object.shaders[0]];
+            VkShader& Shader = m_Shaders[Object.shader];
 
             vk::Buffer VertexBuffers[] = { Object.vertex.buffer };
             vk::DeviceSize Offsets[] = { 0 };

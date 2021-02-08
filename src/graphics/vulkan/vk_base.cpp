@@ -42,8 +42,11 @@ namespace Aery { namespace Graphics {
             return false;
         }
         m_PresentMode = Input.present_mode;
+        m_Window = Input.window; 
 
-        m_Window = Input.window; m_Window->_onVulkanCreated(*this);
+        m_Objects = vector<pair<bool, VkObject>>(8, { false, {} });
+        m_Shaders = unordered_map<PShader, VkShader>();
+        
         if (!glfwVulkanSupported()) { return false; }
         if (!CreateInstance()) { return false; }
         SetupDM(); // Program runs without it as well
@@ -74,6 +77,7 @@ namespace Aery { namespace Graphics {
         };
 
         m_States.active = true;
+        m_Window->_onVulkanCreated(*this);
         return true;
     }
 
@@ -139,10 +143,10 @@ namespace Aery { namespace Graphics {
             _onResize();
         }
 
-        m_Device.waitForFences(1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
+        vk::Result Result = m_Device.waitForFences(1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
 
         mut_u32 ImageIndex = 0;
-        vk::Result Result = m_Device.acquireNextImageKHR(
+        Result = m_Device.acquireNextImageKHR(
             m_Swapchain.instance, 
             UINT64_MAX, 
             m_ImageAvailable[m_CurrentFrame], 

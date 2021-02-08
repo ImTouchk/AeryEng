@@ -65,7 +65,7 @@ static vk::Extent2D PickExtent(const Aery::Graphics::Window& Surface, const vk::
 }
 
 namespace Aery { namespace Graphics {
-    bool VkRenderer::CreateSwapchain(bool PreviousExists) {
+    bool VkRenderer::CreateSwapchain() {
         VkSwapchainSupportDetails Support = QuerySwapSupport(m_PhysicalDevice, m_Surface);
         vk::SurfaceFormatKHR Format = PickSurfaceFormat(Support.formats);
         vk::PresentModeKHR PresentMode = PickPresentMode(Support.presentModes, m_PresentMode);
@@ -137,7 +137,7 @@ namespace Aery { namespace Graphics {
 
     bool VkRenderer::RecreateSwapchain() {
         DestroySwapchain();
-        return CreateSwapchain(true);
+        return CreateSwapchain();
     }
 
     bool VkRenderer::CreateImageViews() {

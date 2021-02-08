@@ -11,7 +11,7 @@
 
 using namespace std;
 
-static Aery::u32 GetDeviceScore(vk::PhysicalDevice& PhysDevice, vk::SurfaceKHR& Surface, const vector<const char*>& Extensions) {
+static Aery::u32 GetDeviceScore(vk::PhysicalDevice& PhysDevice, vk::SurfaceKHR& Surface, const array<const char*, 1>& Extensions) {
     Aery::mut_u32 Score = 0;
     
     Aery::mut_u32 ExtensionCount = 0;
