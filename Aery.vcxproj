@@ -221,6 +221,7 @@
     <ClCompile Include="src\graphics\window.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\utils\debug.cpp" />
+    <ClCompile Include="src\utils\file_io.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\GLFW\glfw3.h" />
@@ -235,6 +236,7 @@
     <ClInclude Include="src\math\vec3.hpp" />
     <ClInclude Include="src\math\vec4.hpp" />
     <ClInclude Include="src\utils\debug.hpp" />
+    <ClInclude Include="src\utils\file_io.hpp" />
     <ClInclude Include="src\utils\types.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
