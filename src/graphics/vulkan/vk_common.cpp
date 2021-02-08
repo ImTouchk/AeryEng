@@ -111,7 +111,7 @@ namespace Aery { namespace Graphics {
         return Extensions;
     }
 
-    bool CheckLayerSupport(vector<const char*>& Layers) {
+    bool CheckLayerSupport(array<const char*, 1>& Layers) {
         Aery::mut_u32 LayerCount = 0;
         vk::Result Result = vk::enumerateInstanceLayerProperties(&LayerCount, nullptr);
         if (Result != vk::Result::eSuccess) {
@@ -136,6 +136,67 @@ namespace Aery { namespace Graphics {
                 return false;
             }
         }
+        return true;
+    }
+    
+    bool CreateGPUBuffer(vk::BufferUsageFlags Flags, void* Data, vk::DeviceSize Size, vk::Device& Device, vk::CommandPool& Pool,
+        VmaAllocator& Allocator, VmaAllocation& Allocation, vk::Queue& GraphicsQ, vk::Buffer& Buffer) {
+        VkBufferCreateInfo BufferInfo = {
+            .flags = static_cast<VkBufferUsageFlags>(Flags),
+            .size = static_cast<VkDeviceSize>(Size),
+        };
+
+        VmaAllocationCreateInfo AllocationInfo = {
+            .usage = VMA_MEMORY_USAGE_CPU_ONLY
+        };
+
+        VmaAllocation CPUAllocation;
+        VkBuffer CPUBuffer;
+        vmaCreateBuffer(Allocator, &BufferInfo, &AllocationInfo, &CPUBuffer, &CPUAllocation, nullptr);
+
+        void* IndexData;
+        vmaMapMemory(Allocator, CPUAllocation, &IndexData);
+        memcpy(IndexData, Data, Size);
+        vmaUnmapMemory(Allocator, CPUAllocation);
+
+        AllocationInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+        VmaAllocation TempAllocation;
+        VkBuffer TempBuffer;
+        vmaCreateBuffer(Allocator, &BufferInfo, &AllocationInfo, &TempBuffer, &TempAllocation, nullptr);
+
+        vk::CommandBufferAllocateInfo CmdAllocInfo = {
+            .commandPool = Pool,
+            .level = vk::CommandBufferLevel::ePrimary,
+            .commandBufferCount = 1,
+        };
+
+        vk::CommandBuffer CmdBuffer = Device.allocateCommandBuffers(CmdAllocInfo)[0];
+        vk::CommandBufferBeginInfo CmdBeginInfo = {
+            .flags = vk::CommandBufferUsageFlagBits::eOneTimeSubmit
+        };
+        CmdBuffer.begin(CmdBeginInfo);
+
+        vk::BufferCopy CopyRegion = {
+            .srcOffset = 0,
+            .dstOffset = 0,
+            .size = BufferInfo.size,
+        };
+        CmdBuffer.copyBuffer(static_cast<vk::Buffer>(CPUBuffer), static_cast<vk::Buffer>(TempBuffer), 1, &CopyRegion);
+        CmdBuffer.end();
+
+        vk::SubmitInfo SubmitInfo = {
+            .commandBufferCount = 1,
+            .pCommandBuffers = &CmdBuffer
+        };
+        vk::Result Result = GraphicsQ.submit(1, &SubmitInfo, {});
+        GraphicsQ.waitIdle();
+        Device.freeCommandBuffers(Pool, 1, &CmdBuffer);
+
+        Buffer = static_cast<vk::Buffer>(TempBuffer);
+        Allocation = TempAllocation;
+
+        vmaDestroyBuffer(Allocator, CPUBuffer, CPUAllocation);
         return true;
     }
 }

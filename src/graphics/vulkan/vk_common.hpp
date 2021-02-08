@@ -2,6 +2,7 @@
 
 #include "utils/types.hpp"
 #include <vulkan/vulkan.hpp>
+#include <vk_mem_alloc.h>
 #include <optional>
 #include <vector>
 
@@ -24,7 +25,7 @@ namespace Aery { namespace Graphics {
     class Window;
     bool CreateVulkanSurface(Window&);
     void DestroyVulkanSurface(Window&);
-    bool CheckLayerSupport(std::vector<const char*>&);
+    bool CheckLayerSupport(std::array<const char*, 1>&);
     std::vector<const char*> GetRequiredExtensions(bool);
     vk::DebugUtilsMessengerCreateInfoEXT EmptyDMCInfo();
 
@@ -36,6 +37,18 @@ namespace Aery { namespace Graphics {
     VkSwapchainSupportDetails& QuerySwapSupport(
         vk::PhysicalDevice&,
         vk::SurfaceKHR& 
+    );
+
+    bool CreateGPUBuffer(
+        vk::BufferUsageFlags,
+        void*,
+        vk::DeviceSize,
+        vk::Device&,
+        vk::CommandPool&,
+        VmaAllocator&,
+        VmaAllocation&,
+        vk::Queue&,
+        vk::Buffer&
     );
 }
 }

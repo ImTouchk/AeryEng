@@ -30,19 +30,9 @@ namespace Aery { namespace Graphics {
         void destroy();
         void draw();
         
-        // Object methods
-
-        bool createDefaultObject(PObject*);
         bool createObject(ObjectCreateInfo&&, PObject*) = delete;
         bool createObject(ObjectCreateInfo&, PObject*);
         void destroyObject(PObject);
-
-        // Shader methods
-
-        bool createDefaultShader(PShader*);
-        bool createShader(ShaderCreateInfo&&, PShader*) = delete;
-        bool createShader(ShaderCreateInfo&, PShader*);
-        void destroyShader(PShader);
 
         // Events
 
@@ -50,47 +40,70 @@ namespace Aery { namespace Graphics {
     private:
         // One-time creation
 
-        bool CreateInstance();      void DestroyInstance();
-        bool SetupDM();             void DestroyDM();
-        bool CreateSurface();       void DestroySurface();
+        bool CreateInstance();      
+        bool SetupDM();
+        bool CreateSurface();
         bool PickPhysicalDevice();
-        bool CreateLogicalDevice(); void DestroyLogicalDevice();
-        bool CreateAllocator();     void DestroyAllocator();
-        void DestroyShaders();      void DestroyObjects();
+        bool CreateLogicalDevice();
+        bool CreateAllocator();
+        
+        void DestroyObjects();
+        void DestroyShaders();
+        void DestroyAllocator();
+        void DestroyLogicalDevice();
+        void DestroySurface();
+        void DestroyDM();
+        void DestroyInstance();
 
         // On-resize creation
 
+        bool CreateSwapchain();
+        bool CreateImageViews();    
+        bool CreateRenderPass();    
+        bool CreateFramebuffers();  
+        bool CreateCommandPool();   
+        bool CreateSyncObjects();   
+        
         bool RecreateSwapchain();
-        bool CreateSwapchain(bool = false);     void DestroySwapchain();
-        bool CreateImageViews();    void DestroyImageViews();
-        bool CreateRenderPass();    void DestroyRenderPass();
-        bool CreateFramebuffers();  void DestroyFramebuffers();
-        bool CreateCommandPool();   void DestroyCommandPool();
-        bool CreateSyncObjects();   void DestroySyncObjects();
-        bool AllocateCommandBuffers();
+        
+        void DestroySyncObjects();
+        void DestroyCommandPool();
+        void DestroyImageViews();
+        void DestroyRenderPass();
+        void DestroyFramebuffers();
+        void DestroySwapchain();
 
+        bool AllocateCommandBuffers();
+        
         // On-draw creation
 
         bool CreateCommandBuffer(int);
 
         // Utils
 
-        u32 FindMemoryType(u32, vk::MemoryPropertyFlags);
+        VkObject& GetEmptyObjectSlot(PObject*);
+
+        PShader GetDefaultShader();
+        bool CreateShader(ShaderCreateInfo&&, PShader*) = delete;
+        bool CreateShader(ShaderCreateInfo&, PShader*);
+        void DestroyShader(PShader);
 
         // Variables
 
+        std::unordered_map<PShader, VkShader> m_Shaders = {};
+        std::vector<std::pair<bool, VkObject>> m_Objects = {};
+        // ^--- the bool represents whether the spot is occupied or not
+
         struct {
-            char useLayers : 1;
+            char useLayers : 1 = 1;
             char layersUsed : 1;
             char minimized : 1;
             char active : 1;
         } m_States;
+
         PresentMode m_PresentMode = PresentMode::eAny;
         Window* m_Window = nullptr;
         mut_u16 m_ID = -1;
-
-        std::unordered_map<mut_u16, VkShader> m_Shaders = {};
-        std::unordered_map<mut_u16, VkObject> m_Objects = {};
 
         vk::Instance m_Instance;
         vk::DebugUtilsMessengerEXT m_DebugMessenger;
@@ -128,11 +141,11 @@ namespace Aery { namespace Graphics {
 
         u16 MAX_FRAMES_IN_FLIGHT = 2;
 
-        std::vector<const char*> m_Extensions = {
+        std::array<const char*, 1> m_Extensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME
         };
 
-        std::vector<const char*> m_Layers = {
+        std::array<const char*, 1> m_Layers = {
             "VK_LAYER_KHRONOS_validation"
         };
     };

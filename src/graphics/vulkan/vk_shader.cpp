@@ -1,5 +1,6 @@
 #include "utils/debug.hpp"
 #include "utils/types.hpp"
+#include "utils/file_io.hpp"
 #include "graphics/vk_renderer.hpp"
 #include <vulkan/vulkan.hpp>
 #include <fmt/core.h>
@@ -9,74 +10,48 @@
 
 using namespace std;
 
-static Aery::mut_u32 Index = 1;
-static mutex ListMutex = {};
+namespace {
+    bool CreateModule(vector<char>& Input, vk::ShaderModule& Output, vk::Device& Device) {
+        vk::ShaderModuleCreateInfo ModuleInfo = {
+            .codeSize = Input.size(),
+            .pCode = reinterpret_cast<Aery::mut_u32*>(Input.data())
+        };
 
-static bool LoadFile(const char* Input, vector<char>& Output, Aery::u32 ID) {
-    ifstream Stream = ifstream(Input, ios::ate | ios::binary);
-    if (!Stream.is_open()) {
-        Aery::log(fmt::format("<VkShader::LoadFile> ID {} failed to load file {}.", ID, Input));
-        return false;
+        vk::Result Result = Device.createShaderModule(&ModuleInfo, nullptr, &Output);
+        if (Result != vk::Result::eSuccess) {
+            Aery::error("<VkShader::CreateModule> Failed to create a shader module.");
+            return false;
+        }
+        return true;
     }
-
-    Aery::u32 FileSize = Aery::u32 ( Stream.tellg() );
-    if (!Output.empty()) { Output.clear(); }
-    Output.resize(FileSize);
-    Stream.seekg(0);
-    Stream.read(Output.data(), FileSize);
-    Stream.close();
-    return true;
-}
-
-static bool CreateModule(vector<char>& Input, vk::ShaderModule& Output, vk::Device& Device) {
-    vk::ShaderModuleCreateInfo ModuleInfo = {
-        .codeSize = Input.size(),
-        .pCode = reinterpret_cast<Aery::u32*>(Input.data())
-    };
-
-    vk::Result Result = Device.createShaderModule(&ModuleInfo, nullptr, &Output);
-    if (Result != vk::Result::eSuccess) {
-        Aery::error("<VkShader::CreateModule> Failed to create a shader module.");
-        return false;
-    }
-    return true;
 }
 
 namespace Aery { namespace Graphics {
-    bool VkRenderer::createDefaultShader(PShader* Output) {
-        static bool Existent = false;
-        static PShader DefaultShader = -1;
-
-        if (Existent) {
-            if (Output != nullptr) { *Output = DefaultShader; }
-            return true;
+    PShader VkRenderer::GetDefaultShader() {
+        static PShader Cached = 0;
+        if (Cached == 0) {
+            ShaderCreateInfo ShaderInfo = {
+                .vertex_path = "assets/default_vert.spv",
+                .fragment_path = "assets/default_frag.spv"
+            };
+            CreateShader(ShaderInfo, &Cached);
         }
-
-        ShaderCreateInfo Default = {
-            .vertex_path = "assets/default_vert.spv",
-            .fragment_path = "assets/default_frag.spv",
-        };
-
-        if (!createShader(Default, &DefaultShader)) { return false; }
-        if (Output != nullptr) { *Output = DefaultShader; }
-        Existent = true;
-        return true;
+        return Cached;
     }
 
-    bool VkRenderer::createShader(ShaderCreateInfo& Input, PShader* Output) {
+    bool VkRenderer::CreateShader(ShaderCreateInfo& Input, PShader* Output) {
         auto CreatePipeline = [&](VkShader& Shader) {
             vector<char> VertexCode = {},
-                FragmentCode = {};
+                         FragmentCode = {};
 
-            if (!LoadFile(Input.vertex_path, VertexCode, m_ID)) { return false; }
-            if (!LoadFile(Input.fragment_path, FragmentCode, m_ID)) { return false; }
+            if (!GetFileContents(Input.vertex_path, VertexCode, FileLoadOptions::eBinary)) { return false; }
+            if (!GetFileContents(Input.fragment_path, FragmentCode, FileLoadOptions::eBinary)) { return false; }
 
             vk::ShaderModule FragmentModule = {},
                 VertexModule = {};
 
             if (!CreateModule(VertexCode, VertexModule, m_Device)) { return false; }
             if (!CreateModule(FragmentCode, FragmentModule, m_Device)) { return false; }
-
 
             vk::PipelineShaderStageCreateInfo VertexCreateInfo = {
                 .stage = vk::ShaderStageFlagBits::eVertex,
@@ -242,12 +217,15 @@ namespace Aery { namespace Graphics {
             return true;
         };
 
-        mut_u32 ID = 0;
-        ListMutex.lock();
-            m_Shaders.insert(std::pair<mut_u32, VkShader>(Index, {}));
-            m_Shaders[Index].id = Index; ID = Index;
-            Index++;
-        ListMutex.unlock();
+        static struct {
+            PShader current = 1;
+            mutex num;
+        } ShaderIndex;
+        ShaderIndex.num.lock();
+        PShader ID = ShaderIndex.current++;
+        ShaderIndex.num.unlock();
+        
+        m_Shaders[ID].id = ID;
 
         if (!CreatePipeline(m_Shaders[ID])) { return false; }
 
@@ -259,32 +237,24 @@ namespace Aery { namespace Graphics {
         return true;
     }
 
-    void VkRenderer::destroyShader(PShader Input) {
+    void VkRenderer::DestroyShader(PShader Input) {
         VkShader& Shader = m_Shaders[Input];
 
         m_Device.destroyPipeline(Shader.pipeline);
         m_Device.destroyPipelineLayout(Shader.layout);
 
-        ListMutex.lock();
-            m_Shaders.erase(Shader.id);
-        ListMutex.unlock();
+        m_Shaders.erase(Shader.id);
 
         Aery::log(fmt::format("<VkRenderer::destroyShader> ID {} destroyed pipeline {}.", m_ID, Shader.id));
     }
 
     void VkRenderer::DestroyShaders() {
-        // I am not calling 'destroyShader' because it erases the element
-        // from the map, which leads to weird out-of-bounds access bugs
-        ListMutex.lock();
-
-        for (auto& Shader_ : m_Shaders) {
-            VkShader& Shader = Shader_.second;
+        for (auto& Element : m_Shaders) {
+            VkShader& Shader = Element.second;
             m_Device.destroyPipeline(Shader.pipeline);
             m_Device.destroyPipelineLayout(Shader.layout);
         }
         m_Shaders.clear();
-
-        ListMutex.unlock();
     }
 }
 }
