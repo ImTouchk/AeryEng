@@ -4,6 +4,7 @@
 #include "math/vec3.hpp"
 #include "math/mat4.hpp"
 #include <string_view>
+#include <variant>
 #include <vector>
 
 namespace Aery {
@@ -24,6 +25,7 @@ namespace Aery {
 
         class Shader {
         public:
+            mut_u16 reference_count = 0;
             mut_u16 id;
 
             bool operator==(const Shader& Other) {
@@ -35,24 +37,26 @@ namespace Aery {
         public:
             std::vector<Vertex> vertices;
             std::vector<mut_u16> indices;
-            std::vector<PShader> shaders;
             PushConstant push_constant;
-            mut_u16 id;
+            PShader shader = 0;
+            mut_u16 id = 0;
+
+            void* push_data = nullptr;
 
             bool operator==(const Object& Other) { 
                 return id == Other.id;
             }
         };
 
-        struct ObjectCreateInfo {
-            std::vector<PShader> shaders;
-            std::vector<Vertex> vertices;
-            std::vector<mut_u16> indices;
-        };
-
         struct ShaderCreateInfo {
             const char* vertex_path;
             const char* fragment_path;
+        };
+
+        struct ObjectCreateInfo {
+            std::vector<Vertex> vertices;
+            std::vector<mut_u16> indices;
+            std::variant<ShaderCreateInfo, PShader> shader;
         };
 
         enum class PresentMode : mut_u16 {
