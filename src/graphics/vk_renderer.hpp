@@ -6,6 +6,8 @@
 #include <vk_mem_alloc.h> 
 #include <unordered_map>
 #include <vector>
+#include <thread>
+#include <mutex>
 
 namespace Aery { namespace Graphics {
     class VkShader : public Shader { public:
@@ -32,7 +34,11 @@ namespace Aery { namespace Graphics {
         
         bool createObject(ObjectCreateInfo&&, PObject*) = delete;
         bool createObject(ObjectCreateInfo&, PObject*);
+        void bindPushConstant(PObject, void*);
         void destroyObject(PObject);
+
+        vk::CommandPool getNewCommandPool();
+        void pushCommandBuffer(vk::CommandBuffer&);
 
         // Events
 
@@ -94,6 +100,10 @@ namespace Aery { namespace Graphics {
         std::vector<std::pair<bool, VkObject>> m_Objects = {};
         // ^--- the bool represents whether the spot is occupied or not
 
+        std::vector<vk::CommandBuffer> m_SecondaryBuffers = {};
+        // ^--- allow external command buffer registeirng
+        std::mutex m_SecondaryBuffersMutex = {};
+        
         struct {
             char useLayers : 1 = 1;
             char layersUsed : 1;

@@ -27,6 +27,23 @@ namespace Aery { namespace Graphics {
         Aery::log(fmt::format("<VkRenderer::DestroyCommandPool> ID {} destroyed a command pool.", m_ID));
     }
 
+    vk::CommandPool VkRenderer::getNewCommandPool() {
+        m_SecondaryBuffersMutex.lock();
+        VkQueueFamilyIndices Indices = FindQueueFamilies(m_PhysicalDevice, m_Surface);
+        vk::CommandPoolCreateInfo CommandPoolInfo = {
+            .queueFamilyIndex = Indices.gFamily.value()
+        };
+        vk::CommandPool Pool = m_Device.createCommandPool(CommandPoolInfo, nullptr);
+        m_SecondaryBuffersMutex.unlock();
+        return Pool;
+    }
+
+    void VkRenderer::pushCommandBuffer(vk::CommandBuffer& Buffer) {
+        m_SecondaryBuffersMutex.lock();
+        m_SecondaryBuffers.push_back(Buffer);
+        m_SecondaryBuffersMutex.unlock();
+    }
+
     bool VkRenderer::AllocateCommandBuffers() {
         if (m_CmdBuffersCreated) {
             m_Device.resetCommandPool(m_CommandPool, vk::CommandPoolResetFlagBits::eReleaseResources);
@@ -80,9 +97,6 @@ namespace Aery { namespace Graphics {
 
             vk::Buffer VertexBuffers[] = { Object.vertex.buffer };
             vk::DeviceSize Offsets[] = { 0 };
-
-            mat4& Transform = Object.push_constant.transform;
-            Transform = { 1.0f };
              
             m_CommandBuffers[i].bindVertexBuffers(0, 1, VertexBuffers, Offsets);
             m_CommandBuffers[i].bindIndexBuffer(Object.index.buffer, 0, vk::IndexType::eUint16);
@@ -91,10 +105,19 @@ namespace Aery { namespace Graphics {
                 Shader.layout, 
                 vk::ShaderStageFlagBits::eVertex, 0, 
                 sizeof(VkObject::push_constant), 
-                &Object.push_constant
+                Object.push_data
             );
             m_CommandBuffers[i].drawIndexed(static_cast<mut_u32>(Object.indices.size()), 1, 0, 0, 0);
         }
+
+        m_SecondaryBuffersMutex.lock();
+        m_CommandBuffers[i].executeCommands(
+            m_SecondaryBuffers.size(),
+            m_SecondaryBuffers.data()
+        );
+        m_SecondaryBuffers.clear();
+        m_SecondaryBuffersMutex.unlock();
+
         m_CommandBuffers[i].endRenderPass();
         m_CommandBuffers[i].end();
         return true;

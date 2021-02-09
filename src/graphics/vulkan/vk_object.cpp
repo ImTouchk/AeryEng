@@ -53,6 +53,11 @@ namespace Aery { namespace Graphics {
         Aery::log(fmt::format("<VkRenderer::destroyObject> ID {} destroyed object {}.", m_ID, Input));
     }
 
+    void VkRenderer::bindPushConstant(PObject Input, void* PushConstant) {
+        VkObject& Object = m_Objects[Input].second;
+        Object.push_data = PushConstant;
+    }
+
     void VkRenderer::DestroyObjects() {
         for (auto& Element : m_Objects) {
             VkObject& Object = Element.second;
