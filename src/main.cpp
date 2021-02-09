@@ -1,12 +1,16 @@
 #include "aery.hpp"
+#include "utils/debug.hpp"
+#include <fmt/core.h>
+#include <thread>
 
 void Start() {
     using namespace Aery;
+    using namespace Aery::Graphics;
     WindowCreateInfo WCInfo = {
         .title = "Hello, world!",
+        .flags = WindowCreateFlags::eResizable,
         .width = 800,
         .height = 600,
-        .flags = WINDOW_VSYNC | WINDOW_RESIZABLE
     };
 
     Window GameWindow = {};
@@ -14,33 +18,50 @@ void Start() {
         return;
     }
 
-    VkRendererCreateInfo VRInfo = {
+    Input GameInput = {};
+    GameInput._onWindowCreated(GameWindow);
+
+    RendererCreateInfo RdInfo = {
+        .present_mode = PresentMode::eVsync,
         .window = &GameWindow,
-        .render_mode = VK_RENDERER_TRIPLE_BUFFERING,
     };
 
     VkRenderer GameRenderer = {};
-    if (!GameRenderer.create(VRInfo)) {
+    if (!GameRenderer.create(RdInfo)) {
         GameWindow.destroy();
         return;
     }
 
-    PVkObject VertexObject;
-    VkObjectCreateInfo ObjectInfo = {
+    PObject VertexObject;
+    ObjectCreateInfo ObjectInfo = {
         .vertices = {
-            { {  1.0f,  1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
-            { { -1.0f, -1.0f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
-            { {  1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+            { { -0.5f,  0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
+            { {  0.0f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
+            { {  0.5f,  0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
+            { {  0.5f, -0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f } }
         },
         .indices = {
             0, 1, 2,
-        }
+            2, 1, 3
+        },
+        .shader = 0
     };
     GameRenderer.createObject(ObjectInfo, &VertexObject);
 
+    PushConstant Constant = {};
+    Constant.transform = mat4(1.0f);
+
+    GameRenderer.bindPushConstant(VertexObject, &Constant);
+
+    mut_f32 OldTime = 0.0f;
     while (GameWindow.active()) {
-        GameWindow.update();
+        mut_f32 CurrentTime = static_cast<mut_f32>( glfwGetTime() );
+        mut_f32 DeltaTime = CurrentTime - OldTime;
+        OldTime = CurrentTime;
+
         GameRenderer.draw();
+        GameWindow.update();
+        
     }
 
     GameRenderer.destroy();
@@ -56,7 +77,8 @@ int WINAPI WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CmdLine, in
 int main() {
 #endif
     glfwInit();
-    Start();
+    std::thread Secondary = std::thread(Start);
+    Secondary.join();
     glfwTerminate();
     return 0;
 }
