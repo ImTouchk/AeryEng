@@ -100,6 +100,10 @@ namespace Aery {
         return m_MouseBtns[Button] == GLFW_PRESS;
     }
 
+    const pair<mut_f32, mut_f32>& Input::getCursorPos() {
+        return m_Cursor;
+    }
+
     void Input::_setKey(Key Key_, int State) {
         m_Keys[Key_] = State;
     }

@@ -48,6 +48,7 @@ namespace Aery {
 
         bool isKey(Key);
         bool isButton(MouseButton);
+        const std::pair<mut_f32, mut_f32>& getCursorPos();
 
         void _onWindowCreated(Graphics::Window&);
         GLFWwindow* _getHandle();
