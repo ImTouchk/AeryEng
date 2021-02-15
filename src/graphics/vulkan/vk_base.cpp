@@ -54,6 +54,7 @@ namespace Aery { namespace Graphics {
         if (!PickPhysicalDevice()) { return false; }
         if (!CreateLogicalDevice()) { return false; }
         if (!CreateAllocator()) { return false; }
+        if (!CreateDepthBuffer()) { return false; }
 
         // Might be recreated later
         if (!CreateSwapchain()) { return false; }
@@ -85,12 +86,15 @@ namespace Aery { namespace Graphics {
         Aery::log(fmt::format("--------------- DESTROYING VULKAN RENDERER {} ---------------", m_ID), fmt::color::hot_pink);
         DestroyObjects();
         DestroyShaders();
+
         DestroySyncObjects();
         DestroyCommandPool();
         DestroyFramebuffers();
         DestroyRenderPass();
         DestroyImageViews();
         DestroySwapchain();
+
+        DestroyDepthBuffer();
         DestroyAllocator();
         DestroyLogicalDevice();
         DestroySurface();

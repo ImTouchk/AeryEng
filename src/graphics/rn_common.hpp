@@ -1,8 +1,7 @@
 #pragma once
 
 #include "utils/types.hpp"
-#include "math/vec3.hpp"
-#include "math/mat4.hpp"
+#include <glm/glm.hpp>
 #include <string_view>
 #include <variant>
 #include <vector>
@@ -12,12 +11,12 @@ namespace Aery {
         class Window;
 
         struct Vertex {
-            vec3 position;
-            vec3 color;
+            glm::vec3 position;
+            glm::vec3 color;
         };
 
         struct PushConstant {
-            mat4 transform;
+            glm::mat4 transform;
         };
 
         using PShader = mut_u16;

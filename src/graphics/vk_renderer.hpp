@@ -52,9 +52,11 @@ namespace Aery { namespace Graphics {
         bool PickPhysicalDevice();
         bool CreateLogicalDevice();
         bool CreateAllocator();
+        bool CreateDepthBuffer();
         
         void DestroyObjects();
         void DestroyShaders();
+        void DestroyDepthBuffer();
         void DestroyAllocator();
         void DestroyLogicalDevice();
         void DestroySurface();
@@ -142,6 +144,12 @@ namespace Aery { namespace Graphics {
 
         vk::Viewport m_Viewport;
         vk::Rect2D m_Scissor;
+
+        struct {
+            vk::Image image;
+            vk::ImageView view;
+            VmaAllocation allocation;
+        } m_Depth;
 
         std::vector<vk::Semaphore> m_ImageAvailable = {};
         std::vector<vk::Semaphore> m_RenderFinished = {};

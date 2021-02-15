@@ -113,7 +113,8 @@ namespace Aery { namespace Graphics {
                 .x = 0, .y = 0,
                 .width = (float)m_Swapchain.extent.width,
                 .height = (float)m_Swapchain.extent.height,
-                .minDepth = 0.0f, .maxDepth = 1.0f
+                .minDepth = 0.0f, 
+                .maxDepth = 1.0f
             };
 
             vk::Rect2D Scissor = {

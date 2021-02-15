@@ -6,7 +6,7 @@ layout (location = 1) in vec3 Color;
 
 layout (location = 0) out vec3 Shading;
 
-layout ( push_constant ) uniform constants {
+layout (push_constant) uniform constants {
     mat4 transform;
 } PushConstants;
 

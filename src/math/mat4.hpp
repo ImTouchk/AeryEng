@@ -6,7 +6,7 @@
 #include <cmath>
 
 namespace Aery {
-    constexpr mut_f32 pi = 3.14159265358979f;
+    constexpr mut_f32 pi = 3.14159265359f;
 
     template<typename vec1>
     struct base_mat4x4 {
@@ -105,34 +105,34 @@ namespace Aery {
         // Rotate on the x-axis by 'a' degrees
         void rotate_x(const vec1 a) {
             const vec1 rad = a * pi / 180.0f;
-            const vec1 cosine = cos(rad);
-            const vec1 sine = sin(rad);
+            const vec1 cosine = static_cast<vec1>( std::cos(rad) );
+            const vec1 sine = static_cast<vec1>( std::sin(rad) );
             base_mat4x4 rotation = {};
-            rotation(5) = cosine;
-            rotation(6) = sine;
-            rotation(9) = -sine;
-            rotation(10) = cosine;
+            rotation(5)  =  cosine;
+            rotation(6)  =  sine;
+            rotation(9)  = -sine;
+            rotation(10) =  cosine;
             *this = *this * rotation;
         }
 
         // Rotate on the y-axis by 'a' degrees
         void rotate_y(const vec1 a) {
             const vec1 rad = a * pi / 180.0f;
-            const vec1 cosine = cos(rad);
-            const vec1 sine = sin(rad);
+            const vec1 cosine = static_cast<vec1>( std::cos(rad) );
+            const vec1 sine = static_cast<vec1>( std::sin(rad) );
             base_mat4x4 rotation = {};
-            rotation(0) = cosine;
-            rotation(2) = -sine;
-            rotation(8) = sine;
-            rotation(10) = cosine;
+            rotation(0)  =  cosine;
+            rotation(2)  = -sine;
+            rotation(8)  =  sine;
+            rotation(10) =  cosine;
             *this = *this * rotation;
         }
 
         // Rotate on the z-axis by 'a' degrees
         void rotate_z(const vec1 a) {
             const vec1 rad = a * pi / 180.0f;
-            const vec1 cosine = cos(rad);
-            const vec1 sine = sin(rad);
+            const vec1 cosine = static_cast<vec1>( std::cos(rad) );
+            const vec1 sine = static_cast<vec1>( std::sin(rad) );
             base_mat4x4 rotation = {};
             rotation(0) = cosine;
             rotation(1) = sine;

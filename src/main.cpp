@@ -36,28 +36,29 @@ void Start() {
     ObjectCreateInfo ObjectInfo = {
         .vertices = {
             { { -0.5f,  0.5f, 0.0f }, { 0.0f, 1.0f, 0.0f } },
-            { {  0.0f, -0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
-            { {  0.5f,  0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
-            { {  0.5f, -0.5f, 0.0f }, { 1.0f, 1.0f, 1.0f } }
+            { {  0.5f,  0.5f, 0.0f }, { 1.0f, 0.0f, 0.0f } },
+            { {  0.0f, -0.5f, 0.0f }, { 0.0f, 0.0f, 1.0f } },
         },
         .indices = {
             0, 1, 2,
-            2, 1, 3
         },
         .shader = 0
     };
     GameRenderer.createObject(ObjectInfo, &VertexObject);
 
     PushConstant Constant = {};
-    Constant.transform = mat4(1.0f);
 
     GameRenderer.bindPushConstant(VertexObject, &Constant);
 
+    mut_f32 Angle = 0.0f;
     mut_f32 OldTime = 0.0f;
     while (GameWindow.active()) {
         mut_f32 CurrentTime = static_cast<mut_f32>( glfwGetTime() );
         mut_f32 DeltaTime = CurrentTime - OldTime;
         OldTime = CurrentTime;
+
+        Angle += 1.0f; if (Angle >= 360.0f) Angle = 0.0f;
+        Constant.transform = glm::rotate(glm::mat4(1.0f), glm::radians(Angle), { 1.0f, 0.0f, 0.0f });
 
         GameRenderer.draw();
         GameWindow.update();
@@ -77,8 +78,7 @@ int WINAPI WinMain(HINSTANCE Instance, HINSTANCE PrevInstance, LPSTR CmdLine, in
 int main() {
 #endif
     glfwInit();
-    std::thread Secondary = std::thread(Start);
-    Secondary.join();
+    Start();
     glfwTerminate();
     return 0;
 }
