@@ -8,34 +8,27 @@
 #include <vector>
 #include <mutex>
 
-using namespace std;
-
-static vector<Aery::Graphics::VkRenderer*> VkRenderers = {};
-static Aery::mut_u16 Index = 0;
-static mutex ListMutex = {};
+namespace {
+    std::vector<Aery::Graphics::VkRenderer*> VkRenderers = {};
+}
 
 namespace Aery { namespace Graphics {
-    VkRenderer::VkRenderer() : m_ID(Index) {
-        ListMutex.lock();
-            VkRenderers.push_back(this);
-            m_States.active = false;
-            Index++;
-        ListMutex.unlock();
+    VkRenderer::VkRenderer() : m_ID(VkRenderers.size()) {
+        VkRenderers.push_back(this);
+        m_States.active = false;
     }
 
     VkRenderer::~VkRenderer() {
-        ListMutex.lock();
-            VkRenderers.erase(
-                VkRenderers.begin() + m_ID
-            );
-        ListMutex.unlock();
+        VkRenderers.erase(
+            VkRenderers.begin() + m_ID
+        );
         if (m_States.active) {
             destroy();
         }
     }
 
     bool VkRenderer::create(RendererCreateInfo& Input) {
-        Aery::log(fmt::format("--------------- CREATING VULKAN RENDERER {} ---------------", m_ID), fmt::color::hot_pink);
+        Aery::log(debug_format("--------------- CREATING VULKAN RENDERER {} ---------------", m_ID), fmt::color::hot_pink);
         // One-time creation
         if (Input.window == nullptr) {
             Aery::error("<VkRenderer::create> VkRendererCreateInfo::window was NULL.");
@@ -44,8 +37,8 @@ namespace Aery { namespace Graphics {
         m_PresentMode = Input.present_mode;
         m_Window = Input.window; 
 
-        m_Objects = vector<pair<bool, VkObject>>(8, { false, {} });
-        m_Shaders = unordered_map<PShader, VkShader>();
+        m_Objects = std::vector<std::pair<bool, VkObject>>(8, { false, {} });
+        m_Shaders = std::unordered_map<PShader, VkShader>();
         
         if (!glfwVulkanSupported()) { return false; }
         if (!CreateInstance()) { return false; }
@@ -83,7 +76,7 @@ namespace Aery { namespace Graphics {
     }
 
     void VkRenderer::destroy() {
-        Aery::log(fmt::format("--------------- DESTROYING VULKAN RENDERER {} ---------------", m_ID), fmt::color::hot_pink);
+        Aery::log(debug_format("--------------- DESTROYING VULKAN RENDERER {} ---------------", m_ID), fmt::color::hot_pink);
         DestroyObjects();
         DestroyShaders();
 

@@ -5,8 +5,6 @@
 #include <fstream>
 #include <cassert>
 
-using namespace std;
-
 namespace Aery {
     FileLoadOptions operator|(FileLoadOptions a, FileLoadOptions b) {
         return static_cast<FileLoadOptions>(static_cast<mut_u16>(a), static_cast<mut_u16>(b));
@@ -19,14 +17,14 @@ namespace Aery {
     bool GetFileContents(const char* Path, std::vector<char>& Output, FileLoadOptions Options) {
         assert(Path != nullptr);
 
-        ios::openmode OpenMode;
-        if (Options & FileLoadOptions::eBinary) OpenMode = ios::ate | ios::binary;
-        else OpenMode = ios::ate;
+        std::ios::openmode OpenMode;
+        if (Options & FileLoadOptions::eBinary) OpenMode = std::ios::ate | std::ios::binary;
+        else OpenMode = std::ios::ate;
 
-        ifstream Input = ifstream(Path, OpenMode);
+        std::ifstream Input = std::ifstream(Path, OpenMode);
 
         if (!Input.is_open()) {
-            Aery::error(fmt::format("<GetFileContents> Failed to open file {}.", Path));
+            Aery::error(debug_format("<GetFileContents> Failed to open file {}.", Path));
             Output.resize(1, 'a');
             return false;
         }

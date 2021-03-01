@@ -5,8 +5,6 @@
 #include <GLFW/glfw3.h>
 #include <fmt/core.h>
 
-using namespace std;
-
 namespace Aery { namespace Graphics {
     bool VkRenderer::CreateSurface() {
         VkSurfaceKHR Surface = VK_NULL_HANDLE;

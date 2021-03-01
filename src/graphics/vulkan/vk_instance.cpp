@@ -7,11 +7,9 @@
 #include <fmt/core.h>
 #include <array>
 
-using namespace std;
-
 namespace Aery { namespace Graphics {
     bool VkRenderer::CreateInstance() {
-        vector<const char*> Extensions = GetRequiredExtensions(m_States.useLayers);
+        std::vector<const char*> Extensions = GetRequiredExtensions(m_States.useLayers);
         if (strcmp(Extensions[0], "NOT_AVAILABLE") == 0) {
             return false;
         }
@@ -41,16 +39,16 @@ namespace Aery { namespace Graphics {
 
         vk::Result Result = vk::createInstance(&InstInfo, nullptr, &m_Instance);
         if (Result != vk::Result::eSuccess) {
-            Aery::error(fmt::format("<VkRenderer::CreateInstance> ID {} failed to create an instance.", m_ID));
+            Aery::error(debug_format("<VkRenderer::CreateInstance> ID {} failed to create an instance.", m_ID));
         }
 
-        Aery::log(fmt::format("<VkRenderer::CreateInstance> ID {} created an instance.", m_ID), fmt::color::light_green);
+        Aery::log(debug_format("<VkRenderer::CreateInstance> ID {} created an instance.", m_ID), fmt::color::light_green);
         return true;
     }
 
     void VkRenderer::DestroyInstance() {
         m_Instance.destroy();
-        Aery::log(fmt::format("<VkRenderer::DestroyInstance> ID {} destroyed an instance.", m_ID));
+        Aery::log(debug_format("<VkRenderer::DestroyInstance> ID {} destroyed an instance.", m_ID));
     }
 }
 }

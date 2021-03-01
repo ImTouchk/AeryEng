@@ -6,8 +6,6 @@
 #include <vk_mem_alloc.h>
 #include <mutex>
 
-using namespace std;
-
 namespace Aery { namespace Graphics {
     bool VkRenderer::createObject(ObjectCreateInfo& Input, PObject* Output) {
         PObject ObjectID = 0;
@@ -42,7 +40,7 @@ namespace Aery { namespace Graphics {
             *Output = ObjectID;
         }
 
-        Aery::log(fmt::format("<VkRenderer::createObject> ID {} created object {}.", m_ID, ObjectID));
+        Aery::log(debug_format("<VkRenderer::createObject> ID {} created object {}.", m_ID, ObjectID));
         return true;
     }
 
@@ -50,7 +48,7 @@ namespace Aery { namespace Graphics {
         VkObject& Object = m_Objects[Input].second;
         vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Object.vertex.buffer), Object.vertex.allocation);
         vmaDestroyBuffer(m_Allocator, static_cast<VkBuffer>(Object.index.buffer), Object.index.allocation);
-        Aery::log(fmt::format("<VkRenderer::destroyObject> ID {} destroyed object {}.", m_ID, Input));
+        Aery::log(debug_format("<VkRenderer::destroyObject> ID {} destroyed object {}.", m_ID, Input));
     }
 
     void VkRenderer::bindPushConstant(PObject Input, void* PushConstant) {

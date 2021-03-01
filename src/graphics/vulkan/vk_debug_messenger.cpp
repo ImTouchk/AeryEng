@@ -9,7 +9,7 @@
 namespace Aery { namespace Graphics {
     bool VkRenderer::SetupDM() {
         if (!m_States.useLayers) {
-            Aery::log(fmt::format("<VkRenderer::SetupDM> ID {} is not using debug layers.", m_ID));
+            Aery::log(debug_format("<VkRenderer::SetupDM> ID {} is not using debug layers.", m_ID));
             m_States.layersUsed = 0;
             return false;
         }
@@ -26,14 +26,14 @@ namespace Aery { namespace Graphics {
             Result = Function(static_cast<VkInstance>(m_Instance), &CreateInfo, nullptr, &DMessenger);
         }
         if (Result != VK_SUCCESS) {
-            Aery::warn(fmt::format("<VkRenderer::SetupDM> ID {} failed to set up a debug messenger.", m_ID));
+            Aery::warn(debug_format("<VkRenderer::SetupDM> ID {} failed to set up a debug messenger.", m_ID));
             m_States.layersUsed = 0;
             return false;
         }
 
         m_DebugMessenger = static_cast<vk::DebugUtilsMessengerEXT>(DMessenger);
         m_States.layersUsed = 1;
-        Aery::log(fmt::format("<VkRenderer::SetupDM> ID {} set up a debug messenger.", m_ID), fmt::color::light_green);
+        Aery::log(debug_format("<VkRenderer::SetupDM> ID {} set up a debug messenger.", m_ID), fmt::color::light_green);
         return true;
     }
 
@@ -46,7 +46,7 @@ namespace Aery { namespace Graphics {
         if (Function != nullptr) {
             Function(static_cast<VkInstance>(m_Instance), static_cast<VkDebugUtilsMessengerEXT>(m_DebugMessenger), nullptr);
         }
-        Aery::log(fmt::format("<VkRenderer::DestroyDM> ID {} destroyed a debug messenger.", m_ID));
+        Aery::log(debug_format("<VkRenderer::DestroyDM> ID {} destroyed a debug messenger.", m_ID));
     }
 }
 }

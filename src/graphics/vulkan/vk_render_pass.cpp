@@ -6,8 +6,6 @@
 #include <vulkan/vulkan.hpp>
 #include <fmt/core.h>
 
-using namespace std;
-
 namespace Aery { namespace Graphics {
     bool VkRenderer::CreateRenderPass() {
         vk::AttachmentDescription ColorAttachment = {
@@ -52,17 +50,17 @@ namespace Aery { namespace Graphics {
 
         vk::Result Result = m_Device.createRenderPass(&PassInfo, nullptr, &m_RenderPass);
         if (Result != vk::Result::eSuccess) {
-            Aery::error(fmt::format("<VkRenderer::CreateRenderPass> ID {} failed to create a render pass.", m_ID));
+            Aery::error(debug_format("<VkRenderer::CreateRenderPass> ID {} failed to create a render pass.", m_ID));
             return false;
         }
 
-        Aery::log(fmt::format("<VkRenderer::CreateRenderPass> ID {} created a render pass.", m_ID), fmt::color::light_green);
+        Aery::log(debug_format("<VkRenderer::CreateRenderPass> ID {} created a render pass.", m_ID), fmt::color::light_green);
         return true;
     }
 
     void VkRenderer::DestroyRenderPass() {
         m_Device.destroyRenderPass(m_RenderPass);
-        Aery::log(fmt::format("<VkRenderer::DestroyRenderPass> ID {} destroyed a render pass.", m_ID));
+        Aery::log(debug_format("<VkRenderer::DestroyRenderPass> ID {} destroyed a render pass.", m_ID));
     }
 }
 }

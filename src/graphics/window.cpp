@@ -7,11 +7,9 @@
 #include <vector>
 #include <mutex>
 
-using namespace std;
-
 namespace {
     Aery::mut_u16 Index = 1;
-    mutex Mutex = {};
+    std::mutex Mutex = {};
 }
 
 static void OnWindowResize(GLFWwindow* Window, int Width, int Height) {
@@ -39,7 +37,7 @@ namespace Aery { namespace Graphics {
 
     bool Window::create(const WindowCreateInfo& Info) {
         if (m_Active) {
-            Aery::error(fmt::format("<Window::create> ID {} is already active.", m_ID));
+            Aery::error(debug_format("<Window::create> ID {} is already active.", m_ID));
             return false;
         }
 
@@ -73,13 +71,13 @@ namespace Aery { namespace Graphics {
         m_Width = Info.width; m_Height = Info.height;
 
         if (m_Handle == NULL) {
-            Aery::error(fmt::format("<Window::create> ID {} creation failed.", m_ID));
+            Aery::error(debug_format("<Window::create> ID {} creation failed.", m_ID));
             return false;
         }
         glfwSetWindowUserPointer(m_Handle, this);
         glfwSetFramebufferSizeCallback(m_Handle, (GLFWframebuffersizefun)OnWindowResize);
         
-        Aery::log(fmt::format("<Window::create> ID {} was started.", m_ID), fmt::color::light_green);
+        Aery::log(debug_format("<Window::create> ID {} was started.", m_ID), fmt::color::light_green);
         glfwMakeContextCurrent(m_Handle);
         m_Active = true;
         m_Created = true;
@@ -88,13 +86,13 @@ namespace Aery { namespace Graphics {
 
     void Window::destroy() {
         if (!m_Created) {
-            Aery::warn(fmt::format("<Window::destroy> ID {} is already destroyed.", m_ID));
+            Aery::warn(debug_format("<Window::destroy> ID {} is already destroyed.", m_ID));
             return;
         }
 
         m_Created = false;
         glfwDestroyWindow(m_Handle);
-        Aery::log(fmt::format("<Window::destroy> ID {} was destroyed.", m_ID));
+        Aery::log(debug_format("<Window::destroy> ID {} was destroyed.", m_ID));
     }
 
     void Window::update() const {

@@ -4,17 +4,13 @@
 #include <fmt/core.h>
 #include <cassert>
 #include <vector>
-#include <mutex>
 
 using namespace std;
 
 namespace {
     vector<Aery::Input*> Handlers = {};
-    mutex ListMutex = {};
 
     void KeyCallback(GLFWwindow* Window, int Key_, int Scancode, int Action, int Mods) {
-        ListMutex.lock();
-
         Aery::Input* Current = nullptr;
         for (auto& Handler : Handlers) {
             if (Handler->_getHandle() == Window) {
@@ -23,13 +19,9 @@ namespace {
         }
         assert(Current != nullptr);
         Current->_setKey(static_cast<Aery::Key>(Key_), Action);
-
-        ListMutex.unlock();
     }
 
     void MouseBtnCallback(GLFWwindow* Window, int Button, int Action, int Mods) {
-        ListMutex.lock();
-
         Aery::Input* Current = nullptr;
         for (auto& Handler : Handlers) {
             if (Handler->_getHandle() == Window) {
@@ -38,13 +30,9 @@ namespace {
         }
         assert(Current != nullptr);
         Current->_setButton(static_cast<Aery::MouseButton>(Button), Action);
-
-        ListMutex.unlock();
     }
 
     void CursorPosCallback(GLFWwindow* Window, double x, double y) {
-        ListMutex.lock();
-
         Aery::Input* Current = nullptr;
         for (auto& Handler : Handlers) {
             if (Handler->_getHandle() == Window) {
@@ -57,27 +45,21 @@ namespace {
             static_cast<Aery::mut_f32>(x), 
             static_cast<Aery::mut_f32>(y)
         );
-
-        ListMutex.unlock();
     }
 }
 
 namespace Aery {
     Input::Input() {
-        ListMutex.lock();
-            Handlers.push_back(this);
-            m_ID = Aery::mut_u16( Handlers.size() - 1 );
-        ListMutex.unlock();
+        Handlers.push_back(this);
+        m_ID = Aery::mut_u16( Handlers.size() - 1 );
         m_Keys.reserve(50);
         m_MouseBtns.reserve(10);
     }
 
     Input::~Input() {
-        ListMutex.lock();
-            Handlers.erase(
-                Handlers.begin() + m_ID
-            );
-        ListMutex.unlock();
+        Handlers.erase(
+            Handlers.begin() + m_ID
+        );
     }
 
     void Input::_onWindowCreated(Graphics::Window& Handle) {

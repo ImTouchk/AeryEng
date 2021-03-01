@@ -1,7 +1,4 @@
 #include "aery.hpp"
-#include "utils/debug.hpp"
-#include <fmt/core.h>
-#include <thread>
 
 void Start() {
     using namespace Aery;
@@ -32,6 +29,7 @@ void Start() {
         return;
     }
 
+    PushConstant MatrixBuffer = {};
     PObject VertexObject;
     ObjectCreateInfo ObjectInfo = {
         .vertices = {
@@ -45,10 +43,7 @@ void Start() {
         .shader = 0
     };
     GameRenderer.createObject(ObjectInfo, &VertexObject);
-
-    PushConstant Constant = {};
-
-    GameRenderer.bindPushConstant(VertexObject, &Constant);
+    GameRenderer.bindPushConstant(VertexObject, &MatrixBuffer);
 
     mut_f32 Angle = 0.0f;
     mut_f32 OldTime = 0.0f;
@@ -57,8 +52,15 @@ void Start() {
         mut_f32 DeltaTime = CurrentTime - OldTime;
         OldTime = CurrentTime;
 
-        Angle += 1.0f; if (Angle >= 360.0f) Angle = 0.0f;
-        Constant.transform = glm::rotate(glm::mat4(1.0f), glm::radians(Angle), { 1.0f, 0.0f, 0.0f });
+        auto Cursor = GameInput.getCursorPos();
+        Cursor.first /= GameWindow.width();
+        Cursor.second /= GameWindow.height();
+
+        if (GameInput.isButton(MouseButton::e1)) Angle += 1.0f; 
+        if (Angle >= 360.0f) Angle = 0.0f;
+
+        MatrixBuffer.transform = glm::translate(glm::mat4(1.0f), { Cursor.first, Cursor.second, 0.6f });
+        MatrixBuffer.transform = glm::rotate(MatrixBuffer.transform, glm::radians(Angle), { 1.0f, 1.0f, 1.0f });
 
         GameRenderer.draw();
         GameWindow.update();

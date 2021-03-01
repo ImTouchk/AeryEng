@@ -4,8 +4,6 @@
 #include <vulkan/vulkan.hpp>
 #include <vk_mem_alloc.h>
 
-using namespace std;
-
 namespace Aery { namespace Graphics {
     bool VkRenderer::CreateAllocator() {
         VmaAllocatorCreateInfo AllocatorInfo = {
@@ -16,17 +14,17 @@ namespace Aery { namespace Graphics {
         };
         VkResult Result = vmaCreateAllocator(&AllocatorInfo, &m_Allocator);
         if (Result != VK_SUCCESS) {
-            Aery::error(fmt::format("<VkRenderer::CreateAllocator> ID {} failed to create an allocator.", m_ID));
+            Aery::error(debug_format("<VkRenderer::CreateAllocator> ID {} failed to create an allocator.", m_ID));
             return false;
         }
 
-        Aery::log(fmt::format("<VkRenderer::CreateAllocator> ID {} created an allocator.", m_ID), fmt::color::light_green);
+        Aery::log(debug_format("<VkRenderer::CreateAllocator> ID {} created an allocator.", m_ID), fmt::color::light_green);
         return true;
     }
 
     void VkRenderer::DestroyAllocator() {
         vmaDestroyAllocator(m_Allocator);
-        Aery::log(fmt::format("<VkRenderer::DestroyAllocator> ID {} destroyed an allocator.", m_ID));
+        Aery::log(debug_format("<VkRenderer::DestroyAllocator> ID {} destroyed an allocator.", m_ID));
     }
 }
 }

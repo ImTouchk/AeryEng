@@ -1,38 +1,43 @@
 #include "debug.hpp"
 #include <fmt/color.h>
 #include <fmt/core.h>
+#include <Windows.h>
 #include <fstream>
 #include <string>
-#include <Windows.h>
 
-static void WriteToFile(std::string& Message) {
-    std::fstream File = std::fstream("log.txt");
-    if (!File.is_open()) {
-        return;
+namespace {
+    void WriteToFile(std::string& Message) {
+        std::fstream File = std::fstream("log.txt");
+        if (!File.is_open()) {
+            return;
+        }
+        File << Message;
+        File.close();
     }
-    File << Message;
-    File.close();
+
+    // Windows-specific : enable ANSI escape codes
+    void EnableVTMode() {
+#ifdef WIN32
+        static bool Enabled = false;
+        if (!Enabled) {
+            HANDLE Console = GetStdHandle(STD_OUTPUT_HANDLE);
+            if (Console == INVALID_HANDLE_VALUE) {
+                return;
+            }
+            DWORD Mode = 0;
+            if (!GetConsoleMode(Console, &Mode)) {
+                return;
+            }
+            Mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+            if (!SetConsoleMode(Console, Mode)) {
+                return;
+            }
+            Enabled = true;
+        }
+#endif
+    }
 }
 
-// Windows-specific : enable ANSI escape codes
-static void EnableVTMode() {
-    static bool Enabled = false;
-    if (!Enabled) {
-        HANDLE Console = GetStdHandle(STD_OUTPUT_HANDLE);
-        if (Console == INVALID_HANDLE_VALUE) {
-            return;
-        }
-        DWORD Mode = 0;
-        if (!GetConsoleMode(Console, &Mode)) {
-            return;
-        }
-        Mode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
-        if (!SetConsoleMode(Console, Mode)) {
-            return;
-        }
-        Enabled = true;
-    }
-}
 
 namespace Aery {
     void log(std::string Message, fmt::color Color) {

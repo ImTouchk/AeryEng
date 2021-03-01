@@ -6,8 +6,6 @@
 #include <vulkan/vulkan.hpp>
 #include <fmt/core.h>
 
-using namespace std;
-
 namespace Aery { namespace Graphics {
     bool VkRenderer::CreateFramebuffers() {
         m_Swapchain.buffers.resize(m_Swapchain.views.size());
@@ -27,12 +25,12 @@ namespace Aery { namespace Graphics {
 
             vk::Result Result = m_Device.createFramebuffer(&FramebufferInfo, nullptr, &m_Swapchain.buffers[i]);
             if (Result != vk::Result::eSuccess) {
-                Aery::error(fmt::format("<VkRenderer::CreateFramebuffers> ID {} failed to create a framebuffer.", m_ID));
+                Aery::error(debug_format("<VkRenderer::CreateFramebuffers> ID {} failed to create a framebuffer.", m_ID));
                 return false;
             }
         }
 
-        Aery::log(fmt::format("<VkRenderer::CreateFramebuffers> ID {} created {} framebuffers.", m_ID, m_Swapchain.buffers.size()), fmt::color::light_green);
+        Aery::log(debug_format("<VkRenderer::CreateFramebuffers> ID {} created {} framebuffers.", m_ID, m_Swapchain.buffers.size()), fmt::color::light_green);
         return true;
     }
 
@@ -40,7 +38,7 @@ namespace Aery { namespace Graphics {
         for (mut_u32 i = 0; i < m_Swapchain.buffers.size(); i++) {
             m_Device.destroyFramebuffer(m_Swapchain.buffers[i]);
         }
-        Aery::log(fmt::format("<VkRenderer::DestroyFramebuffers> ID {} destroyed {} framebuffers.", m_ID, m_Swapchain.buffers.size()));
+        Aery::log(debug_format("<VkRenderer::DestroyFramebuffers> ID {} destroyed {} framebuffers.", m_ID, m_Swapchain.buffers.size()));
         m_Swapchain.buffers.clear();
     }
 }

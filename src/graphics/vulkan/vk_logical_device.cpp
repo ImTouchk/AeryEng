@@ -8,13 +8,11 @@
 #include <vector>
 #include <set>
 
-using namespace std;
-
 namespace Aery { namespace Graphics {
     bool VkRenderer::CreateLogicalDevice() {
         const VkQueueFamilyIndices Indices = FindQueueFamilies(m_PhysicalDevice, m_Surface);
-        vector<vk::DeviceQueueCreateInfo> QueueInfos = {};
-        const set<mut_u32> UniqueQFamilies = {
+        std::vector<vk::DeviceQueueCreateInfo> QueueInfos = {};
+        const std::set<mut_u32> UniqueQFamilies = {
             Indices.gFamily.value(),
             Indices.pFamily.value()
         };
@@ -47,19 +45,19 @@ namespace Aery { namespace Graphics {
 
         vk::Result Result = m_PhysicalDevice.createDevice(&DeviceInfo, nullptr, &m_Device);
         if (Result != vk::Result::eSuccess) {
-            Aery::error(fmt::format("<VkRenderer::CreateLogicalDevice> ID {} failed to create a logical device.", m_ID));
+            Aery::error(debug_format("<VkRenderer::CreateLogicalDevice> ID {} failed to create a logical device.", m_ID));
             return false;
         }
 
         m_Device.getQueue(Indices.gFamily.value(), 0, &m_GraphicsQ);
         m_Device.getQueue(Indices.pFamily.value(), 0, &m_PresentQ);
-        Aery::log(fmt::format("<VkRenderer::CreateLogicalDevice> ID {} created a logical device.", m_ID), fmt::color::light_green);
+        Aery::log(debug_format("<VkRenderer::CreateLogicalDevice> ID {} created a logical device.", m_ID), fmt::color::light_green);
         return true;
     }
 
     void VkRenderer::DestroyLogicalDevice() {
         m_Device.destroy();
-        Aery::log(fmt::format("<VkRenderer::DestroyLogicalDevice> ID {} destroyed a logical device.", m_ID));
+        Aery::log(debug_format("<VkRenderer::DestroyLogicalDevice> ID {} destroyed a logical device.", m_ID));
     }
 }
 }

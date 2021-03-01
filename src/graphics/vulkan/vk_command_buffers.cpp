@@ -1,6 +1,5 @@
 #include "utils/debug.hpp"
 #include "utils/types.hpp"
-#include "math/mat4.hpp"
 #include "graphics/vulkan/vk_common.hpp"
 #include "graphics/vk_renderer.hpp"
 #include <vulkan/vulkan.hpp>
@@ -18,13 +17,13 @@ namespace Aery { namespace Graphics {
         };
 
         m_CommandPool = m_Device.createCommandPool(CommandPoolInfo, nullptr);
-        Aery::log(fmt::format("<VkRenderer::CreateCommandPool> ID {} created a command pool.", m_ID), fmt::color::light_green);
+        Aery::log(debug_format("<VkRenderer::CreateCommandPool> ID {} created a command pool.", m_ID), fmt::color::light_green);
         return true;
     }
 
     void VkRenderer::DestroyCommandPool() {
         m_Device.destroyCommandPool(m_CommandPool);
-        Aery::log(fmt::format("<VkRenderer::DestroyCommandPool> ID {} destroyed a command pool.", m_ID));
+        Aery::log(debug_format("<VkRenderer::DestroyCommandPool> ID {} destroyed a command pool.", m_ID));
     }
 
     vk::CommandPool VkRenderer::getNewCommandPool() {
@@ -53,12 +52,12 @@ namespace Aery { namespace Graphics {
         vk::CommandBufferAllocateInfo BufferAllocateInfo = {
             .commandPool = m_CommandPool,
             .level = vk::CommandBufferLevel::ePrimary,
-            .commandBufferCount = (u32)m_CommandBuffers.size()
+            .commandBufferCount = static_cast<u32>( m_CommandBuffers.size() )
         };
 
         vk::Result Result = m_Device.allocateCommandBuffers(&BufferAllocateInfo, m_CommandBuffers.data());
         if (Result != vk::Result::eSuccess) {
-            Aery::error(fmt::format("<VkRenderer::CreateCmdBuffers> ID {} failed to allocate command buffers.", m_ID));
+            Aery::error(debug_format("<VkRenderer::CreateCmdBuffers> ID {} failed to allocate command buffers.", m_ID));
             return false;
         }
         return true;

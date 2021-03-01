@@ -9,9 +9,7 @@
 #include <vector>
 #include <set>
 
-using namespace std;
-
-static Aery::u32 GetDeviceScore(vk::PhysicalDevice& PhysDevice, vk::SurfaceKHR& Surface, const array<const char*, 1>& Extensions) {
+static Aery::u32 GetDeviceScore(vk::PhysicalDevice& PhysDevice, vk::SurfaceKHR& Surface, const std::array<const char*, 1>& Extensions) {
     Aery::mut_u32 Score = 0;
     
     Aery::mut_u32 ExtensionCount = 0;
@@ -26,7 +24,7 @@ static Aery::u32 GetDeviceScore(vk::PhysicalDevice& PhysDevice, vk::SurfaceKHR& 
         return Score;
     }
 
-    set<string> RequiredExt(Extensions.begin(), Extensions.end());
+    std::set<std::string> RequiredExt(Extensions.begin(), Extensions.end());
     for (Aery::mut_u32 i = 0; i < ExtensionCount; i++) {
         RequiredExt.erase(GPUExtensions[i].extensionName);
     }
@@ -69,14 +67,14 @@ namespace Aery { namespace Graphics {
             Aery::error("<VkRenderer::PickPhysicalDevice> Failed to enumerate physical devices.");
             return false;
         }
-        vector<vk::PhysicalDevice> Devices(DeviceCount);
+        std::vector<vk::PhysicalDevice> Devices(DeviceCount);
         Result = m_Instance.enumeratePhysicalDevices(&DeviceCount, Devices.data());
         if (Result != vk::Result::eSuccess) {
             Aery::error("<VkRenderer::PickPhysicalDevice> Failed to enumerate physical devices.");
             return false;
         }
 
-        unordered_map<vk::PhysicalDevice*, mut_u32> Scores = {};
+        std::unordered_map<vk::PhysicalDevice*, mut_u32> Scores = {};
         for (mut_u32 i = 0; i < Devices.size(); i++) {
             u32 Score = GetDeviceScore(Devices[i], m_Surface, m_Extensions);
             if (Score != 0) { Scores[&Devices[i]] = Score; }
@@ -86,8 +84,8 @@ namespace Aery { namespace Graphics {
             return false;
         }
 
-        pair<vk::PhysicalDevice*, mut_u32> Best = { &Devices[0], Scores[&Devices[0]] };
-        for (pair<vk::PhysicalDevice*, u32> Score : Scores) {
+        std::pair<vk::PhysicalDevice*, mut_u32> Best = { &Devices[0], Scores[&Devices[0]] };
+        for (std::pair<vk::PhysicalDevice*, u32> Score : Scores) {
             if (Best.second < Score.second) {
                 Best.first = Score.first;
                 Best.second = Score.second;
@@ -97,7 +95,7 @@ namespace Aery { namespace Graphics {
         vk::PhysicalDeviceProperties Properties;
         Best.first->getProperties(&Properties);
 
-        Aery::log(fmt::format("<VkRenderer::PickPhysicalDevice> ID {} picked device {} with score {}.", m_ID, Properties.deviceName, Best.second));
+        Aery::log(debug_format("<VkRenderer::PickPhysicalDevice> ID {} picked device {} with score {}.", m_ID, Properties.deviceName, Best.second));
         m_PhysicalDevice = *Best.first;
         return true;
     }

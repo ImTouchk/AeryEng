@@ -8,10 +8,8 @@
 #include <vector>
 #include <mutex>
 
-using namespace std;
-
 namespace {
-    bool CreateModule(vector<char>& Input, vk::ShaderModule& Output, vk::Device& Device) {
+    bool CreateModule(std::vector<char>& Input, vk::ShaderModule& Output, vk::Device& Device) {
         vk::ShaderModuleCreateInfo ModuleInfo = {
             .codeSize = Input.size(),
             .pCode = reinterpret_cast<Aery::mut_u32*>(Input.data())
@@ -41,7 +39,7 @@ namespace Aery { namespace Graphics {
 
     bool VkRenderer::CreateShader(ShaderCreateInfo& Input, PShader* Output) {
         auto CreatePipeline = [&](VkShader& Shader) {
-            vector<char> VertexCode = {},
+            std::vector<char> VertexCode = {},
                          FragmentCode = {};
 
             if (!GetFileContents(Input.vertex_path, VertexCode, FileLoadOptions::eBinary)) { return false; }
@@ -186,7 +184,7 @@ namespace Aery { namespace Graphics {
 
             vk::Result Result = m_Device.createPipelineLayout(&LayoutInfo, nullptr, &Shader.layout);
             if (Result != vk::Result::eSuccess) {
-                Aery::error(fmt::format("<VkRenderer::createShader> ID {} failed to create a pipeline layout.", m_ID));
+                Aery::error(debug_format("<VkRenderer::createShader> ID {} failed to create a pipeline layout.", m_ID));
                 return false;
             }
 
@@ -210,7 +208,7 @@ namespace Aery { namespace Graphics {
         
             vk::ResultValue<vk::Pipeline> PipelineRes = m_Device.createGraphicsPipeline({}, PipelineInfo);
             if (PipelineRes.result != vk::Result::eSuccess) {
-                Aery::warn(fmt::format("<VkRenderer::createShader> ID {} failed to create a pipeline.", m_ID));
+                Aery::warn(debug_format("<VkRenderer::createShader> ID {} failed to create a pipeline.", m_ID));
                 return false;
             }
 
@@ -220,7 +218,7 @@ namespace Aery { namespace Graphics {
 
         static struct {
             PShader current = 1;
-            mutex num;
+            std::mutex num;
         } ShaderIndex;
         ShaderIndex.num.lock();
         PShader ID = ShaderIndex.current++;
@@ -234,7 +232,7 @@ namespace Aery { namespace Graphics {
             *Output = ID; 
         }
 
-        Aery::log(fmt::format("<VkRenderer::createShader> ID {} created a pipeline {}.", m_ID, ID));
+        Aery::log(debug_format("<VkRenderer::createShader> ID {} created a pipeline {}.", m_ID, ID));
         return true;
     }
 
@@ -246,7 +244,7 @@ namespace Aery { namespace Graphics {
 
         m_Shaders.erase(Shader.id);
 
-        Aery::log(fmt::format("<VkRenderer::destroyShader> ID {} destroyed pipeline {}.", m_ID, Shader.id));
+        Aery::log(debug_format("<VkRenderer::destroyShader> ID {} destroyed pipeline {}.", m_ID, Shader.id));
     }
 
     void VkRenderer::DestroyShaders() {

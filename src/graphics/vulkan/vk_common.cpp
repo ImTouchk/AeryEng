@@ -7,8 +7,6 @@
 #include <vector>
 #include <array>
 
-using namespace std;
-
 static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback
 (
     VkDebugUtilsMessageSeverityFlagBitsEXT Severity,
@@ -19,7 +17,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback
 {   
     if (Severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT ||
         Severity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
-        Aery::log(fmt::format("<Vk::DebugCallback> {}", CallbackData->pMessage), fmt::color::aqua);
+        Aery::log(Aery::debug_format("<Vk::DebugCallback> {}", CallbackData->pMessage), fmt::color::aqua);
     }
 
     return VK_FALSE;
@@ -99,10 +97,10 @@ namespace Aery { namespace Graphics {
         return CachedDetails;
     }
 
-    vector<const char*> GetRequiredExtensions(bool UseLayers) {
+    std::vector<const char*> GetRequiredExtensions(bool UseLayers) {
         Aery::mut_u32 ExtensionCount = 0;
         const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&ExtensionCount);
-        vector<const char*> Extensions(glfwExtensions, glfwExtensions + ExtensionCount);
+        std::vector<const char*> Extensions(glfwExtensions, glfwExtensions + ExtensionCount);
         if (UseLayers) {
             Extensions.push_back(
                 VK_EXT_DEBUG_UTILS_EXTENSION_NAME
@@ -111,7 +109,7 @@ namespace Aery { namespace Graphics {
         return Extensions;
     }
 
-    bool CheckLayerSupport(array<const char*, 1>& Layers) {
+    bool CheckLayerSupport(std::array<const char*, 1>& Layers) {
         Aery::mut_u32 LayerCount = 0;
         vk::Result Result = vk::enumerateInstanceLayerProperties(&LayerCount, nullptr);
         if (Result != vk::Result::eSuccess) {
@@ -119,7 +117,7 @@ namespace Aery { namespace Graphics {
             return false;
         }
 
-        vector<vk::LayerProperties> LProperties = vector<vk::LayerProperties>(LayerCount);
+        std::vector<vk::LayerProperties> LProperties = std::vector<vk::LayerProperties>(LayerCount);
         Result = vk::enumerateInstanceLayerProperties(&LayerCount, LProperties.data());
 
         for (Aery::mut_u32 i = 0; i < Aery::mut_u32(Layers.size()); i++) {

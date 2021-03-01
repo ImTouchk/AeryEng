@@ -6,8 +6,6 @@
 #include <fmt/core.h>
 #include <vector>
 
-using namespace std;
-
 namespace Aery { namespace Graphics {
     bool VkRenderer::CreateSyncObjects() {
         m_ImageAvailable.resize(MAX_FRAMES_IN_FLIGHT);
@@ -23,7 +21,7 @@ namespace Aery { namespace Graphics {
             m_RenderFinished[i] = m_Device.createSemaphore(SemaphoreInfo);
             m_InFlightFences[i] = m_Device.createFence(FenceInfo);
         }
-        Aery::log(fmt::format("<VkRenderer::CreateSyncObjects> ID {} created all objects.", m_ID), fmt::color::light_green);
+        Aery::log(debug_format("<VkRenderer::CreateSyncObjects> ID {} created all objects.", m_ID), fmt::color::light_green);
         return true;
     }
 
@@ -36,7 +34,7 @@ namespace Aery { namespace Graphics {
         }
         m_ImageAvailable.clear(); m_RenderFinished.clear();
         m_InFlightFences.clear(); m_ImagesInFlight.clear();
-        Aery::log(fmt::format("<VkRenderer::DestroySyncObjects> ID {} destroyed all objects.", m_ID));
+        Aery::log(debug_format("<VkRenderer::DestroySyncObjects> ID {} destroyed all objects.", m_ID));
     }
 }
 }

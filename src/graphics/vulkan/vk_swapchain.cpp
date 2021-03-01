@@ -6,9 +6,7 @@
 #include <vulkan/vulkan.hpp>
 #include <fmt/core.h>
 
-using namespace std;
-
-static vk::SurfaceFormatKHR& PickSurfaceFormat(vector<vk::SurfaceFormatKHR>& Formats) {
+static vk::SurfaceFormatKHR& PickSurfaceFormat(std::vector<vk::SurfaceFormatKHR>& Formats) {
     if (Formats.size() == 0) {
         Aery::error("<PickSurfaceFormat> No formats available.");
         Formats.push_back({});
@@ -23,7 +21,7 @@ static vk::SurfaceFormatKHR& PickSurfaceFormat(vector<vk::SurfaceFormatKHR>& For
     return Formats[0];
 }
 
-static vk::PresentModeKHR PickPresentMode(vector<vk::PresentModeKHR>& Modes, Aery::Graphics::PresentMode Preferred) {
+static vk::PresentModeKHR PickPresentMode(std::vector<vk::PresentModeKHR>& Modes, Aery::Graphics::PresentMode Preferred) {
     if (Modes.size() == 0) {
         Aery::error("<PickPresentMode> No present modes available.");
         return {};
@@ -59,8 +57,8 @@ static vk::Extent2D PickExtent(const Aery::Graphics::Window& Surface, const vk::
         Surface.height()
     };
 
-    ActualExtent.width = max(Capabilities.minImageExtent.width, ActualExtent.width);
-    ActualExtent.height = max(Capabilities.minImageExtent.height, ActualExtent.height);
+    ActualExtent.width = std::max(Capabilities.minImageExtent.width, ActualExtent.width);
+    ActualExtent.height = std::max(Capabilities.minImageExtent.height, ActualExtent.height);
     return ActualExtent;
 }
 
@@ -108,14 +106,14 @@ namespace Aery { namespace Graphics {
 
         vk::Result Result = m_Device.createSwapchainKHR(&SwapInfo, nullptr, &m_Swapchain.instance);
         if (Result != vk::Result::eSuccess) {
-            Aery::error(fmt::format("<VkRenderer::CreateSwapchain> ID {} failed to create a swapchain.", m_ID));
+            Aery::error(debug_format("<VkRenderer::CreateSwapchain> ID {} failed to create a swapchain.", m_ID));
             return false;
         }
 
         Result = m_Device.getSwapchainImagesKHR(m_Swapchain.instance, &ImageCount, nullptr);
         if (Result != vk::Result::eSuccess) {
             GetImageFail:
-            Aery::error(fmt::format("<VkRenderer::CreateSwapchain> ID {} failed to get the swapchain images.", m_ID));
+            Aery::error(debug_format("<VkRenderer::CreateSwapchain> ID {} failed to get the swapchain images.", m_ID));
             return false;
         }
         m_Swapchain.images.resize(ImageCount);
@@ -126,7 +124,7 @@ namespace Aery { namespace Graphics {
         m_Swapchain.format = Format.format;
         m_Swapchain.extent = Extent;
 
-        Aery::log(fmt::format("<VkRenderer::CreateSwapchain> ID {} created a swapchain.", m_ID), fmt::color::light_green);
+        Aery::log(debug_format("<VkRenderer::CreateSwapchain> ID {} created a swapchain.", m_ID), fmt::color::light_green);
         return true;
     }
 
@@ -164,12 +162,12 @@ namespace Aery { namespace Graphics {
             };
             vk::Result Result = m_Device.createImageView(&ViewInfo, nullptr, &m_Swapchain.views[i]);
             if (Result != vk::Result::eSuccess) {
-                Aery::error(fmt::format("<VkRenderer::CreateImageViews> ID {} failed to create an image view {}.", m_ID, i));
+                Aery::error(debug_format("<VkRenderer::CreateImageViews> ID {} failed to create an image view {}.", m_ID, i));
                 return false;
             }
         }
 
-        Aery::log(fmt::format("<VkRenderer::CreateImageViews> ID {} created all image views.", m_ID), fmt::color::light_green);
+        Aery::log(debug_format("<VkRenderer::CreateImageViews> ID {} created all image views.", m_ID), fmt::color::light_green);
         return true;
     }
 
@@ -180,7 +178,7 @@ namespace Aery { namespace Graphics {
             }
             m_Device.destroyImageView(m_Swapchain.views[i], nullptr);
         }
-        Aery::log(fmt::format("<VkRenderer::DestroyImageViews> Destroyed all views.", m_ID));
+        Aery::log(debug_format("<VkRenderer::DestroyImageViews> Destroyed all views.", m_ID));
     }
 }
 }

@@ -4,8 +4,6 @@
 #include <vulkan/vulkan.hpp>
 #include <vk_mem_alloc.h>
 
-using namespace std;
-
 namespace {
     vk::Format FindSupportedFormat(vk::PhysicalDevice& GPU, const std::vector<vk::Format>& Candidates, vk::ImageTiling Tiling, vk::FormatFeatureFlags Flags) {
         for (auto& Format : Candidates) {
