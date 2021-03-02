@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -202,41 +202,13 @@
     <ClCompile Include="inc\fmt\format.cc" />
     <ClCompile Include="inc\fmt\os.cc" />
     <ClCompile Include="lib\glad.c" />
-    <ClCompile Include="src\graphics\vulkan\vk_allocator.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_base.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_command_buffers.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_common.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_debug_messenger.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_depth_buffer.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_frame_buffers.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_instance.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_logical_device.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_object.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_physical_device.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_render_pass.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_sync_objects.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_shader.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_surface.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_swapchain.cpp" />
-    <ClCompile Include="src\graphics\vulkan\vk_utils.cpp" />
-    <ClCompile Include="src\graphics\window.cpp" />
-    <ClCompile Include="src\input.cpp" />
-    <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\utils\debug.cpp" />
-    <ClCompile Include="src\utils\file_io.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\GLFW\glfw3.h" />
     <ClInclude Include="inc\GLFW\glfw3native.h" />
-    <ClInclude Include="src\aery.hpp" />
-    <ClInclude Include="src\graphics\rn_common.hpp" />
-    <ClInclude Include="src\graphics\vk_renderer.hpp" />
-    <ClInclude Include="src\graphics\vulkan\vk_common.hpp" />
-    <ClInclude Include="src\graphics\window.hpp" />
-    <ClInclude Include="src\input.hpp" />
-    <ClInclude Include="src\utils\debug.hpp" />
-    <ClInclude Include="src\utils\file_io.hpp" />
-    <ClInclude Include="src\utils\types.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
