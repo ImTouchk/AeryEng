@@ -1,5 +1,5 @@
-# Aery Engine
-**Aery** is a work-in-progress game engine written in C++20. Its primary graphics backend is Vulkan, but OpenGL support is planned for the future, and DirectX12 is
+# Lunar Engine
+**Lunar** is a work-in-progress game engine written in C++20. Its primary graphics backend is Vulkan, but OpenGL support is planned for the future, and DirectX12 is
 also considered. Right now, the Vulkan renderer can render very simple shaders to the screen.
 
 The engine will focus on 2D applications first, with full 3D support maybe coming at a later date.
