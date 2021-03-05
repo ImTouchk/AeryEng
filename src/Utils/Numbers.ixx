@@ -1,5 +1,6 @@
 module;
 #include <cstdint>
+#include <iterator>
 export module Lunar:Numbers;
 
 template<typename _Ty>
@@ -7,11 +8,11 @@ struct base_num {
     using val = base_num<_Ty>;
     using ref = val&;
 
-    base_num(ref Other) {
+    base_num(const ref Other) {
         m_Value = Other.m_Value;
     }
 
-    base_num(_Ty Value) {
+    base_num(const _Ty Value) {
         m_Value = Value;
     }
 
@@ -51,9 +52,28 @@ struct base_num {
     }
 
     OVERLOAD_OPERATOR(+) OVERLOAD_OPERATOR(-)
-    OVERLOAD_OPERATOR(*) OVERLOAD_OPERATOR(/ )
+    OVERLOAD_OPERATOR(*) OVERLOAD_OPERATOR(/)
     OVERLOAD_OPERATOR(&) OVERLOAD_OPERATOR(^)
-    OVERLOAD_OPERATOR(%) OVERLOAD_OPERATOR(| )
+    OVERLOAD_OPERATOR(%) OVERLOAD_OPERATOR(|)
+    
+#undef OVERLOAD_OPERATOR
+
+#define OVERLOAD_OPERATOR(op) \
+    template<typename _Ty2> \
+    bool operator op(const _Ty2 Value) { \
+        return m_Value op static_cast<_Ty>(Value); \
+    } \
+    bool operator op(const ref Other) { \
+        return m_Value op Other.m_Value; \
+    } \
+    bool operator op(const _Ty Value) const { \
+        return m_Value op Value; \
+    }
+
+    OVERLOAD_OPERATOR(==) OVERLOAD_OPERATOR(!=)
+    OVERLOAD_OPERATOR(>)  OVERLOAD_OPERATOR(<)
+    
+#undef OVERLOAD_OPERATOR
 
     ref operator--() {
         m_Value--;
@@ -76,7 +96,7 @@ struct base_num {
     }
 
     template<typename _Ty2>
-    base_num(base_num<_Ty>& Other) {
+    base_num(const base_num<_Ty2>& Other) {
         m_Value = static_cast<_Ty>(Other.m_Value);
     }
 
@@ -100,6 +120,7 @@ struct base_num {
     _Ty& value() {
         return m_Value;
     }
+
 private:
     _Ty m_Value;
 };
@@ -113,4 +134,23 @@ export namespace Lunar {
 
     using f32 = base_num<float>;
     using f64 = base_num<double>;
+
+    template<typename _Ty>
+    class range {
+    private:
+        _Ty last;
+        _Ty iter;
+
+    public:
+        range(_Ty start, _Ty end) : last(end), iter(start) {}
+        range(_Ty end) : last(end), iter(0) {}
+        range(const range& other) : last(other.last), iter(other.iter) {}
+
+        const range& begin() const { return *this; }
+        const range& end() const { return *this; }
+
+        bool operator!=(const range&) const { return iter < last; }
+        void operator++() { ++iter; }
+        _Ty operator*() const { return iter; }
+    };
 }
