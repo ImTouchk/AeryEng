@@ -29,8 +29,6 @@ export namespace Lunar {
         void update();
 
     private:
-        friend void OnResize(GLFWwindow* Handle, int Width, int Height);
-
         using WindowData = WindowCreateInfo;
 
         GLFWwindow* m_Handle;

@@ -94,17 +94,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);VULKAN_HPP_NO_STRUCT_CONSTRUCTORS;GLFW_INCLUDE_VULKAN;GLM_FORCE_DEPTH_ZERO_TO_ONE;GLM_FORCE_RADIANS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);VULKAN_HPP_NO_STRUCT_CONSTRUCTORS;GLFW_INCLUDE_VULKAN;GLM_FORCE_DEPTH_ZERO_TO_ONE;GLM_FORCE_RADIANS;VK_USE_DEBUG_LAYERS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>D:\Development\C++\Lunar\inc;D:\Development\C++\Lunar\src;D:\Development\Vulkan\SDK 1.2.154\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Development\C++\Lunar\inc;D:\Development\C++\Lunar\src;D:\Development\Vulkan\SDK 1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Development\C++\Lunar\lib\glfw32;D:\Development\Vulkan\SDK 1.2.154\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Development\C++\Lunar\lib\glfw32;D:\Development\Vulkan\SDK 1.2.170.0\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -121,7 +121,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>D:\Development\C++\Lunar\inc;D:\Development\C++\Lunar\src;D:\Development\Vulkan\SDK 1.2.154\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Development\C++\Lunar\inc;D:\Development\C++\Lunar\src;D:\Development\Vulkan\SDK 1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -135,7 +135,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Development\C++\Lunar\lib\glfw32;D:\Development\Vulkan\SDK 1.2.154\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Development\C++\Lunar\lib\glfw32;D:\Development\Vulkan\SDK 1.2.170.0\Lib32;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
@@ -148,17 +148,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);VULKAN_HPP_NO_STRUCT_CONSTRUCTORS;GLFW_INCLUDE_VULKAN;GLM_FORCE_DEPTH_ZERO_TO_ONE;GLM_FORCE_RADIANS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);VULKAN_HPP_NO_STRUCT_CONSTRUCTORS;GLFW_INCLUDE_VULKAN;GLM_FORCE_DEPTH_ZERO_TO_ONE;GLM_FORCE_RADIANS;VK_USE_DEBUG_LAYERS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>D:\Development\C++\Lunar\inc;D:\Development\C++\Lunar\src;D:\Development\Vulkan\SDK 1.2.154\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Development\C++\Lunar\inc;D:\Development\C++\Lunar\src;D:\Development\Vulkan\SDK 1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Development\C++\Lunar\lib\glfw64;D:\Development\Vulkan\SDK 1.2.154\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Development\C++\Lunar\lib\glfw64;D:\Development\Vulkan\SDK 1.2.170.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -175,7 +175,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
-      <AdditionalIncludeDirectories>D:\Development\C++\Lunar\inc;D:\Development\C++\Lunar\src;D:\Development\Vulkan\SDK 1.2.154\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Development\C++\Lunar\inc;D:\Development\C++\Lunar\src;D:\Development\Vulkan\SDK 1.2.170.0\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -189,7 +189,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>D:\Development\C++\Lunar\lib\glfw64;D:\Development\Vulkan\SDK 1.2.154\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Development\C++\Lunar\lib\glfw64;D:\Development\Vulkan\SDK 1.2.170.0\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;vulkan-1.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <EntryPointSymbol>
       </EntryPointSymbol>
@@ -204,14 +204,19 @@
     <ClCompile Include="lib\glad.c" />
     <ClCompile Include="src\Lunar.ixx" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Render\Renderer.ixx" />
+    <ClCompile Include="src\Render\vulkan\vk_base.cpp" />
+    <ClCompile Include="src\Render\vulkan\vk_common.cpp" />
     <ClCompile Include="src\Render\Window.cpp" />
     <ClCompile Include="src\Render\Window.ixx" />
     <ClCompile Include="src\Utils\Debug.ixx" />
     <ClCompile Include="src\Utils\Numbers.ixx" />
+    <ClCompile Include="src\Utils\Serialized.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\GLFW\glfw3.h" />
     <ClInclude Include="inc\GLFW\glfw3native.h" />
+    <ClInclude Include="src\Render\vulkan\vk_common.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

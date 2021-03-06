@@ -16,7 +16,7 @@ namespace {
 
     void OnError(int Code, const char* Message)
     {
-        Lunar::Error("<Window> [Code {}] {}", Code, Message);
+        Lunar::Error("<Window> Code {} - {}", Code, Message);
     }
 }
 
@@ -64,6 +64,7 @@ namespace Lunar {
 
         m_Active = true;
         m_Data = CreateInfo;
+
         return true;
     }
 

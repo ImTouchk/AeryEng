@@ -79,8 +79,3 @@ export namespace Lunar {
         exit(-1);
     }
 }
-
-#define LUNAR_EXIT(format_str, args) \
-    Lunar::Error(format_str, args) \
-    Lunar::Print("^----- At file {}", __FILE__) \
-    Lunar::Exit()
