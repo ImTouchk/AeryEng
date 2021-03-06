@@ -207,11 +207,11 @@
     <ClCompile Include="src\Render\Renderer.ixx" />
     <ClCompile Include="src\Render\vulkan\vk_base.cpp" />
     <ClCompile Include="src\Render\vulkan\vk_common.cpp" />
+    <ClCompile Include="src\Render\vulkan\vk_permanent_resources.cpp" />
     <ClCompile Include="src\Render\Window.cpp" />
     <ClCompile Include="src\Render\Window.ixx" />
     <ClCompile Include="src\Utils\Debug.ixx" />
     <ClCompile Include="src\Utils\Numbers.ixx" />
-    <ClCompile Include="src\Utils\Serialized.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\GLFW\glfw3.h" />

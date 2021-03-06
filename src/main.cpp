@@ -7,10 +7,10 @@ import Lunar;
 
 #include <fmt/core.h>
 
-int main()
-{
-    glfwInit();
+#include <thread>
 
+void program_start()
+{
     Lunar::WindowCreateInfo CreateInfo = {
         .title = "Aery Engine"
     };
@@ -19,7 +19,7 @@ int main()
     Window.start(CreateInfo);
 
     Lunar::Renderer Renderer;
-    Renderer.start();
+    Renderer.start(Window);
 
     while (Window.active()) {
         Window.update();
@@ -28,6 +28,18 @@ int main()
 
     Renderer.stop();
     Window.stop();
+    return;
+}
+
+int main()
+{
+    glfwInit();
+
+    std::thread Second = std::thread(program_start);
+
+    program_start();
+        
+    Second.join();
 
     glfwTerminate();
     return 0;

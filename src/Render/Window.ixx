@@ -28,6 +28,7 @@ export namespace Lunar {
         bool active();
         void update();
 
+        friend class Renderer;
     private:
         using WindowData = WindowCreateInfo;
 

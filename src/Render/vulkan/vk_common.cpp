@@ -100,6 +100,10 @@ namespace Lunar::vk {
 
     void destroyInstance()
     {
+        if (GlobalInstance == NULL) {
+            return;
+        }
+
         vkDestroyInstance(GlobalInstance, nullptr);
         Lunar::Print("<Vulkan> Instance destroyed.");
     }
@@ -162,7 +166,7 @@ namespace Lunar::vk {
         for (Lunar::u32 i : Lunar::range(FamilyCount)) {
             VkBool32 PresentSupport = false;
             vkGetPhysicalDeviceSurfaceSupportKHR(Device, i, Surface, &PresentSupport);
-            if (Families[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+            if (Families[i.value()].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 Cache.indices.gFamily = i;
             }
             if (PresentSupport) {

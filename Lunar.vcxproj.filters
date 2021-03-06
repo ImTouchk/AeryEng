@@ -30,9 +30,6 @@
     <ClCompile Include="src\Utils\Numbers.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Utils\Serialized.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Lunar.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -52,6 +49,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Render\vulkan\vk_common.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render\vulkan\vk_permanent_resources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
