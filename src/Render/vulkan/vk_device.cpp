@@ -40,23 +40,24 @@ namespace Lunar {
             .pEnabledFeatures = &Features
         };
 
-#ifdef VK_USE_DEBUG_LAYERS
+#   ifdef VK_USE_DEBUG_LAYERS
         DeviceInfo.enabledLayerCount = static_cast<uint32_t>(m_Layers.size());
         DeviceInfo.ppEnabledLayerNames = m_Layers.data();
-#endif
+#   endif
 
         VkDevice Device;
         VkResult Result;
         Result = vkCreateDevice(m_PhysDevice, &DeviceInfo, nullptr, &Device);
         if (Result != VK_SUCCESS) {
-            Lunar::Error("<Vulkan> Failed to create a logical device.");
+            Lunar::Error("<Renderer> Failed to create a logical device.");
             Lunar::Exit();
         }
 
-        
+        vkGetDeviceQueue(Device, Indices.gFamily.value(), 0, &m_GraphicsQ);
+        vkGetDeviceQueue(Device, Indices.pFamily.value(), 0, &m_PresentQ);
 
         m_Device = Device;
-        Lunar::Print("<Vulkan> Logical device created.");
+        Lunar::Print("<Renderer> Logical device created.");
     }
 
     void Renderer::DestroyDevice()
@@ -65,6 +66,7 @@ namespace Lunar {
             return;
         }
         vkDestroyDevice(m_Device, nullptr);
-        Lunar::Print("<Vulkan> Logical device destroyed.");
+        Lunar::Print("<Renderer> Logical device destroyed.");
     }
 }
+

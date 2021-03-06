@@ -27,9 +27,19 @@ export namespace Lunar {
         /* Those resources are: */
 
         void PickGPU();
-        void SetupMessenger(); void DestroyMessenger();
-        void CreateSurface();  void DestroySurface();
-        void CreateDevice();   void DestroyDevice();
+        void SetupMessenger();  void DestroyMessenger();
+        void CreateSurface();   void DestroySurface();
+        void CreateDevice();    void DestroyDevice();
+        void CreateAllocator(); void DestroyAllocator();
+
+        /* Temporary Resources */
+        
+        void CreateSwapchain();    void DestroySwapchain();
+        void CreateImageViews();   void DestroyImageViews();
+        void CreateRenderPass();   void DestroyRenderPass();
+        void CreateFramebuffers(); void DestroyFramebuffers();
+        void CreateCommandPool();  void DestroyCommandPool();
+        void AllocateCommandBuffers();
 
     private:
         std::array<const char*, 1> m_Extensions = {
@@ -46,6 +56,8 @@ export namespace Lunar {
         VkDevice m_Device = NULL;
         VkQueue m_GraphicsQ = NULL;
         VkQueue m_PresentQ = NULL;
+
+        VmaAllocator m_Allocator = NULL;
 
         Window* m_Window;
         u32 m_ID = 0;

@@ -205,6 +205,7 @@
     <ClCompile Include="src\Lunar.ixx" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Render\Renderer.ixx" />
+    <ClCompile Include="src\Render\vulkan\vk_allocator.cpp" />
     <ClCompile Include="src\Render\vulkan\vk_base.cpp" />
     <ClCompile Include="src\Render\vulkan\vk_common.cpp" />
     <ClCompile Include="src\Render\vulkan\vk_device.cpp" />
@@ -219,6 +220,7 @@
   <ItemGroup>
     <ClInclude Include="inc\GLFW\glfw3.h" />
     <ClInclude Include="inc\GLFW\glfw3native.h" />
+    <ClInclude Include="inc\vk_mem_alloc.h" />
     <ClInclude Include="src\Render\vulkan\vk_common.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

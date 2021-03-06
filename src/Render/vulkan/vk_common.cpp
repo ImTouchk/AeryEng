@@ -29,7 +29,7 @@ namespace {
 
         Result = vkEnumerateInstanceLayerProperties(&LayerCount.value(), nullptr);
         if (Result != VK_SUCCESS) {
-            Lunar::Error("<CheckLayerSupport> Could not enumerate layer properties.");
+            Lunar::Error("<Renderer> Could not enumerate layer properties.");
             return false;
         }
 
@@ -92,10 +92,10 @@ namespace Lunar::vk {
             VkResult Result;
             Result = vkCreateInstance(&InstanceCreateInfo, nullptr, &GlobalInstance);
             if (Result != VK_SUCCESS) {
-                Lunar::Error("<Vulkan> Failed to create an instance.");
+                Lunar::Error("<Renderer> Failed to create an instance.");
             }
 
-            Lunar::Print("<Vulkan> Instance created.");
+            Lunar::Print("<Renderer> Instance created.");
         }
         return GlobalInstance;
     }
@@ -107,7 +107,7 @@ namespace Lunar::vk {
         }
 
         vkDestroyInstance(GlobalInstance, nullptr);
-        Lunar::Print("<Vulkan> Instance destroyed.");
+        Lunar::Print("<Renderer> Instance destroyed.");
     }
 }
 
@@ -169,15 +169,15 @@ namespace Lunar::vk {
         VkQueueFamilyProperties* Families = new VkQueueFamilyProperties[FamilyCount.value()];
         vkGetPhysicalDeviceQueueFamilyProperties(Device, &FamilyCount.value(), Families);
         
-
         for (Lunar::u32 i : Lunar::range(FamilyCount)) {
             VkBool32 PresentSupport = false;
             vkGetPhysicalDeviceSurfaceSupportKHR(Device, i, Surface, &PresentSupport);
+            if (PresentSupport) { Cache.indices.pFamily = i; }
             if (Families[i.value()].queueFlags & VK_QUEUE_GRAPHICS_BIT) {
                 Cache.indices.gFamily = i;
             }
-            if (PresentSupport) {
-                Cache.indices.pFamily = i;
+            if (Cache.indices.isComplete()) {
+                break;
             }
         }
 

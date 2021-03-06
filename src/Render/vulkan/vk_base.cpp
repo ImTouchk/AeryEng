@@ -54,7 +54,7 @@ namespace Lunar {
     void Renderer::CreatePermanentResources()
     {
         if (!glfwVulkanSupported()) {
-            Lunar::Error("<Vulkan> The machine does not support Vulkan.");
+            Lunar::Error("<Renderer> The machine does not support Vulkan.");
             return;
         }
 
@@ -62,10 +62,12 @@ namespace Lunar {
         CreateSurface();
         PickGPU();
         CreateDevice();
+        CreateAllocator();
     }
 
     void Renderer::DestroyPermanentResources()
     {
+        DestroyAllocator();
         DestroyDevice();
         DestroySurface();
         DestroyMessenger();

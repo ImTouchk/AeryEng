@@ -25,9 +25,9 @@ namespace Lunar {
 
         Result = Function(vk::getInstance(), &MessengerCreateInfo, nullptr, &Messenger);
         if (Result != VK_SUCCESS) {
-            Lunar::Warn("<Vulkan> Failed to set up a debug messenger.");
+            Lunar::Warn("<Renderer> Failed to set up a debug messenger.");
         }
-        else Lunar::Print("<Vulkan> Debug messenger was set up.");
+        else Lunar::Print("<Renderer> Debug messenger was set up.");
 
         m_DebugMsg = Messenger;
 #   endif
@@ -51,7 +51,7 @@ namespace Lunar {
         }
 
         Function(vk::getInstance(), m_DebugMsg, nullptr);
-        Lunar::Print("<Vulkan> Debug messenger destroyed.");
+        Lunar::Print("<Renderer> Debug messenger destroyed.");
 #   endif
     }
 }

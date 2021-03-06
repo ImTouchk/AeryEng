@@ -81,7 +81,7 @@ namespace Lunar {
         VkResult Result;
         Result = vkEnumeratePhysicalDevices(Lunar::vk::getInstance(), &DeviceCount.value(), nullptr);
         if (Result != VK_SUCCESS) {
-            Lunar::Error("<Vulkan> Failed to enumerate graphics cards.");
+            Lunar::Error("<Renderer> Failed to enumerate graphics cards.");
             Lunar::Exit();
         }
 
@@ -97,7 +97,7 @@ namespace Lunar {
         }
 
         if (Scores.empty()) {
-            Lunar::Error("<Vulkan> No suitable GPU found.");
+            Lunar::Error("<Renderer> No suitable GPU found.");
             Lunar::Exit();
         }
 
@@ -115,7 +115,7 @@ namespace Lunar {
         VkPhysicalDeviceProperties Properties;
         vkGetPhysicalDeviceProperties(*Best.first, &Properties);
 
-        Lunar::Print("<Vulkan> Picked device {} with score {}.", Properties.deviceName, Best.second.value());
+        Lunar::Print("<Renderer> Picked device {} with score {}.", Properties.deviceName, Best.second.value());
         m_PhysDevice = *Best.first;
     }
 }

@@ -19,10 +19,10 @@ namespace Lunar {
             &Surface
         );
         if (Result != VK_SUCCESS) {
-            Lunar::Error("<Vulkan> Failed to create a surface.");
+            Lunar::Error("<Renderer> Failed to create a surface.");
             Lunar::Exit();
         }
-        else Lunar::Print("<Vulkan> Surface created.");
+        else Lunar::Print("<Renderer> Surface created.");
 
         m_Surface = Surface;
     }
@@ -34,6 +34,6 @@ namespace Lunar {
         }
 
         vkDestroySurfaceKHR(vk::getInstance(), m_Surface, nullptr);
-        Lunar::Print("<Vulkan> Surface destroyed.");
+        Lunar::Print("<Renderer> Surface destroyed.");
     }
 }
