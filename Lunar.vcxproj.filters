@@ -51,7 +51,16 @@
     <ClCompile Include="src\Render\vulkan\vk_common.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Render\vulkan\vk_permanent_resources.cpp">
+    <ClCompile Include="src\Render\vulkan\vk_messenger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render\vulkan\vk_surface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render\vulkan\vk_physical_device.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Render\vulkan\vk_device.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -207,7 +207,10 @@
     <ClCompile Include="src\Render\Renderer.ixx" />
     <ClCompile Include="src\Render\vulkan\vk_base.cpp" />
     <ClCompile Include="src\Render\vulkan\vk_common.cpp" />
-    <ClCompile Include="src\Render\vulkan\vk_permanent_resources.cpp" />
+    <ClCompile Include="src\Render\vulkan\vk_device.cpp" />
+    <ClCompile Include="src\Render\vulkan\vk_messenger.cpp" />
+    <ClCompile Include="src\Render\vulkan\vk_physical_device.cpp" />
+    <ClCompile Include="src\Render\vulkan\vk_surface.cpp" />
     <ClCompile Include="src\Render\Window.cpp" />
     <ClCompile Include="src\Render\Window.ixx" />
     <ClCompile Include="src\Utils\Debug.ixx" />

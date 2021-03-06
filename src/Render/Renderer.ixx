@@ -1,5 +1,7 @@
 module;
 #include <vulkan/vulkan.h>
+#include <vk_mem_alloc.h>
+#include <array>
 export module Lunar:Renderer;
 import :Numbers;
 import :Window;
@@ -21,14 +23,31 @@ export namespace Lunar {
     private:
         void CreatePermanentResources();
         void DestroyPermanentResources();
+
+        /* Those resources are: */
+
+        void PickGPU();
+        void SetupMessenger(); void DestroyMessenger();
+        void CreateSurface();  void DestroySurface();
+        void CreateDevice();   void DestroyDevice();
+
     private:
-        VkDebugUtilsMessengerEXT m_DebugMsg;
-        VkSurfaceKHR m_Surface;
-        VkPhysicalDevice m_PhysDevice;
-        VkDevice m_Device;
-        VkQueue m_GraphicsQ;
-        VkQueue m_PresentQ;
+        std::array<const char*, 1> m_Extensions = {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME
+        };
+
+        std::array<const char*, 1> m_Layers = {
+            "VK_LAYER_KHRONOS_validation"
+        };
+
+        VkDebugUtilsMessengerEXT m_DebugMsg = NULL;
+        VkSurfaceKHR m_Surface = NULL;
+        VkPhysicalDevice m_PhysDevice = NULL;
+        VkDevice m_Device = NULL;
+        VkQueue m_GraphicsQ = NULL;
+        VkQueue m_PresentQ = NULL;
 
         Window* m_Window;
+        u32 m_ID = 0;
     };
 }

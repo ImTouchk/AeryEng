@@ -1,5 +1,7 @@
 #pragma once
 
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 #include <optional>
 #include <vector>
@@ -7,9 +9,6 @@
 import Lunar;
 
 namespace Lunar::vk {
-    VkInstance& getInstance();
-    void destroyInstance();
-
     VkDebugUtilsMessengerCreateInfoEXT debugMessengerInfo();
 
     VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
@@ -42,5 +41,9 @@ namespace Lunar::vk {
         VkPhysicalDevice& Device,
         VkSurfaceKHR& Surface
     );
+    
+    /* */
 
+    VkInstance& getInstance();
+    void destroyInstance();
 }

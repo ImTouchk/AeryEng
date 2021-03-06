@@ -64,6 +64,7 @@ namespace Lunar::vk {
             };
 
             VkApplicationInfo ApplicationInfo = {
+                .sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
                 .pApplicationName = "Untitled",
                 .applicationVersion = VK_MAKE_VERSION(0, 0, 1),
                 .pEngineName = "Lunar",
@@ -72,6 +73,7 @@ namespace Lunar::vk {
             };
 
             VkInstanceCreateInfo InstanceCreateInfo = {
+                .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
                 .pApplicationInfo = &ApplicationInfo,
                 .enabledLayerCount = 0,
                 .enabledExtensionCount = static_cast<uint32_t>(Ext.size()),
@@ -117,7 +119,12 @@ namespace Lunar::vk {
         void* UserData
     )
     {
-        Lunar::Print("<VULKAN> {}", CallbackData->pMessage);
+        if(Severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
+            Lunar::Warn("<VULKAN LAYER> {}", CallbackData->pMessage);
+
+        if (Severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
+            Lunar::Error("<VULKAN LAYER> {}", CallbackData->pMessage);
+
         return VK_FALSE;
     }
 
@@ -126,10 +133,8 @@ namespace Lunar::vk {
         VkDebugUtilsMessengerCreateInfoEXT CreateInfo = {
             .sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
 
-            .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-                               VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT   |
-                               VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-                               VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT,
+            .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT   |
+                               VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
 
             .messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT     |
                            VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT |
@@ -161,8 +166,10 @@ namespace Lunar::vk {
         Lunar::u32 FamilyCount = 0;
         vkGetPhysicalDeviceQueueFamilyProperties(Device, &FamilyCount.value(), nullptr);
 
-        VkQueueFamilyProperties* Families = new VkQueueFamilyProperties[FamilyCount];
+        VkQueueFamilyProperties* Families = new VkQueueFamilyProperties[FamilyCount.value()];
+        vkGetPhysicalDeviceQueueFamilyProperties(Device, &FamilyCount.value(), Families);
         
+
         for (Lunar::u32 i : Lunar::range(FamilyCount)) {
             VkBool32 PresentSupport = false;
             vkGetPhysicalDeviceSurfaceSupportKHR(Device, i, Surface, &PresentSupport);
@@ -182,41 +189,39 @@ namespace Lunar::vk {
     {
         /* Same thing happens here */
 
-        static struct {
-            VkPhysicalDevice gpu = NULL;
-            swapchainSupportDetails details;
-        } Cache;
+        static VkPhysicalDevice CachedGPU = NULL;
+        static swapchainSupportDetails Cache = {};
 
-        if (Cache.gpu == Device) {
-            return Cache.details;
+        if (CachedGPU == Device) {
+            return Cache;
         }
 
-        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(Device, Surface, &Cache.details.capabilities);
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(Device, Surface, &Cache.capabilities);
 
         Lunar::u32 FormatCount = 0;
         vkGetPhysicalDeviceSurfaceFormatsKHR(Device, Surface, &FormatCount.value(), nullptr);
         if (FormatCount != 0) {
-            Cache.details.formats.resize(FormatCount);
+            Cache.formats.resize(FormatCount);
             vkGetPhysicalDeviceSurfaceFormatsKHR(
                 Device, 
                 Surface, 
                 &FormatCount.value(), 
-                Cache.details.formats.data()
+                Cache.formats.data()
             );
         }
 
         Lunar::u32 PresentModeCount = 0;
         vkGetPhysicalDeviceSurfacePresentModesKHR(Device, Surface, &PresentModeCount.value(), nullptr);
         if (PresentModeCount != 0) {
-            Cache.details.presentModes.resize(FormatCount);
+            Cache.presentModes.resize(PresentModeCount);
             vkGetPhysicalDeviceSurfacePresentModesKHR(
                 Device, 
                 Surface, 
                 &PresentModeCount.value(), 
-                Cache.details.presentModes.data()
+                Cache.presentModes.data()
             );
         }
 
-        return Cache.details;
+        return Cache;
     }
 }
