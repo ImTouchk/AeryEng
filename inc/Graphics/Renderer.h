@@ -15,7 +15,7 @@ namespace Lunar {
         Renderer() = default;
         ~Renderer() = default;
 
-        bool start(Window& CreateInfo);
+        void start(Window& CreateInfo);
         void stop();
 
         bool active() const;
@@ -47,6 +47,7 @@ namespace Lunar {
     private:
         Window* m_Window = NULL;
         bool m_Active    = false;
+        u32 m_ID = 0;
 
         VkDebugUtilsMessengerEXT m_Messenger = NULL;
         VmaAllocator m_Allocator = NULL;

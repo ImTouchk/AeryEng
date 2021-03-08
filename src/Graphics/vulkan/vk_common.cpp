@@ -3,9 +3,9 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <array>
+
 #include "Debug.h"
 #include "Types.h"
-
 #include "Graphics/VkCommon.h"
 
 #define VK_USE_DEBUG_LAYERS
@@ -80,7 +80,7 @@ namespace Lunar::vk {
                 .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
                 .pApplicationInfo = &ApplicationInfo,
                 .enabledLayerCount = 0,
-                .enabledExtensionCount = static_cast<uint32_t>(Ext.size()),
+                .enabledExtensionCount = static_cast<u32>(Ext.size()),
                 .ppEnabledExtensionNames = Ext.data(),
             };
 
@@ -96,10 +96,10 @@ namespace Lunar::vk {
             VkResult Result;
             Result = vkCreateInstance(&InstanceCreateInfo, nullptr, &GlobalInstance);
             if (Result != VK_SUCCESS) {
-                Error("Renderer - Failed to create an instance.");
+                Error("Renderer> Failed to create an instance.");
             }
 
-            Print("Renderer - Instance created.");
+            Print("Renderer> Instance created.");
         }
         return GlobalInstance;
     }
@@ -111,7 +111,7 @@ namespace Lunar::vk {
         }
 
         vkDestroyInstance(GlobalInstance, nullptr);
-        Print("Renderer - Instance destroyed.");
+        Print("Renderer> Instance destroyed.");
     }
 }
 
@@ -124,10 +124,10 @@ namespace Lunar::vk {
     )
     {
         if(Severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT)
-            Warn("<VULKAN LAYER> {}", CallbackData->pMessage);
+            Warn("VULKAN> {}", CallbackData->pMessage);
 
         if (Severity == VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT)
-            Error("<VULKAN LAYER> {}", CallbackData->pMessage);
+            Error("VULKAN> {}", CallbackData->pMessage);
 
         return VK_FALSE;
     }
@@ -162,6 +162,7 @@ namespace Lunar::vk {
         } Cache;
 
         if (Cache.gpu == Device) {
+            Lunar::Print("Vulkan> Using cached queue families result.");
             return Cache.indices;
         }
 
@@ -192,40 +193,44 @@ namespace Lunar::vk {
     swapchainSupportDetails& querySwapSupport(VkPhysicalDevice& Device, VkSurfaceKHR& Surface)
     {
         /* Same thing happens here */
+        static struct {
+            VkPhysicalDevice gpu = NULL;
+            swapchainSupportDetails details;
+        } Cache;
 
-        static VkPhysicalDevice CachedGPU = NULL;
-        static swapchainSupportDetails Cache = {};
-
-        if (CachedGPU == Device) {
-            return Cache;
+        if (Cache.gpu == Device) {
+            Lunar::Print("Vulkan> Using cached swapchain support result.");
+            return Cache.details;
         }
 
-        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(Device, Surface, &Cache.capabilities);
+        Cache.gpu = Device;
+
+        vkGetPhysicalDeviceSurfaceCapabilitiesKHR(Device, Surface, &Cache.details.capabilities);
 
         u32 FormatCount = 0;
         vkGetPhysicalDeviceSurfaceFormatsKHR(Device, Surface, &FormatCount, nullptr);
         if (FormatCount != 0) {
-            Cache.formats.resize(FormatCount);
+            Cache.details.formats.resize(FormatCount);
             vkGetPhysicalDeviceSurfaceFormatsKHR(
                 Device, 
                 Surface, 
                 &FormatCount, 
-                Cache.formats.data()
+                Cache.details.formats.data()
             );
         }
 
         u32 PresentModeCount = 0;
         vkGetPhysicalDeviceSurfacePresentModesKHR(Device, Surface, &PresentModeCount, nullptr);
         if (PresentModeCount != 0) {
-            Cache.presentModes.resize(PresentModeCount);
+            Cache.details.presentModes.resize(PresentModeCount);
             vkGetPhysicalDeviceSurfacePresentModesKHR(
                 Device, 
                 Surface, 
                 &PresentModeCount, 
-                Cache.presentModes.data()
+                Cache.details.presentModes.data()
             );
         }
 
-        return Cache;
+        return Cache.details;
     }
 }

@@ -1,19 +1,20 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include "Types.h"
-#include "Debug.h"
 
+#include "Debug.h"
+#include "Types.h"
 #include "Graphics/Window.h"
 
 namespace {
     void OnResize(GLFWwindow* Handle, int Width, int Height)
     {
-        Lunar::Print("Resize event!");
+        Lunar::PrintColor(fmt::color::aqua);
+        Lunar::Print("Window> Resize event!");
     }
 
     void OnError(int Code, const char* Message)
     {
-        Lunar::Error("[GLFW] {}", Message);
+        Lunar::Error("GLFW> {}", Message);
     }
 }
 
@@ -21,8 +22,8 @@ namespace Lunar {
     bool Window::start(const WindowCreateInfo& CreateInfo)
     {
         if(m_Active == true) {
-            Lunar::Warn("Window - Start method was called but window is already active.");
-            Lunar::Print("Window - Calling stop automatically...");
+            Lunar::Warn("Window> Start method was called but window is already active.");
+            Lunar::Print("Window> Calling stop automatically...");
             stop();
         }
 
@@ -52,7 +53,7 @@ namespace Lunar {
         );
 
         if(m_Handle == NULL) {
-            Lunar::Error("Window - Creation failed.");
+            Lunar::Error("Window> Creation failed.");
             Lunar::Exit();
             return false;
         }
@@ -60,7 +61,7 @@ namespace Lunar {
         glfwSetWindowUserPointer(m_Handle, this);
         glfwSetFramebufferSizeCallback(m_Handle, OnResize);
 
-        Lunar::Print("Window - Creation successful.");
+        Lunar::Print("Window> Creation successful.");
         m_Active = true;
         return true;
     }
@@ -68,7 +69,7 @@ namespace Lunar {
     void Window::stop()
     {
         if(!m_Active) {
-            Lunar::Warn("Window - Stop method was called but window is already inactive.");
+            Lunar::Warn("Window> Stop method was called but window is already inactive.");
             return;
         }
 

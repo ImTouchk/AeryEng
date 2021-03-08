@@ -11,11 +11,12 @@ find_package(Vulkan REQUIRED FATAL_ERROR)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+add_compile_definitions(VK_USE_DEBUG_LAYERS=1)
+
 file(GLOB_RECURSE SOURCES "src/*.cpp")
 file(GLOB FMT_IMPL "ext/inc/fmt/*.cc")
 
 include_directories(inc)
-#add_library(Lunar STATIC ${SOURCES})
 add_executable(Lunar ${SOURCES} ${FMT_IMPL})
 
 target_include_directories(Lunar
