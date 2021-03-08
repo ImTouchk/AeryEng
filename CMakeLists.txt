@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.7.0)
 project(Lunar)
 
 add_subdirectory(ext/glfw)
+include_directories(ext/inc)
 include_directories(ext/glfw/include)
 
 find_package(Vulkan REQUIRED FATAL_ERROR)
@@ -11,9 +12,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 file(GLOB_RECURSE SOURCES "src/*.cpp")
+file(GLOB FMT_IMPL "ext/inc/fmt/*.cc")
 
 include_directories(inc)
-add_library(Lunar STATIC ${SOURCES})
+#add_library(Lunar STATIC ${SOURCES})
+add_executable(Lunar ${SOURCES} ${FMT_IMPL})
 
 target_include_directories(Lunar
     PUBLIC ${VULKAN_INCLUDE_DIRS}

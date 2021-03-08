@@ -1,20 +1,19 @@
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
-#include <vulkan/vulkan.h>
-#include <iostream>
+#include "Graphics/Window.h"
+#include "Graphics/Renderer.h"
 
 int main()
 {
-    if (!glfwInit()) {
-        return -1;
+    glfwInit();
+
+    Lunar::WindowCreateInfo WindowCreateInfo;
+    Lunar::Window Window;
+
+    Window.start(WindowCreateInfo);
+    while(Window.active()) {
+
+        Window.update();
     }
-    
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    GLFWwindow* Window = glfwCreateWindow(800, 600, "Hello, world!", NULL, NULL);
-    while(!glfwWindowShouldClose(Window)) {
-        glfwPollEvents();
-    }
-    glfwDestroyWindow(Window);
+    Window.stop();
 
     glfwTerminate();
     return 0;

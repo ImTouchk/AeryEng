@@ -1,3 +1,15 @@
 .vscode/
 .vs/
 build/
+CMakeFiles/
+ext/glfw/ALL_BUILD.*
+ext/glfw/INSTALL.*
+ext/glfw/uninstall.*
+ext/glfw/GLFW.sln
+ext/glfw/src/glfw.vcxproj
+ext/glfw/src/glfw.vcxproj.filters
+ext/glfw/src/INSTALL.*
+ext/glfw/src/*.cmake
+ext/glfw/*.cmake
+ext/glfw/src/glfw3.pc
+ext/glfw/src/glfw_config.h
