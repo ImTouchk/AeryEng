@@ -15,6 +15,7 @@ private:
     _Ty iter;
 
 public:
+    range(_Ty end) : last(end), iter(0) {}
     range(_Ty start, _Ty end) : last(end), iter(start) {}
     range(const range& other) : last(other.last), iter(other.iter) {}
 

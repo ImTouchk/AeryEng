@@ -26,10 +26,12 @@ namespace Lunar {
         bool active() const;
         void update();
     private:
-        GLFWwindow* m_Handle;
-        bool m_Active;
+        friend class Renderer;
+
+        GLFWwindow* m_Handle = NULL;
+        bool m_Active        = false;
         u32 height = 0;
-        u32 width = 0;
+        u32 width  = 0;
     };
 }
 

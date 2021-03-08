@@ -5,17 +5,9 @@
 
 #define LUNAR_DEBUG
 
-fmt::color _PrintColor = fmt::color::white;
-const char* _PrintTitle = "INFO";
+inline fmt::color _PrintColor;
 
 namespace Lunar {
-    void PrintTitle(const char* NewTitle)
-    {
-#   ifdef LUNAR_DEBUG
-        _PrintTitle = NewTitle;
-#   endif
-    }
-
     void PrintColor(fmt::color NewColor)
     {
 #   ifdef LUNAR_DEBUG
@@ -30,7 +22,7 @@ namespace Lunar {
         std::string Result = fmt::format(format_str, args...);
         fmt::print(
             fmt::fg(_PrintColor),
-            "[{}] {}\n", _PrintTitle, Result
+            "[INFO] {}\n", Result
         );
 #   endif
     }
@@ -67,8 +59,6 @@ namespace Lunar {
         );
         exit(-1);
     }
-
-    void Exit();
 }
 
-#endif
+#endif // LUNAR_DEBUG_H

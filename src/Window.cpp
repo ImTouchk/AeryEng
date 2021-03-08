@@ -8,9 +8,7 @@
 namespace {
     void OnResize(GLFWwindow* Handle, int Width, int Height)
     {
-        Lunar::PrintTitle("WINDOW");
         Lunar::Print("Resize event!");
-        Lunar::PrintTitle("INFO");
     }
 
     void OnError(int Code, const char* Message)
@@ -22,10 +20,9 @@ namespace {
 namespace Lunar {
     bool Window::start(const WindowCreateInfo& CreateInfo)
     {
-        Lunar::PrintTitle("WINDOW");
         if(m_Active == true) {
-            Lunar::Warn("Start method was called but window is already active.");
-            Lunar::Print("Calling stop automatically...");
+            Lunar::Warn("Window - Start method was called but window is already active.");
+            Lunar::Print("Window - Calling stop automatically...");
             stop();
         }
 
@@ -55,7 +52,7 @@ namespace Lunar {
         );
 
         if(m_Handle == NULL) {
-            Lunar::Error("Creation failed.");
+            Lunar::Error("Window - Creation failed.");
             Lunar::Exit();
             return false;
         }
@@ -63,7 +60,7 @@ namespace Lunar {
         glfwSetWindowUserPointer(m_Handle, this);
         glfwSetFramebufferSizeCallback(m_Handle, OnResize);
 
-        Lunar::Print("Creation successful.");
+        Lunar::Print("Window - Creation successful.");
         m_Active = true;
         return true;
     }
@@ -71,7 +68,7 @@ namespace Lunar {
     void Window::stop()
     {
         if(!m_Active) {
-            Lunar::Warn("Stop method was called but window is already inactive.");
+            Lunar::Warn("Window - Stop method was called but window is already inactive.");
             return;
         }
 
