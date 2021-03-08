@@ -33,7 +33,14 @@ namespace Lunar {
         void CreateDevice();    void DestroyDevice();
         void CreateAllocator(); void DestroyAllocator();
 
+        void CreatePermanentResources();
+        void DestroyPermanentResources();
+
         /* Temporary Resources */
+        void OnResize();
+        
+        void CreateTemporaryResources();
+        void DestroyTemporaryResources();
 
         void CreateSwapchain();    void DestroySwapchain();
         void CreateImageViews();   void DestroyImageViews();
@@ -44,6 +51,7 @@ namespace Lunar {
         void AllocateCommandBuffers();
 
         friend class Window;
+        friend void _OnResize(GLFWwindow* Handle, int Width, int Height);
     private:
         Window* m_Window = NULL;
         bool m_Active    = false;

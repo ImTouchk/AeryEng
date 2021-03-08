@@ -1,5 +1,6 @@
 #include <vk_mem_alloc.h>
 #include <vulkan/vulkan.h>
+#include <cassert>
 #include <mutex>
 
 #include "Debug.h"
@@ -14,14 +15,11 @@ namespace {
 namespace Lunar {
     void Renderer::start(Window& CreateInfo)
     {
-        auto CreatePermanentResources = [&]() {
-            vk::getInstance();
-            SetupMessenger();
-            CreateSurface();
-            PickPhysicalDevice();
-            CreateDevice();
-            CreateAllocator();
-        };
+        if(m_Active == true) {
+            Lunar::Warn("Renderer> Start method was called but renderer is already active.");
+            Lunar::Print("Renderer> Calling stop automatically...");
+            stop();
+        }
 
         {
             std::unique_lock<std::mutex> Lock(CountMutex);
@@ -34,36 +32,78 @@ namespace Lunar {
 
         m_Window = &CreateInfo;
         CreatePermanentResources();
+        CreateTemporaryResources();
+
+        m_Active = true;
     }
 
     void Renderer::stop()
     {
+        if(m_Active == false) {
+            Lunar::Warn("Renderer> Stop method was called but renderer is already inactive.");
+            return;
+        }
+
         Lunar::PrintColor(fmt::color::light_coral);
         Lunar::Print("------- DESTROYING RENDERER {} -------", m_ID);
         Lunar::PrintColor(fmt::color::white);
 
-        auto DestroyPermanentResources = [&]() {
-            DestroyAllocator();
-            DestroyDevice();
-            DestroySurface();
-            DestroyMessenger();
-
-            std::unique_lock<std::mutex> Lock(CountMutex);
-            if(Renderers-- == 0) {
-                vk::destroyInstance();
-            }
-        };
-
+        DestroyTemporaryResources();
         DestroyPermanentResources();
     }
 
     void Renderer::draw()
     {
-
+        assert(m_Active == true);
     }
 
     bool Renderer::active() const
     {
         return true;
+    }
+
+    void Renderer::CreateTemporaryResources()
+    {
+        CreateSwapchain();
+        CreateImageViews();
+        CreateRenderPass();
+    }
+
+    void Renderer::DestroyTemporaryResources()
+    {
+        vkDeviceWaitIdle(m_Device);
+
+        DestroyRenderPass();
+        DestroyImageViews();
+        DestroySwapchain();
+    }
+
+    void Renderer::CreatePermanentResources()
+    {
+        vk::getInstance();
+        SetupMessenger();
+        CreateSurface();
+        PickPhysicalDevice();
+        CreateDevice();
+        CreateAllocator();
+    }
+
+    void Renderer::DestroyPermanentResources()
+    {
+        DestroyAllocator();
+        DestroyDevice();
+        DestroySurface();
+        DestroyMessenger();
+
+        std::unique_lock<std::mutex> Lock(CountMutex);
+        if(Renderers-- == 0) {
+            vk::destroyInstance();
+        }
+    }
+
+    void Renderer::OnResize()
+    {
+        DestroyTemporaryResources();
+        //CreateTemporaryResources();
     }
 }

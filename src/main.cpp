@@ -5,7 +5,7 @@ int main()
 {
     glfwInit();
 
-    Lunar::WindowCreateInfo WindowCreateInfo;
+    Lunar::WindowCreateInfo WindowCreateInfo = { .maximized = false };
     Lunar::Window Window;
     Lunar::Renderer Renderer;
 

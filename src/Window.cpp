@@ -3,15 +3,10 @@
 
 #include "Debug.h"
 #include "Types.h"
+#include "Graphics/Renderer.h"
 #include "Graphics/Window.h"
 
 namespace {
-    void OnResize(GLFWwindow* Handle, int Width, int Height)
-    {
-        Lunar::PrintColor(fmt::color::aqua);
-        Lunar::Print("Window> Resize event!");
-    }
-
     void OnError(int Code, const char* Message)
     {
         Lunar::Error("GLFW> {}", Message);
@@ -19,6 +14,37 @@ namespace {
 }
 
 namespace Lunar {
+    void _OnResize(GLFWwindow* Handle, int Width, int Height)
+    {
+        Lunar::Window* Current = reinterpret_cast<Lunar::Window*>(
+            glfwGetWindowUserPointer(Handle)
+        );
+
+        /* 
+            I am too lazy to replace this pointer trick (which is
+            probably entering UB territory) with an actual solution
+            and it amuzes me so I'm going to keep it for now :D
+        */
+
+        struct WindowInternal {
+            GLFWwindow* _window;
+            bool _active;
+            u32 _width;
+            u32 _height;
+            Lunar::Renderer* _renderer;
+        };
+
+        static_assert(sizeof(WindowInternal) == sizeof(Lunar::Window));
+
+        WindowInternal* Internal = std::bit_cast<WindowInternal*>(Current);
+
+        Internal->_width = static_cast<u32>(Width);
+        Internal->_height = static_cast<u32>(Height);
+        Internal->_renderer->OnResize();
+
+        Lunar::Print("Window> Resize event {{ width: {}, height: {} }}", Internal->_width, Internal->_height);
+    }
+
     bool Window::start(const WindowCreateInfo& CreateInfo)
     {
         if(m_Active == true) {
@@ -59,7 +85,7 @@ namespace Lunar {
         }
 
         glfwSetWindowUserPointer(m_Handle, this);
-        glfwSetFramebufferSizeCallback(m_Handle, OnResize);
+        glfwSetFramebufferSizeCallback(m_Handle, _OnResize);
 
         Lunar::Print("Window> Creation successful.");
         m_Active = true;
@@ -85,5 +111,15 @@ namespace Lunar {
     {
         glfwPollEvents();
         m_Active = !glfwWindowShouldClose(m_Handle);
+    }
+
+    u32 Window::width() const
+    {
+        return m_Width;
+    }
+
+    u32 Window::height() const
+    {
+        return m_Height;
     }
 }
