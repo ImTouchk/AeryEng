@@ -25,7 +25,7 @@ namespace Lunar {
         VkDebugUtilsMessengerEXT Messenger = NULL;
         VkResult Result;
 
-        Result = Function(vk::getInstance(), &MessengerCreateInfo, nullptr, &Messenger);
+        Result = Function(vk::getInstance(), &MessengerCreateInfo, NULL, &Messenger);
         if (Result != VK_SUCCESS) {
             Lunar::Warn("Renderer> Failed to set up a debug messenger.");
         }

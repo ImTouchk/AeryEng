@@ -17,13 +17,13 @@ namespace {
         u32 ExtCount = 0;
 
         VkResult Result;
-        Result = vkEnumerateDeviceExtensionProperties(Device, nullptr, &ExtCount, nullptr);
+        Result = vkEnumerateDeviceExtensionProperties(Device, NULL, &ExtCount, NULL);
         if (Result != VK_SUCCESS) {
             return 0;
         }
 
         VkExtensionProperties* Extensions = new VkExtensionProperties[ExtCount];
-        vkEnumerateDeviceExtensionProperties(Device, nullptr, &ExtCount, Extensions);
+        vkEnumerateDeviceExtensionProperties(Device, NULL, &ExtCount, Extensions);
 
         std::set<std::string> Required(Ext.begin(), Ext.end());
         for (u32 i : range(ExtCount)) {
@@ -80,7 +80,7 @@ namespace Lunar {
     {
         u32 DeviceCount;
         VkResult Result;
-        Result = vkEnumeratePhysicalDevices(Lunar::vk::getInstance(), &DeviceCount, nullptr);
+        Result = vkEnumeratePhysicalDevices(Lunar::vk::getInstance(), &DeviceCount, NULL);
         if (Result != VK_SUCCESS) {
             Lunar::Error("Renderer> Failed to enumerate graphics cards.");
             Lunar::Exit();

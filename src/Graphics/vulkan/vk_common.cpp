@@ -31,7 +31,7 @@ namespace {
         u32 LayerCount = 0;
         VkResult Result;
 
-        Result = vkEnumerateInstanceLayerProperties(&LayerCount, nullptr);
+        Result = vkEnumerateInstanceLayerProperties(&LayerCount, NULL);
         if (Result != VK_SUCCESS) {
             Lunar::Error("Renderer - Could not enumerate layer properties.");
             return false;
@@ -94,7 +94,7 @@ namespace Lunar::vk {
 #           endif
 
             VkResult Result;
-            Result = vkCreateInstance(&InstanceCreateInfo, nullptr, &GlobalInstance);
+            Result = vkCreateInstance(&InstanceCreateInfo, NULL, &GlobalInstance);
             if (Result != VK_SUCCESS) {
                 Error("Renderer> Failed to create an instance.");
             }
@@ -110,7 +110,7 @@ namespace Lunar::vk {
             return;
         }
 
-        vkDestroyInstance(GlobalInstance, nullptr);
+        vkDestroyInstance(GlobalInstance, NULL);
         Print("Renderer> Instance destroyed.");
     }
 }
@@ -169,7 +169,7 @@ namespace Lunar::vk {
         Cache.gpu = Device;
 
         u32 FamilyCount = 0;
-        vkGetPhysicalDeviceQueueFamilyProperties(Device, &FamilyCount, nullptr);
+        vkGetPhysicalDeviceQueueFamilyProperties(Device, &FamilyCount, NULL);
 
         VkQueueFamilyProperties* Families = new VkQueueFamilyProperties[FamilyCount];
         vkGetPhysicalDeviceQueueFamilyProperties(Device, &FamilyCount, Families);
@@ -208,7 +208,7 @@ namespace Lunar::vk {
         vkGetPhysicalDeviceSurfaceCapabilitiesKHR(Device, Surface, &Cache.details.capabilities);
 
         u32 FormatCount = 0;
-        vkGetPhysicalDeviceSurfaceFormatsKHR(Device, Surface, &FormatCount, nullptr);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(Device, Surface, &FormatCount, NULL);
         if (FormatCount != 0) {
             Cache.details.formats.resize(FormatCount);
             vkGetPhysicalDeviceSurfaceFormatsKHR(
@@ -220,7 +220,7 @@ namespace Lunar::vk {
         }
 
         u32 PresentModeCount = 0;
-        vkGetPhysicalDeviceSurfacePresentModesKHR(Device, Surface, &PresentModeCount, nullptr);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(Device, Surface, &PresentModeCount, NULL);
         if (PresentModeCount != 0) {
             Cache.details.presentModes.resize(PresentModeCount);
             vkGetPhysicalDeviceSurfacePresentModesKHR(
