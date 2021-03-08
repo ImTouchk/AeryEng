@@ -5,10 +5,10 @@
 
 #define LUNAR_DEBUG
 
-inline fmt::color _PrintColor;
+inline fmt::color _PrintColor = fmt::color::white;
 
 namespace Lunar {
-    void PrintColor(fmt::color NewColor)
+    inline void PrintColor(fmt::color NewColor)
     {
 #   ifdef LUNAR_DEBUG
         _PrintColor = NewColor;
@@ -16,7 +16,7 @@ namespace Lunar {
     }
 
     template<typename S, typename... Args>
-    void Print(const S& format_str, Args&&... args)
+    inline void Print(const S& format_str, Args&&... args)
     {
 #   ifdef LUNAR_DEBUG
         std::string Result = fmt::format(format_str, args...);
@@ -28,7 +28,7 @@ namespace Lunar {
     }
 
     template<typename S, typename... Args>
-    void Warn(const S& format_str, Args&&... args)
+    inline void Warn(const S& format_str, Args&&... args)
     {
 #   ifdef LUNAR_DEBUG
         std::string Result = fmt::format(format_str, args...);
@@ -40,7 +40,7 @@ namespace Lunar {
     }
 
     template<typename S, typename... Args>
-    void Error(const S& format_str, Args&&... args)
+    inline void Error(const S& format_str, Args&&... args)
     {
 #   ifdef LUNAR_DEBUG
         std::string Result = fmt::format(format_str, args...);
@@ -51,7 +51,7 @@ namespace Lunar {
 #   endif
     }
 
-    void Exit()
+    inline void Exit()
     {
         fmt::print(
             fmt::fg(fmt::color::red),
