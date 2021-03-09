@@ -36,11 +36,19 @@ namespace Lunar {
 
         static_assert(sizeof(WindowInternal) == sizeof(Lunar::Window));
 
+        /* std::bit_cast is not supported yet on GCC */
+
+#   ifdef _WIN32
         WindowInternal* Internal = std::bit_cast<WindowInternal*>(Current);
+#   else
+        WindowInternal* Internal = reinterpret_cast<WindowInternal*>(
+            reinterpret_cast<void*>(Current)
+        );
+#   endif
 
         Internal->_width = static_cast<u32>(Width);
         Internal->_height = static_cast<u32>(Height);
-        Internal->_renderer->OnResize();
+        //Internal->_renderer->OnResize();
 
         Lunar::Print("Window> Resize event {{ width: {}, height: {} }}", Internal->_width, Internal->_height);
     }
