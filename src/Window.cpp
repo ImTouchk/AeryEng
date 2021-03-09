@@ -38,7 +38,7 @@ namespace Lunar {
 
         /* std::bit_cast is not supported yet on GCC */
 
-#   ifdef _WIN32
+#   ifdef _MSC_VER
         WindowInternal* Internal = std::bit_cast<WindowInternal*>(Current);
 #   else
         WindowInternal* Internal = reinterpret_cast<WindowInternal*>(
