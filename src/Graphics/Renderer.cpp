@@ -31,6 +31,8 @@ namespace Lunar {
         Lunar::PrintColor(fmt::color::white);
 
         m_Window = &CreateInfo;
+        m_Window->m_Renderer = this;
+
         CreatePermanentResources();
         CreateTemporaryResources();
 
@@ -67,12 +69,14 @@ namespace Lunar {
         CreateSwapchain();
         CreateImageViews();
         CreateRenderPass();
+        CreateFramebuffers();
     }
 
     void Renderer::DestroyTemporaryResources()
     {
         vkDeviceWaitIdle(m_Device);
 
+        DestroyFramebuffers();
         DestroyRenderPass();
         DestroyImageViews();
         DestroySwapchain();
@@ -103,7 +107,10 @@ namespace Lunar {
 
     void Renderer::OnResize()
     {
+        Lunar::PrintColor(fmt::color::misty_rose);
+        Lunar::Print("------- RENDERER {} RESIZE EVENT -------", m_ID);
+        Lunar::PrintColor(fmt::color::white);
         DestroyTemporaryResources();
-        //CreateTemporaryResources();
+        CreateTemporaryResources();
     }
 }
