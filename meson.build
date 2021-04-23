@@ -1,13 +1,14 @@
 project(
-  'LunarGUI', 
+  'Lunar', 
   'cpp', 
   version : '0.1', 
-  default_options : ['warning_level=3']
+  default_options : ['warning_level=3', 'cpp_std=c++2a']
 )
 
 deps = [
   dependency('vulkan'), 
-  dependency('glfw3')
+  dependency('glfw3'),
+  dependency('threads')
 ]
 
 header_files = include_directories(
@@ -19,7 +20,7 @@ source_files = [
 ]
 
 library = shared_library(
-  'LunarGUI', 
+  'Lunar', 
   source_files,
   include_directories : header_files,
   dependencies : deps,
@@ -30,5 +31,7 @@ test_app = executable(
   'TestApp',
   'examples/main.cpp',
   include_directories : header_files,
-  link_with : library
+  link_with : library,
+  dependencies: deps,
+  override_options : ['cpp_std=c++2a']
 )
