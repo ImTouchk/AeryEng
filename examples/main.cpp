@@ -1,7 +1,5 @@
 #include "Lunar.hpp"
 
-#include <thread>
-
 int main()
 {
     Lunar::window window(

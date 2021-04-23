@@ -1,6 +1,6 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
-#include <mutex>
+#include <cstdlib>
 
 #include "types.hpp"
 #include "window.hpp"
@@ -8,11 +8,9 @@
 namespace {
     bool GLFW_INITIALIZED  = false;
     isize REFERENCE_COUNT  = 0; 
-    std::mutex COUNT_MUTEX = {};
 
     void IncrementCounter()
     {
-        std::lock_guard<std::mutex> lock(COUNT_MUTEX);
         REFERENCE_COUNT++;
 
         if(!GLFW_INITIALIZED) {
@@ -26,9 +24,7 @@ namespace {
 
     void DecrementCounter()
     {
-        std::lock_guard<std::mutex> lock(COUNT_MUTEX);
         REFERENCE_COUNT--;
-
         if(REFERENCE_COUNT == 0) {
             glfwTerminate();
             GLFW_INITIALIZED = false;
@@ -52,7 +48,7 @@ namespace Lunar {
             glfwWindowHint(GLFW_RESIZABLE, m_Info.resizable);
             glfwWindowHint(GLFW_MAXIMIZED, m_Info.maximized);
         }
-        
+
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
         m_Handle = reinterpret_cast<isize*>(glfwCreateWindow(
@@ -86,8 +82,5 @@ namespace Lunar {
     void window::update()
     {
         glfwPollEvents();
-        glfwSwapBuffers(
-            reinterpret_cast<GLFWwindow*>(m_Handle)
-        );
     }
 }
