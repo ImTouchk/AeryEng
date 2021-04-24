@@ -16,11 +16,11 @@ header_files = include_directories(
   'include'
 )
 
-source_files = [
-  'source/graphics/window.cpp',
+source_files = files([
+  'source/graphics/renderer.cpp',
   'source/graphics/vk_boilerplate.cpp',
-  'source/graphics/renderer.cpp'
-]
+  'source/graphics/window.cpp',
+])
 
 library = shared_library(
   'Lunar', 
