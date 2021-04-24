@@ -84,13 +84,15 @@ namespace {
     {
         VkDebugUtilsMessengerCreateInfoEXT createInfo = {
             .sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
+            .pNext           = nullptr,
+            .flags           = 0,
             .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT |
                                VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT,
             .messageType     = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT     |
                                VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT |
                                VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT,
             .pfnUserCallback = vulkanDebugCallback,
-            .pUserData       = NULL
+            .pUserData       = nullptr,
         };
         return createInfo;
     }
@@ -107,6 +109,7 @@ namespace {
 
             VkApplicationInfo appInfo = {
                 .sType              = VK_STRUCTURE_TYPE_APPLICATION_INFO,
+                .pNext              = nullptr,
                 .pApplicationName   = "LunarEngineGame",
                 .applicationVersion = VK_MAKE_VERSION(0, 0, 1),
                 .pEngineName        = "Lunar",
@@ -116,8 +119,11 @@ namespace {
 
             VkInstanceCreateInfo instanceCreateInfo = {
                 .sType                   = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+                .pNext                   = nullptr,
+                .flags                   = 0,
                 .pApplicationInfo        = &appInfo,
                 .enabledLayerCount       = 0,
+                .ppEnabledLayerNames     = 0,
                 .enabledExtensionCount   = static_cast<uint32_t>(extensions.size()),
                 .ppEnabledExtensionNames = extensions.data()
             };
@@ -170,10 +176,58 @@ namespace Lunar {
     void renderer::createBoilerplate()
     {
         incrementCounter();
+        setupDbgMessenger();
     }
 
     void renderer::destroyBoilerplate()
     {
+        destroyDbgMessenger();
         decrementCounter();
+    }
+
+    void renderer::setupDbgMessenger()
+    {
+#       ifndef NDEBUG
+        VkDebugUtilsMessengerCreateInfoEXT createInfo = debugMessengerInfo();
+        auto function = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+            getVulkanInstance(), "vkCreateDebugUtilsMessengerEXT"
+        );
+
+        VkResult result;
+        if(function == nullptr) {
+            result = VK_ERROR_EXTENSION_NOT_PRESENT;
+        } else {
+            result = function(
+                getVulkanInstance(), 
+                &createInfo, 
+                nullptr, 
+                &m_DebugMessenger
+            );
+        }
+
+        if(result != VK_SUCCESS) {
+            Lunar::warn("Renderer: Could not initialize vulkan debug layers.");
+            return;
+        }
+
+        Lunar::log("Renderer: Vulkan debug layers initialized.");
+#       endif
+    }
+
+    void renderer::destroyDbgMessenger()
+    {
+#       ifndef NDEBUG
+        auto function = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(
+            getVulkanInstance(), "vkDestroyDebugUtilsMessengerEXT"
+        );
+        if(function != nullptr && m_DebugMessenger != nullptr) {
+            function(
+                getVulkanInstance(),
+                m_DebugMessenger,
+                nullptr
+            );
+            Lunar::log("Renderer: Vulkan debug layers destroyed.");
+        }
+#       endif
     }
 }

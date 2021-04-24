@@ -18,7 +18,9 @@ namespace Lunar {
     
     private:
         void createBoilerplate();
+        void setupDbgMessenger();
         void destroyBoilerplate();
+        void destroyDbgMessenger();
 
     private:
         /* VulkanAPI specific */
