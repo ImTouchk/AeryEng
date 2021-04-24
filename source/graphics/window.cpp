@@ -3,13 +3,13 @@
 #include <cstdlib>
 
 #include "types.hpp"
-#include "window.hpp"
+#include "graphics/window.hpp"
 
 namespace {
     bool GLFW_INITIALIZED  = false;
     isize REFERENCE_COUNT  = 0; 
 
-    void IncrementCounter()
+    void incrementCounter()
     {
         REFERENCE_COUNT++;
 
@@ -22,7 +22,7 @@ namespace {
         }
     }
 
-    void DecrementCounter()
+    void decrementCounter()
     {
         REFERENCE_COUNT--;
         if(REFERENCE_COUNT == 0) {
@@ -35,7 +35,7 @@ namespace {
 namespace Lunar {
     window::window(const createInfo&& info)
     {
-        IncrementCounter();
+        incrementCounter();
 
         GLFWmonitor* monitor = nullptr;
         m_Info        = info;
@@ -69,7 +69,7 @@ namespace Lunar {
         glfwDestroyWindow(
             reinterpret_cast<GLFWwindow*>(m_Handle)
         );
-        DecrementCounter();
+        decrementCounter();
     }
 
     bool window::isActive() const

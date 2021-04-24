@@ -8,7 +8,8 @@ project(
 deps = [
   dependency('vulkan'), 
   dependency('glfw3'),
-  dependency('threads')
+  dependency('threads'),
+  dependency('fmt')
 ]
 
 header_files = include_directories(
@@ -16,7 +17,9 @@ header_files = include_directories(
 )
 
 source_files = [
-  'source/window.cpp'
+  'source/graphics/window.cpp',
+  'source/graphics/vk_boilerplate.cpp',
+  'source/graphics/renderer.cpp'
 ]
 
 library = shared_library(
@@ -32,6 +35,5 @@ test_app = executable(
   'examples/main.cpp',
   include_directories : header_files,
   link_with : library,
-  dependencies: deps,
-  override_options : ['cpp_std=c++2a']
+  dependencies: deps
 )

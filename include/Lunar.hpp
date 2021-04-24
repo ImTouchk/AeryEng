@@ -3,5 +3,6 @@
 
 #include "types.hpp"
 #include "graphics/window.hpp"
+#include "graphics/renderer.hpp"
 
 #endif // LUNAR_BASE_H

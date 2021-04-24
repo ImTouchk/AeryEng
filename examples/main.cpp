@@ -14,6 +14,13 @@ int main()
         }
     );
 
+    Lunar::renderer renderer(
+        Lunar::renderer::createInfo{
+            .target = window,
+            .vsync  = false
+        }
+    );
+
     while(window.isActive()) {
         window.update();
     }
