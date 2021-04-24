@@ -4,7 +4,7 @@
 namespace Lunar {
     renderer::renderer(createInfo&& info)
     {
-        createBoilerplate();
+        createBoilerplate(info);
     }
 
     renderer::~renderer()

@@ -17,8 +17,11 @@ namespace Lunar {
         ~renderer();
     
     private:
-        void createBoilerplate();
+        void createBoilerplate(createInfo& info);
         void setupDbgMessenger();
+        void createSurface(const window& target);
+
+        void destroySurface();
         void destroyBoilerplate();
         void destroyDbgMessenger();
 

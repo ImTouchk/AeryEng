@@ -72,6 +72,11 @@ namespace Lunar {
         decrementCounter();
     }
 
+    isize* window::handle() const
+    {
+        return m_Handle;
+    }
+
     bool window::isActive() const
     {
         return !glfwWindowShouldClose(

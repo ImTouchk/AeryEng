@@ -21,6 +21,8 @@ namespace Lunar {
         bool isActive() const;
         void update();
 
+        isize* handle() const;
+
     private:
         createInfo m_Info;
         isize* m_Handle;

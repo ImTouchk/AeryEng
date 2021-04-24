@@ -1,4 +1,4 @@
-#define GLFW_INCLUDE_NONE
+#define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 #include <vulkan/vulkan.h>
 #include <vector>
@@ -173,14 +173,16 @@ namespace {
 }
 
 namespace Lunar {
-    void renderer::createBoilerplate()
+    void renderer::createBoilerplate(createInfo& info)
     {
         incrementCounter();
         setupDbgMessenger();
+        createSurface(info.target);
     }
 
     void renderer::destroyBoilerplate()
     {
+        destroySurface();
         destroyDbgMessenger();
         decrementCounter();
     }
@@ -229,5 +231,32 @@ namespace Lunar {
             Lunar::log("Renderer: Vulkan debug layers destroyed.");
         }
 #       endif
+    }
+
+    void renderer::createSurface(const window& target)
+    {
+        VkResult     result;
+        result = glfwCreateWindowSurface(
+            getVulkanInstance(),
+            reinterpret_cast<GLFWwindow*>(target.handle()),
+            nullptr,
+            &m_Surface
+        );
+
+        if(result != VK_SUCCESS) {
+            Lunar::error("Renderer: Vulkan surface creation failed.");
+            exit(-1);
+        }
+
+        Lunar::log("Renderer: Vulkan surface created.");
+    }
+
+    void renderer::destroySurface()
+    {
+        vkDestroySurfaceKHR(
+            getVulkanInstance(),
+            m_Surface,
+            nullptr
+        );
     }
 }
