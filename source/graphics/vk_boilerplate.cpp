@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <vector>
 #include <array>
+#include <set>
 #include <cstring>
 
 #include "types.hpp"
@@ -186,7 +187,9 @@ namespace Lunar {
         destroyDbgMessenger();
         decrementCounter();
     }
+}
 
+namespace Lunar {
     void renderer::setupDbgMessenger()
     {
 #       ifndef NDEBUG
@@ -232,10 +235,12 @@ namespace Lunar {
         }
 #       endif
     }
+}
 
+namespace Lunar {
     void renderer::createSurface(const window& target)
     {
-        VkResult     result;
+        VkResult result;
         result = glfwCreateWindowSurface(
             getVulkanInstance(),
             reinterpret_cast<GLFWwindow*>(target.handle()),
@@ -258,5 +263,47 @@ namespace Lunar {
             m_Surface,
             nullptr
         );
+    }
+}
+
+namespace Lunar {
+    usize getDeviceScore(VkPhysicalDevice& device, VkSurfaceKHR& surface, const std::array<const char*, 1>& ext)
+    {
+        usize    score    = 0;
+        usize    extCount = 0;
+        VkResult result;
+
+        result = vkEnumerateDeviceExtensionProperties(device, nullptr, &extCount, nullptr);
+        if(result != VK_SUCCESS) {
+            return 0;
+        }
+
+        std::vector<VkExtensionProperties> extensions(extCount);
+        vkEnumerateDeviceExtensionProperties(device, nullptr, &extCount, extensions.data());
+        std::set<std::string> required(ext.begin(), ext.end());
+        for(const auto& available : extensions) {
+            required.erase(available.extensionName);
+        }
+
+        VkPhysicalDeviceProperties properties;
+        vkGetPhysicalDeviceProperties(device, &properties);
+
+        VkPhysicalDeviceMemoryProperties memory;
+        vkGetPhysicalDeviceMemoryProperties(device, &memory);
+
+        for(usize i = 0; i < memory.memoryHeapCount; i++) {
+            VkMemoryHeap& heap = memory.memoryHeaps[i];
+            if(heap.flags & VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) {
+                score += heap.size;
+            }
+        }
+
+        switch(properties.deviceType) {
+        case VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU:   score += 1000; break;
+        case VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU: score += 200;  break;
+        default: break;
+        }
+
+        
     }
 }
