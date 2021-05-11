@@ -21,6 +21,11 @@ namespace Lunar
           m_Height(info.height),
           m_Title(info.title),
           m_Fullscreen(info.fullscreen),
+          m_Context(info._context),
+          m_Samples(info._samples),
+          m_PreferredRenderer(info._renderer),
+          m_StartMaximized(info.maximized),
+          m_Resizable(info.resizable),
           m_Handle(nullptr)
     {
         isize result;
@@ -49,6 +54,11 @@ namespace Lunar
         );
     }
 
+    void* Window::handle() const
+    {
+        return m_Handle;
+    }
+
     void Window::start()
     {
         if (m_Handle != nullptr) {
@@ -64,6 +74,17 @@ namespace Lunar
             m_Width  = mode->width;
             m_Height = mode->height;
         }
+
+        if (m_Context) 
+            glfwWindowHint(GLFW_SAMPLES, m_Samples);
+
+        glfwWindowHint(GLFW_CLIENT_API, 
+            (m_Context) ? GLFW_OPENGL_API 
+                        : GLFW_NO_API
+        );
+
+        glfwWindowHint(GLFW_RESIZABLE, m_Resizable);
+        glfwWindowHint(GLFW_MAXIMIZED, m_StartMaximized);
 
         m_Handle = reinterpret_cast<void*>(
             glfwCreateWindow(
@@ -108,11 +129,21 @@ namespace Lunar
     )
     {
         if (!std::filesystem::exists(path)) {
+            Lunar::print(
+                "Could not find config file '{}'. Loading default values for Window::createInfo.", 
+                path
+            );
+
             return Window::createInfo {
                 .width      = 800,
                 .height     = 600,
                 .title      = title,
                 .fullscreen = false,
+                .resizable  = true,
+                .maximized  = true,
+                ._context   = true,
+                ._samples   = 4,
+                ._renderer  = "default"
             };
         }
 
@@ -120,12 +151,29 @@ namespace Lunar
         usize width      = file["window"]["width"].value_or<usize>(800);
         usize height     = file["window"]["height"].value_or<usize>(600);
         bool  fullscreen = file["window"]["fullscreen"].value_or<bool>(false);
+        bool  maximized  = file["window"]["maximized"].value_or<bool>(false);
+        bool  resizable  = file["window"]["resizable"].value_or<bool>(true);
+        usize samples    = file["opengl"]["samples"].value_or<usize>(2);
+        auto  renderer   = file["window"]["renderer"].value_or<std::string>("default");
+
+        bool context = false;
+        if (renderer.compare("opengl") == 0 ||
+            renderer.compare("default") == 0)
+            context = true;
+
+        Lunar::print("Loaded config file '{}'.", path);
+        Lunar::print("width -> {} | height -> {} | renderer -> {}", width, height, renderer);
 
         return Window::createInfo {
             .width      = width,
             .height     = height,
             .title      = title,
             .fullscreen = fullscreen,
+            .resizable  = resizable,
+            .maximized  = maximized,
+            ._context   = context,
+            ._samples   = samples,
+            ._renderer  = renderer,
         };
     }
 }

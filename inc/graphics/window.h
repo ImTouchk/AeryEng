@@ -15,6 +15,11 @@ namespace Lunar
             usize height;
             std::string_view title;
             bool fullscreen;
+            bool resizable;
+            bool maximized;
+            bool  _context;
+            usize _samples;
+            std::string _renderer;
 
             static createInfo fromFile(
                 const std::string_view path,
@@ -27,6 +32,7 @@ namespace Lunar
 
         bool active() const;
         void update();
+        void* handle() const;
 
     private:
         void stop();
@@ -36,8 +42,13 @@ namespace Lunar
         void*            m_Handle;
         usize            m_Width;
         usize            m_Height;
+        usize            m_Samples;
         std::string_view m_Title;
+        std::string      m_PreferredRenderer;
         bool             m_Fullscreen;
+        bool             m_Resizable;
+        bool             m_StartMaximized;
+        bool             m_Context;
     };
 }
 
