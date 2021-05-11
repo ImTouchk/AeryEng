@@ -15,8 +15,6 @@ find_package(Vulkan REQUIRED)
 # -------------- Build library
 add_library(Lunar SHARED
 	inc/core/common.h
-	src/common.cpp
-	src/main.cpp
 )
 target_include_directories(Lunar PUBLIC inc)
 target_include_directories(Lunar PRIVATE ${Vulkan_INCLUDE_DIRS})
