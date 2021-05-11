@@ -12,6 +12,7 @@ int main()
     };
 
     Lunar::Renderer* renderer = Lunar::getRenderer();
+    renderer->start(window);
 
     while (window.active()) {
         window.update();

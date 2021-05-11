@@ -9,9 +9,14 @@ namespace Lunar
     class GLRenderer : public Renderer
     {
     public:
+        GLRenderer();
+
         void stop() override;
-        bool start(Window* window) override;
+        bool start(Window& window) override;
         bool active() const override;
+
+    private:
+        bool m_Active;
     };
 }
 
