@@ -13,12 +13,15 @@ add_subdirectory(submodules/glfw)
 find_package(Vulkan REQUIRED)
 
 # -------------- Build library
-add_library(Lunar SHARED 
+add_library(Lunar SHARED
+	inc/core/common.h
+	src/common.cpp
 	src/main.cpp
 )
 target_include_directories(Lunar PUBLIC inc)
 target_include_directories(Lunar PRIVATE ${Vulkan_INCLUDE_DIRS})
-target_link_libraries(Lunar PRIVATE fmt toml11 glfw Vulkan::Vulkan)
+target_link_libraries(Lunar PRIVATE toml11 glfw Vulkan::Vulkan)
+target_link_libraries(Lunar PUBLIC fmt)
 
 if(DEFINED BUILD_EXAMPLE AND BUILD_EXAMPLE EQUAL "OFF")
 	message("-- Not building example...")
@@ -26,4 +29,5 @@ else()
 	message("-- Building example...")
 	add_executable(lunar_test examples/main.cpp)
 	target_link_libraries(lunar_test PUBLIC Lunar)
+	set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT lunar_test)
 endif()
