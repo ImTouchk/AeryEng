@@ -10,7 +10,7 @@ namespace Lunar
     {
     public:
         virtual ~Renderer() {}
-        virtual bool start(Window* window) = 0;
+        virtual bool start(Window& window) = 0;
         virtual void stop()  = 0;
         virtual bool active() const = 0;
     };
