@@ -77,6 +77,9 @@ namespace Lunar
         if (m_PreferredRenderer.compare("opengl") == 0) {
             glfwWindowHint(GLFW_SAMPLES, m_Samples);
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         } else {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         }
@@ -102,6 +105,12 @@ namespace Lunar
             Lunar::error("GLFW -> {}", errorString);
             
             exit(ERROR_GLFW_WINDOW_CREATE);
+        }
+
+        if (m_PreferredRenderer.compare("opengl") == 0) {
+            glfwMakeContextCurrent(
+                reinterpret_cast<GLFWwindow*>(m_Handle)
+            );
         }
     }
 
