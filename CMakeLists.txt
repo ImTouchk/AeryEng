@@ -6,6 +6,7 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS 1)
 add_subdirectory(submodules/fmt)
 add_subdirectory(submodules/tomlplusplus)
 add_subdirectory(submodules/glfw)
+add_subdirectory(submodules/glad)
 find_package(Vulkan REQUIRED)
 
 # -------------- Build library
@@ -20,7 +21,7 @@ add_library(Lunar SHARED
 )
 target_include_directories(Lunar PUBLIC inc)
 target_include_directories(Lunar PRIVATE ${Vulkan_INCLUDE_DIRS})
-target_link_libraries(Lunar PRIVATE tomlplusplus glfw Vulkan::Vulkan)
+target_link_libraries(Lunar PRIVATE tomlplusplus glfw Vulkan::Vulkan glad)
 target_link_libraries(Lunar PUBLIC fmt)
 target_compile_features(Lunar PUBLIC cxx_std_20)
 
