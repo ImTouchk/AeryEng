@@ -1,8 +1,18 @@
 #include "core/common.h"
+#include "graphics/window.h"
 
 int main()
 {
-    Lunar::print("Hello, {}!", "world");
-    Lunar::error("I'd rather be {1} than {0}", "right", "happy");
+    Lunar::Window window = {
+        Lunar::Window::createInfo::fromFile(
+            "config.toml",
+            "Hello, world!"
+        )
+    };
+
+    while (window.active()) {
+        window.update();
+    }
+
     return 1;
 }
