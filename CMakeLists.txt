@@ -13,6 +13,10 @@ add_library(Lunar SHARED
 	inc/core/common.h
 	inc/graphics/window.h
 	src/graphics/window.cpp
+	inc/graphics/renderer.h
+	src/graphics/renderer.cpp
+	inc/graphics/gl_renderer.h
+	src/graphics/gl_renderer.cpp
 )
 target_include_directories(Lunar PUBLIC inc)
 target_include_directories(Lunar PRIVATE ${Vulkan_INCLUDE_DIRS})

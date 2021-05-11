@@ -1,5 +1,6 @@
 #include "core/common.h"
 #include "graphics/window.h"
+#include "graphics/renderer.h"
 
 int main()
 {
@@ -9,6 +10,8 @@ int main()
             "Hello, world!"
         )
     };
+
+    Lunar::Renderer* renderer = Lunar::getRenderer();
 
     while (window.active()) {
         window.update();
