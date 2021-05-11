@@ -17,7 +17,6 @@ namespace Lunar
             bool fullscreen;
             bool resizable;
             bool maximized;
-            bool  _context;
             usize _samples;
             std::string _renderer;
 
@@ -39,6 +38,9 @@ namespace Lunar
         void start();
 
     private:
+        friend class GLRenderer;
+
+    private:
         void*            m_Handle;
         usize            m_Width;
         usize            m_Height;
@@ -48,7 +50,6 @@ namespace Lunar
         bool             m_Fullscreen;
         bool             m_Resizable;
         bool             m_StartMaximized;
-        bool             m_Context;
     };
 }
 
