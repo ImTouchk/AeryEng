@@ -4,3 +4,6 @@
 [submodule "submodules/glfw"]
 	path = submodules/glfw
 	url = https://github.com/glfw/glfw
+[submodule "submodules/tomlplusplus"]
+	path = submodules/tomlplusplus
+	url = https://github.com/marzer/tomlplusplus

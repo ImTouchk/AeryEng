@@ -1,25 +1,24 @@
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(Lunar VERSION 0.0.1 DESCRIPTION "Lunar Engine")
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS 1)
 
 # -------------- Dependencies
 add_subdirectory(submodules/fmt)
-add_subdirectory(submodules/toml11)
+add_subdirectory(submodules/tomlplusplus)
 add_subdirectory(submodules/glfw)
 find_package(Vulkan REQUIRED)
 
 # -------------- Build library
 add_library(Lunar SHARED
 	inc/core/common.h
+	inc/graphics/window.h
+	src/graphics/window.cpp
 )
 target_include_directories(Lunar PUBLIC inc)
 target_include_directories(Lunar PRIVATE ${Vulkan_INCLUDE_DIRS})
-target_link_libraries(Lunar PRIVATE toml11 glfw Vulkan::Vulkan)
+target_link_libraries(Lunar PRIVATE tomlplusplus glfw Vulkan::Vulkan)
 target_link_libraries(Lunar PUBLIC fmt)
+target_compile_features(Lunar PUBLIC cxx_std_20)
 
 if(DEFINED BUILD_EXAMPLE AND BUILD_EXAMPLE EQUAL "OFF")
 	message("-- Not building example...")
