@@ -18,6 +18,9 @@ add_library(Lunar SHARED
 	src/graphics/renderer.cpp
 	inc/graphics/gl_renderer.h
 	src/graphics/gl_renderer.cpp
+	inc/math/vec2.h
+	inc/math/vec3.h
+	inc/math/vec4.h
 )
 target_include_directories(Lunar PUBLIC inc)
 target_include_directories(Lunar PRIVATE ${Vulkan_INCLUDE_DIRS})
