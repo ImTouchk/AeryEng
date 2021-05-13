@@ -164,7 +164,6 @@ namespace Lunar
         auto  renderer   = file["window"]["renderer"].value_or<std::string>("opengl");
 
         Lunar::print("Loaded config file '{}'.", path);
-        Lunar::print("width -> {} | height -> {} | renderer -> {}", width, height, renderer);
 
         return Window::createInfo {
             .width      = width,
