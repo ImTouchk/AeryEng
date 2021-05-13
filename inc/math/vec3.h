@@ -8,37 +8,37 @@
 
 namespace Lunar
 {
-    template<typename T, int _ = 3>
-    struct vec
+    template<typename T>
+    struct base_vec3
     {
         static_assert(
             std::is_arithmetic<T>::value,
             "vec<T> -> T must be a numeric type."
         );
 
-        using Value    = vec<T, 3>;
-        using Ref      = vec<T, 3>&;
-        using ConstRef = const vec<T, 3>&;
+        using Value    = base_vec3<T>;
+        using Ref      = base_vec3<T>&;
+        using ConstRef = const base_vec3<T>&;
 
-        vec(ConstRef other)
+        base_vec3(ConstRef other)
+            : x(other.x),
+              y(other.y),
+              z(other.z)
         {
-            x = other.x;
-            y = other.y;
-            z = other.z;
         }
 
-        vec(T x, T y, T z)
+        base_vec3(T x, T y, T z)
+            : x(x),
+              y(y),
+              z(z)
         {
-            this->x = x;
-            this->y = y;
-            this->z = z;
         }
 
-        vec()
+        base_vec3()
+            : x(0),
+              y(0),
+              z(0)
         {
-            x = 0;
-            y = 0;
-            z = 0;
         }
 
         T length() const
@@ -187,7 +187,7 @@ namespace Lunar
         /* alignment for avx*/
     };
 
-    using vec3 = vec<fsize, 3>;
+    using vec3 = base_vec3<fsize>;
 }
 
 #endif // _LUNAR_MATH_VEC3_H

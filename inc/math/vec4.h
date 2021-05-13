@@ -8,55 +8,55 @@
 
 namespace Lunar
 {
-    template<typename T, int _ = 4>
-    struct vec
+    template<typename T>
+    struct base_vec4
     {
         static_assert(
             std::is_arithmetic<T>::value,
             "vec<T> -> T must be a numeric type."
         );
 
-        using Value    = vec<T, 4>;
-        using Ref      = vec<T, 4>&;
-        using ConstRef = const vec<T, 4>&;
+        using Value    = base_vec4<T>;
+        using Ref      = base_vec4<T>&;
+        using ConstRef = const base_vec4<T>&;
 
-        vec(ConstRef other)
+        base_vec4(ConstRef other)
+            : x(other.x),
+              y(other.y),
+              z(other.z),
+              w(other.w)
         {
-            x = other.x;
-            y = other.y;
-            z = other.z;
-            w = other.w;
         }
 
-        vec(T x, T y, T z, T w)
+        base_vec4(T x, T y, T z, T w)
+            : x(x),
+              y(y),
+              z(z),
+              w(w)
         {
-            this->x = x;
-            this->y = y;
-            this->z = z;
-            this->w = w;
         }
 
-        vec(T x, T y, T z)
+        base_vec4(T x, T y, T z)
+            : x(x),
+              y(y),
+              z(z),
+              w(0)
         {
-            this->x = x;
-            this->y = y;
-            this->z = z;
-            w = 0;
         }
 
-        vec()
+        base_vec4()
+            : x(0),
+              y(0),
+              z(0),
+              w(0)
         {
-            x = 0;
-            y = 0;
-            z = 0;
-            w = 0;
         }
 
         T length() const
         {
-            (w == 1) ?
-                return 1 :
-                return std::sqrt(
+            return (w == 1) ?
+                1 :
+                std::sqrt(
                     (x * x) +
                     (y * y) +
                     (z * z)
@@ -196,7 +196,7 @@ namespace Lunar
         union { T w; T a; };
     };
 
-    using vec4 = vec<fsize, 4>;
+    using vec4 = base_vec4<fsize>;
 }
 
 #endif // _LUNAR_MATH_VEC4_H

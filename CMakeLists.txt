@@ -1,8 +1,12 @@
 cmake_minimum_required(VERSION 3.9 FATAL_ERROR)
 project(Lunar VERSION 0.0.1 DESCRIPTION "Lunar Engine")
+
 set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS 1)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # -------------- Dependencies
+option(BUILD_SHARED_LIBS ON)
 add_subdirectory(submodules/fmt)
 add_subdirectory(submodules/tomlplusplus)
 add_subdirectory(submodules/glfw)
@@ -21,6 +25,7 @@ add_library(Lunar SHARED
 	inc/math/vec2.h
 	inc/math/vec3.h
 	inc/math/vec4.h
+	inc/math/mat4.h
 )
 target_include_directories(Lunar PUBLIC inc)
 target_include_directories(Lunar PRIVATE ${Vulkan_INCLUDE_DIRS})
