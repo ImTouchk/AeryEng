@@ -13,14 +13,13 @@ int main()
         )
     };
 
-    auto* renderer = window.getRenderer();
-    renderer->start();
+    auto& renderer = *window.getRenderer();
+    renderer.start();
 
     while (window.active()) {
-        renderer->clear(1, 0, 0, 1);
-        renderer->show();
-
         window.update();
+        renderer.clear(1.0f, 0.0f, 0.0f, 1.0f);
+        renderer.show();
     }
 
     return 1;
