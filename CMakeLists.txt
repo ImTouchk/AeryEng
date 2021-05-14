@@ -6,6 +6,28 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+set(LUNAR_SOURCES 
+	inc/core/common.h
+	inc/graphics/window.h
+	src/graphics/window.cpp
+	inc/graphics/renderer.h
+	src/graphics/renderer.cpp
+	src/graphics/gl_renderer.h
+	src/graphics/gl_renderer.cpp
+	inc/math/vec2.h
+	inc/math/vec3.h
+	inc/math/vec4.h
+	inc/math/mat4.h	
+)
+
+if(WIN32)
+	set(LUNAR_SOURCES 
+		${LUNAR_SOURCES}
+		src/graphics/dx11_renderer.h
+		src/graphics/dx11_renderer.cpp
+	)
+endif()
+
 # -------------- Dependencies
 option(BUILD_SHARED_LIBS ON)
 add_subdirectory(submodules/fmt)
@@ -15,19 +37,7 @@ add_subdirectory(submodules/glad)
 find_package(Vulkan REQUIRED)
 
 # -------------- Build library
-add_library(Lunar SHARED
-	inc/core/common.h
-	inc/graphics/window.h
-	src/graphics/window.cpp
-	inc/graphics/renderer.h
-	src/graphics/renderer.cpp
-	inc/graphics/gl_renderer.h
-	src/graphics/gl_renderer.cpp
-	inc/math/vec2.h
-	inc/math/vec3.h
-	inc/math/vec4.h
-	inc/math/mat4.h
-)
+add_library(Lunar SHARED ${LUNAR_SOURCES})
 target_include_directories(Lunar PUBLIC inc)
 target_include_directories(Lunar PRIVATE ${Vulkan_INCLUDE_DIRS})
 target_link_libraries(Lunar PRIVATE tomlplusplus glfw Vulkan::Vulkan glad)

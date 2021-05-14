@@ -3,6 +3,7 @@
 
 #include <string_view>
 #include "core/common.h"
+#include "graphics/renderer.h"
 
 namespace Lunar
 {
@@ -32,6 +33,8 @@ namespace Lunar
         bool active() const;
         void update();
         void* handle() const;
+
+        Renderer* getRenderer();
 
     private:
         void stop();
