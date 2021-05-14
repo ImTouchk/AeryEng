@@ -11,7 +11,6 @@ set(LUNAR_SOURCES
 	inc/graphics/window.h
 	src/graphics/window.cpp
 	inc/graphics/renderer.h
-	src/graphics/renderer.cpp
 	src/graphics/gl_renderer.h
 	src/graphics/gl_renderer.cpp
 	inc/math/vec2.h

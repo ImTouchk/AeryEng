@@ -129,4 +129,9 @@ namespace Lunar
             clearColor
         );
     }
+
+    void DX11Renderer::show()
+    {
+        m_Swapchain->Present(0, 0);
+    }
 }

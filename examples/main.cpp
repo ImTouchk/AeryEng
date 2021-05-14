@@ -18,6 +18,7 @@ int main()
 
     while (window.active()) {
         renderer->clear(1, 0, 0, 1);
+        renderer->show();
 
         window.update();
     }
