@@ -67,13 +67,18 @@ namespace Lunar
 
     Renderer* Window::getRenderer()
     {
-#   ifdef WIN32
-        static DX11Renderer* _dx11 = new DX11Renderer(this);
-        return _dx11;
-#   else
-        static GLRenderer* _gl = new GLRenderer(this);
-        return _gl;
-#   endif
+        static Renderer* _ren = nullptr;
+
+        auto& renderer = m_PreferredRenderer;
+        if (renderer.compare("opengl") == 0)
+            _ren = new GLRenderer(this);
+#       ifdef WIN32
+        else if (renderer.compare("dx11") == 0)
+            _ren = new DX11Renderer(this);
+#       endif
+        else _ren = new GLRenderer(this);
+
+        return _ren;
     }
 
     void Window::start()
@@ -123,12 +128,6 @@ namespace Lunar
             Lunar::error("GLFW -> {}", errorString);
             
             exit(ERROR_GLFW_WINDOW_CREATE);
-        }
-
-        if (m_PreferredRenderer.compare("opengl") == 0) {
-            glfwMakeContextCurrent(
-                reinterpret_cast<GLFWwindow*>(m_Handle)
-            );
         }
     }
 
