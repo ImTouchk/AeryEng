@@ -1,4 +1,4 @@
-#include "graphics/gl_renderer.h"
+#include "gl_renderer.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -14,17 +14,14 @@ namespace
 
 namespace Lunar
 {
-    GLRenderer::GLRenderer()
-        : m_Active(false)
+    GLRenderer::GLRenderer(void* window)
+        : m_Active(false),
+          m_Window(window)
     {
     }
 
-    bool GLRenderer::start(Window& window)
+    bool GLRenderer::start()
     {
-        if (window.m_PreferredRenderer
-            .compare("opengl") != 0
-        ) return false;
-
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
             Lunar::error("Failed to load the OpenGL driver.");
             exit(ERROR_GLAD_FAIL);
