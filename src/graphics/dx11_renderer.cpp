@@ -105,6 +105,7 @@ namespace Lunar
     void DX11Renderer::stop()
     {
         m_Swapchain->Release();
+        m_BackBuffer->Release();
         m_Device->Release();
         m_DeviceCon->Release();
     }
@@ -112,5 +113,20 @@ namespace Lunar
     bool DX11Renderer::active() const
     {
         return true;
+    }
+
+    void DX11Renderer::clear(fsize r, fsize g, fsize b, fsize a)
+    {
+        float clearColor[4] = { 
+            static_cast<float>(r), 
+            static_cast<float>(g),
+            static_cast<float>(b),
+            static_cast<float>(a) 
+        };
+
+        m_DeviceCon->ClearRenderTargetView(
+            m_BackBuffer,
+            clearColor
+        );
     }
 }

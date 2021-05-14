@@ -1,5 +1,12 @@
 #include "graphics/window.h"
 
+#include "graphics/renderer.h"
+#include "gl_renderer.h"
+
+#ifdef WIN32
+#   include "dx11_renderer.h"
+#endif
+
 #include <toml++/toml.h>
 #include <GLFW/glfw3.h>
 #include <string_view>
@@ -56,6 +63,17 @@ namespace Lunar
     void* Window::handle() const
     {
         return m_Handle;
+    }
+
+    Renderer* Window::getRenderer()
+    {
+#   ifdef WIN32
+        static DX11Renderer* _dx11 = new DX11Renderer(this);
+        return _dx11;
+#   else
+        static GLRenderer* _gl = new GLRenderer(this);
+        return _gl;
+#   endif
     }
 
     void Window::start()

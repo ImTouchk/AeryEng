@@ -17,6 +17,8 @@ namespace Lunar
         void stop() override;
         bool start() override;
         bool active() const override;
+        void clear(fsize r, fsize g, fsize b, fsize a) override;
+        void show() override;
 
     private:
         bool                    m_Active;

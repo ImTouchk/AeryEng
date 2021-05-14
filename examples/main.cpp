@@ -2,6 +2,8 @@
 #include "graphics/window.h"
 #include "graphics/renderer.h"
 
+#include <Windows.h>
+
 int main()
 {
     Lunar::Window window = {
@@ -11,10 +13,12 @@ int main()
         )
     };
 
-    Lunar::Renderer* renderer = Lunar::getRenderer();
-    renderer->start(window);
+    auto* renderer = window.getRenderer();
+    renderer->start();
 
     while (window.active()) {
+        renderer->clear(1, 0, 0, 1);
+
         window.update();
     }
 
